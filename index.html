@@ -691,11 +691,15 @@ function render(){
  const q=document.getElementById("search").value.trim().toLowerCase();
  const qBanglish=searchReady(q);
  const list=poems.filter(p=>{
+   const authorOriginal=String(p.author||"").toLowerCase();
+   const authorBanglish=searchReady(p.author||"");
    const original=(p.title+" "+p.body+" "+(p.author||"")).toLowerCase();
    const translit=searchReady(p.title+" "+p.body+" "+(p.author||""));
-   return !q || original.includes(q) || translit.includes(qBanglish);
+   // লেখকের নাম মিললে সেই লেখকের সব কবিতা দেখাবে।
+   const authorMatch = !!q && (authorOriginal.includes(q) || (qBanglish && authorBanglish.includes(qBanglish)));
+   return !q || authorMatch || original.includes(q) || translit.includes(qBanglish);
  });
- document.getElementById("count").textContent=`${poems.length}টি কবিতা`;
+ document.getElementById("count").textContent=`${list.length}টি কবিতা`;
  const grid=document.getElementById("grid");
  if(!list.length){grid.innerHTML='<div class="empty">এই নামে কোনো কবিতা পাওয়া যায়নি।</div>';return}
  grid.innerHTML=list.map(p=>{
