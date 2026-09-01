@@ -111,7 +111,7 @@ footer strong{color:#b9b0a3}
 }
 
 
-.author{color:#9f978b;font-size:12px;margin-top:8px}
+.author{color:#f1c27d;font-size:16px;font-weight:700;margin-top:10px;padding:7px 12px;display:inline-block;border:1px solid rgba(241,194,125,.45);border-radius:10px;background:rgba(241,194,125,.08)}
 .editor-note{color:#777;font-size:12px;line-height:1.7;margin:8px 0 18px}
 
 .pending-card{border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;background:#111}
@@ -646,8 +646,9 @@ function render(){
     <button class="favorite ${fav?'active':''}" title="${fav?'Favorite থেকে সরান':'Favorite করুন'}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button>
     <div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,"0")}</div>
     <h3>${escapeHTML(p.title)}</h3>
+    ${p.author ? `<div class="author">✍ লেখক: ${escapeHTML(p.author)}</div>` : ""}
     <div class="excerpt">${escapeHTML(p.body)}</div>
-    <div class="date">${escapeHTML(p.author ? "লেখক: "+p.author : (p.date||""))}</div>
+    <div class="date">${escapeHTML(p.date||"")}</div>
    </article>`;
  }).join("");
 }
