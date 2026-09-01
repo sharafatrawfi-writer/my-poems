@@ -132,6 +132,11 @@ footer strong{color:#b9b0a3}
 @media(max-width:760px){.dashboard-grid{grid-template-columns:1fr}}
 
 
+
+.crop-tools{display:none;margin-top:12px;padding:12px;border:1px solid rgba(241,194,125,.35);border-radius:14px;background:rgba(255,255,255,.04)}
+.crop-tools.active{display:block}.crop-wrap{position:relative;max-width:520px;margin:10px auto;overflow:hidden;border-radius:12px;background:#111;touch-action:none}
+#cropCanvas{display:block;width:100%;height:auto;cursor:grab}.crop-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}.crop-actions button{border:0;border-radius:10px;padding:9px 13px;cursor:pointer}
+.crop-hint{font-size:13px;opacity:.8;text-align:center}
 </style>
 
 <script type="module">
@@ -198,7 +203,7 @@ footer strong{color:#b9b0a3}
     <div class="count" id="count">4টি কবিতা</div>
   </div>
   <div class="tools">
-    <input id="search" class="search" placeholder="কবিতা খুঁজুন..." oninput="render()">
+    <input id="search" class="search" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
     <button class="btn gold" onclick="openEditor()">নতুন কবিতা</button>
   </div>
   <div class="grid" id="grid"><article class="card" onclick="openReader(&#39;p-1788281580204&#39;)">
@@ -467,6 +472,16 @@ footer strong{color:#b9b0a3}
       <div class="image-upload-box">
         <label class="file-label" for="imageFile">🖼️ ছবি বেছে নিন</label>
         <input id="imageFile" type="file" accept="image/*" style="display:none" onchange="previewImage(this)">
+        <div id="cropTools" class="crop-tools">
+          <div class="crop-hint">ছবির উপর টেনে অংশ ঠিক করো • 🔍 Zoom দিয়ে আকার ঠিক করো</div>
+          <div class="crop-wrap"><canvas id="cropCanvas"></canvas></div>
+          <div class="crop-actions">
+            <button type="button" onclick="zoomCrop(1.12)">🔍 Zoom +</button>
+            <button type="button" onclick="zoomCrop(0.89)">🔎 Zoom −</button>
+            <button type="button" onclick="resetCrop()">↺ Reset</button>
+            <button type="button" onclick="applyCrop()">✅ Crop & Use</button>
+          </div>
+        </div>
         <div class="image-help">প্রতিটি কবিতার জন্য আলাদা ছবি যোগ করতে পারবে। ছবি automatically optimize করে browser-এর localStorage-এ রাখা হবে।</div>
         <div class="image-preview" id="imagePreview">
           <img id="previewImg" alt="ছবির preview">
@@ -643,9 +658,43 @@ let adminEditingId = null;
 
 function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
+function banglishNormalize(text){
+ return String(text||"").toLowerCase().trim()
+   .replace(/[অ-ঔ]/g, m=>({"অ":"o","আ":"a","ই":"i","ঈ":"i","উ":"u","ঊ":"u","ঋ":"ri","এ":"e","ঐ":"oi","ও":"o","ঔ":"ou"}[m]||m));
+}
+
+function bengaliToBanglish(text){
+ const base={"ক":"k","খ":"kh","গ":"g","ঘ":"gh","ঙ":"ng","চ":"ch","ছ":"chh","জ":"j","ঝ":"jh","ঞ":"n","ট":"t","ঠ":"th","ড":"d","ঢ":"dh","ণ":"n","ত":"t","থ":"th","দ":"d","ধ":"dh","ন":"n","প":"p","ফ":"f","ব":"b","ভ":"bh","ম":"m","য":"y","র":"r","ল":"l","শ":"sh","ষ":"sh","স":"s","হ":"h","ড়":"r","ঢ়":"rh","য়":"y","ৎ":"t","ং":"ng","ঃ":"h","ঁ":"n"};
+ const vowel={"া":"a","ি":"i","ী":"i","ু":"u","ূ":"u","ৃ":"ri","ে":"e","ৈ":"oi","ো":"o","ৌ":"ou"};
+ const independent={"অ":"o","আ":"a","ই":"i","ঈ":"i","উ":"u","ঊ":"u","ঋ":"ri","এ":"e","ঐ":"oi","ও":"o","ঔ":"ou"};
+ let out="";
+ for(let i=0;i<text.length;i++){
+   const c=text[i], next=text[i+1];
+   if(independent[c]){out+=independent[c];continue;}
+   if(base[c]){
+     out+=base[c];
+     if(next==="্"){} else if(vowel[next]){} else {out+="o";}
+     continue;
+   }
+   if(c==="্"){continue;}
+   if(vowel[c]){out+=vowel[c];continue;}
+   out+=c;
+ }
+ return out.toLowerCase();
+}
+
+function searchReady(text){
+ return bengaliToBanglish(String(text||"")).replace(/[^a-z0-9]+/g," ").replace(/(.)\1+/g,"$1").trim();
+}
+
 function render(){
  const q=document.getElementById("search").value.trim().toLowerCase();
- const list=poems.filter(p=>(p.title+" "+p.body).toLowerCase().includes(q));
+ const qBanglish=searchReady(q);
+ const list=poems.filter(p=>{
+   const original=(p.title+" "+p.body+" "+(p.author||"")).toLowerCase();
+   const translit=searchReady(p.title+" "+p.body+" "+(p.author||""));
+   return !q || original.includes(q) || translit.includes(qBanglish);
+ });
  document.getElementById("count").textContent=`${poems.length}টি কবিতা`;
  const grid=document.getElementById("grid");
  if(!list.length){grid.innerHTML='<div class="empty">এই নামে কোনো কবিতা পাওয়া যায়নি।</div>';return}
@@ -690,6 +739,7 @@ function openEditor(){
  document.getElementById("title").value="";
  document.getElementById("body").value="";
  document.getElementById("imageFile").value="";
+ document.getElementById("cropTools").classList.remove("active");
  showPreview("");
  document.getElementById("editorOverlay").classList.add("show");
  document.body.style.overflow="hidden";
@@ -703,25 +753,39 @@ function previewImage(input){
  if(!file.type.startsWith("image/")){alert("শুধু image file নির্বাচন করুন।");return}
  if(file.size>12*1024*1024){alert("ছবিটি 12MB-এর চেয়ে ছোট হলে ভালো হবে।");return}
  const reader=new FileReader();
- reader.onload=e=>optimizeImage(e.target.result);
+ reader.onload=e=>openCropper(e.target.result);
  reader.readAsDataURL(file);
 }
 
-/* Resize/compress so multiple poem images are much less likely to hit localStorage limits. */
-function optimizeImage(src){
+let cropImg=null,cropScale=1,cropOffsetX=0,cropOffsetY=0,cropDragging=false,cropLastX=0,cropLastY=0;
+const CROP_SIZE=900;
+function openCropper(src){
  const img=new Image();
  img.onload=()=>{
-   const max=1400, scale=Math.min(1,max/Math.max(img.width,img.height));
-   const canvas=document.createElement("canvas");
-   canvas.width=Math.max(1,Math.round(img.width*scale));
-   canvas.height=Math.max(1,Math.round(img.height*scale));
-   const ctx=canvas.getContext("2d");
-   ctx.drawImage(img,0,0,canvas.width,canvas.height);
-   pendingImage=canvas.toDataURL("image/jpeg",0.82);
-   showPreview(pendingImage);
- };
- img.src=src;
+  cropImg=img; cropScale=Math.max(CROP_SIZE/img.width,CROP_SIZE/img.height);
+  cropOffsetX=(CROP_SIZE-img.width*cropScale)/2; cropOffsetY=(CROP_SIZE-img.height*cropScale)/2;
+  document.getElementById('cropTools').classList.add('active'); drawCrop();
+ }; img.src=src;
 }
+function drawCrop(){
+ const c=document.getElementById('cropCanvas'); c.width=CROP_SIZE; c.height=CROP_SIZE;
+ const ctx=c.getContext('2d'); ctx.clearRect(0,0,CROP_SIZE,CROP_SIZE);
+ ctx.fillStyle='#111';ctx.fillRect(0,0,CROP_SIZE,CROP_SIZE);
+ if(cropImg)ctx.drawImage(cropImg,cropOffsetX,cropOffsetY,cropImg.width*cropScale,cropImg.height*cropScale);
+ ctx.save();ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=5;ctx.strokeRect(3,3,CROP_SIZE-6,CROP_SIZE-6);
+ ctx.strokeStyle='rgba(255,255,255,.35)';ctx.lineWidth=2;
+ for(let i=1;i<3;i++){let x=CROP_SIZE*i/3;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CROP_SIZE);ctx.stroke();ctx.beginPath();ctx.moveTo(0,x);ctx.lineTo(CROP_SIZE,x);ctx.stroke();}
+ ctx.restore();
+}
+function zoomCrop(f){if(!cropImg)return;const old=cropScale;const min=Math.max(CROP_SIZE/cropImg.width,CROP_SIZE/cropImg.height);cropScale=Math.max(min,Math.min(old*f,6));const cx=CROP_SIZE/2,cy=CROP_SIZE/2;cropOffsetX=cx-(cx-cropOffsetX)*(cropScale/old);cropOffsetY=cy-(cy-cropOffsetY)*(cropScale/old);drawCrop();}
+function resetCrop(){if(!cropImg)return;cropScale=Math.max(CROP_SIZE/cropImg.width,CROP_SIZE/cropImg.height);cropOffsetX=(CROP_SIZE-cropImg.width*cropScale)/2;cropOffsetY=(CROP_SIZE-cropImg.height*cropScale)/2;drawCrop();}
+function applyCrop(){if(!cropImg)return;const c=document.createElement('canvas');c.width=1200;c.height=1200;const ctx=c.getContext('2d');const f=1200/CROP_SIZE;ctx.drawImage(cropImg,cropOffsetX*f,cropOffsetY*f,cropImg.width*cropScale*f,cropImg.height*cropScale*f);pendingImage=c.toDataURL('image/jpeg',0.82);document.getElementById('cropTools').classList.remove('active');showPreview(pendingImage);}
+const cropCanvas=document.getElementById('cropCanvas');
+function cropPointerStart(e){if(!cropImg)return;cropDragging=true;const p=e.touches?e.touches[0]:e;cropLastX=p.clientX;cropLastY=p.clientY;cropCanvas.style.cursor='grabbing';e.preventDefault();}
+function cropPointerMove(e){if(!cropDragging)return;const p=e.touches?e.touches[0]:e;const r=cropCanvas.getBoundingClientRect();const sx=CROP_SIZE/r.width;cropOffsetX+=(p.clientX-cropLastX)*sx;cropOffsetY+=(p.clientY-cropLastY)*sx;cropLastX=p.clientX;cropLastY=p.clientY;drawCrop();e.preventDefault();}
+function cropPointerEnd(){cropDragging=false;cropCanvas.style.cursor='grab';}
+cropCanvas.addEventListener('mousedown',cropPointerStart);window.addEventListener('mousemove',cropPointerMove);window.addEventListener('mouseup',cropPointerEnd);cropCanvas.addEventListener('touchstart',cropPointerStart,{passive:false});window.addEventListener('touchmove',cropPointerMove,{passive:false});window.addEventListener('touchend',cropPointerEnd);
+function optimizeImage(src){openCropper(src);}
 
 function showPreview(src){
  const box=document.getElementById("imagePreview"), img=document.getElementById("previewImg");
@@ -731,6 +795,7 @@ function showPreview(src){
 function removeImage(){
  pendingImage="";
  document.getElementById("imageFile").value="";
+ document.getElementById("cropTools").classList.remove("active");
  showPreview("");
 }
 
