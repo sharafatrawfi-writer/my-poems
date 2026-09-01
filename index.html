@@ -164,7 +164,7 @@ footer strong{color:#b9b0a3}
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
   import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
   // === STEP 1: Replace these values with your Firebase project's Web App config ===
   const firebaseConfig = {
@@ -187,7 +187,7 @@ footer strong{color:#b9b0a3}
 
   window.firebasePoem = {
     auth, db, ADMIN_EMAIL, signInWithEmailAndPassword, signOut,
-    collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc
+    collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc, setDoc
   };
 
   onAuthStateChanged(auth, async user => {
@@ -484,10 +484,11 @@ footer strong{color:#b9b0a3}
   <article class="reader modal">
     <button class="close" onclick="closeEditor()">×</button>
     <div class="eyebrow">Your words</div>
-    <div class="editor-note">নতুন কবিতা জমা দেওয়া যাবে। Admin approve করার পরেই তা সবার website-এ প্রকাশ হবে; প্রকাশিত কবিতা visitor-রা edit বা delete করতে পারবে না।</div>
+    <div class="editor-note">নতুন কবিতা জমা দেওয়া যাবে। Admin approve করার পরেই তা সবার website-এ প্রকাশ হবে। Admin Login করলে সব প্রকাশিত কবিতা Edit/Delete এবং pending কবিতা Edit করতে পারবে।</div>
     <h2 id="editorHeading">নতুন কবিতা যোগ করুন</h2>
     <div class="field"><label>তোমার নাম</label><input id="author" placeholder="যেমন: রাফি"></div>
 <div class="field"><label>কবিতার নাম</label><input id="title" placeholder="যেমন: শেষ চিঠি"></div>
+    <div class="field"><label>কবিতাটি লেখার তারিখ</label><input id="poemDate" type="date"></div>
     <div class="field"><label>কবিতা</label><textarea id="body" placeholder="এখানে তোমার কবিতা লিখো..."></textarea></div>
     <div class="field">
       <label>কবিতার ছবি</label>
@@ -757,6 +758,7 @@ function openReader(id){
 function closeReader(){document.getElementById("readerOverlay").classList.remove("show");document.body.style.overflow=""}
 
 function openEditor(){
+  const dateInput=document.getElementById("poemDate"); if(dateInput) dateInput.value=new Date().toISOString().slice(0,10);
  adminEditingId=null;
  currentId=null;
  pendingImage="";
@@ -834,13 +836,14 @@ function toggleFavorite(event,id){
 
 async function savePoem(){
  const author=document.getElementById("author").value.trim(), title=document.getElementById("title").value.trim(), body=document.getElementById("body").value.trim();
+ const poemDate=document.getElementById("poemDate").value || new Date().toISOString().slice(0,10);
  if(!author||!title||!body){alert("তোমার নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
  const p=window.firebasePoem;
  if(!p){alert("Submission system configure করা হয়নি।");return}
  if(adminEditingId){ await saveAdminEdit(); return; }
  try{
    await p.addDoc(p.collection(p.db,"submissions"),{
-     author,title,body,image:pendingImage||"",status:"pending",createdAt:p.serverTimestamp()
+     author,title,body,date:poemDate,image:pendingImage||"",status:"pending",createdAt:p.serverTimestamp()
    });
    closeEditor();
    alert("তোমার কবিতা জমা হয়েছে। Admin approve করার পর সবার website-এ প্রকাশ হবে।");
@@ -926,12 +929,32 @@ async function adminLogin(){
   }catch(e){ alert("Login failed: "+(e.code||e.message)); }
 }
 
+async function ensureInitialPoemsPublished(){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  for(const poem of initialPoems){
+    try{
+      const ref=p.doc(p.db,"publishedPoems",poem.id);
+      const snap=await p.getDocs(p.query(p.collection(p.db,"publishedPoems")));
+      const existing=snap.docs.find(d=>d.id===poem.id);
+      if(!existing){
+        await p.setDoc(ref,{author:poem.author||"",title:poem.title||"",body:poem.body||"",image:poem.image||"",date:poem.date||"",publishedAt:p.serverTimestamp(),source:"admin-original",deleted:false});
+      }
+    }catch(e){
+      console.warn("Initial poem migration error:",poem.id,e.message);
+    }
+  }
+}
+
 async function loadAdminDashboard(){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
   document.getElementById("loggedAdminEmail").textContent=window.firebasePoemUser.email;
   document.getElementById("adminDashboard").style.display="";
   try{
+    // প্রথমবার Admin খুললে আগের HTML-এর কবিতাগুলোও Firestore-এ রাখা হবে,
+    // যাতে Admin এগুলো edit/delete করলে সবার website-এ পরিবর্তন দেখা যায়।
+    await ensureInitialPoemsPublished();
     const snap=await p.getDocs(p.collection(p.db,"submissions"));
     let pending=0,rejected=0;
     snap.forEach(d=>{
@@ -940,8 +963,10 @@ async function loadAdminDashboard(){
       if(s==="rejected") rejected++;
     });
     const pub=await p.getDocs(p.collection(p.db,"publishedPoems"));
+    let published=0;
+    pub.forEach(d=>{if(!d.data().deleted) published++;});
     document.getElementById("statPending").textContent=pending;
-    document.getElementById("statPublished").textContent=pub.size;
+    document.getElementById("statPublished").textContent=published;
     document.getElementById("statRejected").textContent=rejected;
   }catch(e){
     console.warn("Dashboard stats error:",e.message);
@@ -973,9 +998,11 @@ async function loadPendingPoems(){
       <div class="pending-card">
         <h3>${escapeHTML(x.title||"Untitled")}</h3>
         <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div>
         <div class="pending-body">${escapeHTML(x.body||"")}</div>
         <div class="pending-actions">
           <button class="btn gold" onclick="approvePoem('${x.id}')">Approve & Publish</button>
+          <button class="btn" onclick="editPendingPoem('${x.id}')">✏️ Edit</button>
           <button class="btn" onclick="rejectPoem('${x.id}')">Reject</button>
         </div>
       </div>`).join("");
@@ -997,7 +1024,7 @@ async function approvePoem(id){
     if(target){
       const x=target.data();
       await p.addDoc(p.collection(p.db,"publishedPoems"),{
-        author:x.author,title:x.title,body:x.body,image:x.image||"",date:new Date().getFullYear().toString(),publishedAt:p.serverTimestamp()
+        author:x.author,title:x.title,body:x.body,image:x.image||"",date:x.date||new Date().toISOString().slice(0,10),publishedAt:p.serverTimestamp()
       });
     }
     await loadAdminDashboard();
@@ -1018,21 +1045,33 @@ async function rejectPoem(id){
 
 
 <script>
+function formatPoemDate(value){
+  if(!value) return "তারিখ দেওয়া হয়নি";
+  const m=String(value).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(!m) return String(value);
+  return `${m[3]}-${m[2]}-${m[1]}`;
+}
+
 async function loadPublishedAdmin(){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
   const box=document.getElementById("publishedList");
   box.innerHTML="<p>Loading…</p>";
   try{
+    await ensureInitialPoemsPublished();
     const q=p.query(p.collection(p.db,"publishedPoems"),p.orderBy("publishedAt","desc"));
     const snap=await p.getDocs(q);
     const items=[];
-    snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    snap.forEach(d=>{
+      const x=d.data();
+      if(!x.deleted) items.push({id:d.id,...x});
+    });
     if(!items.length){box.innerHTML="<p class='admin-small'>কোনো published কবিতা নেই।</p>";return;}
     box.innerHTML=items.map(x=>`
       <div class="pending-card">
         <h3>${escapeHTML(x.title||"Untitled")}</h3>
         <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div>
         <div class="pending-body">${escapeHTML(x.body||"")}</div>
         <div class="pending-actions">
           <button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button>
@@ -1040,6 +1079,28 @@ async function loadPublishedAdmin(){
         </div>
       </div>`).join("");
   }catch(e){ box.innerHTML="<p class='admin-small'>Firestore error: "+escapeHTML(e.message)+"</p>"; }
+}
+
+async function editPendingPoem(id){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  try{
+    const d=await p.getDocs(p.collection(p.db,"submissions"));
+    const target=d.docs.find(x=>x.id===id);
+    if(!target) return alert("Pending কবিতাটি পাওয়া যায়নি।");
+    const x=target.data();
+    adminEditingId="pending:"+id;
+    document.getElementById("editorHeading").textContent="Pending কবিতা Edit করুন";
+    document.getElementById("author").value=x.author||"";
+    document.getElementById("title").value=x.title||"";
+    document.getElementById("poemDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"") ? x.date : "";
+    document.getElementById("body").value=x.body||"";
+    document.getElementById("imageFile").value="";
+    pendingImage=x.image||"";
+    showPreview(pendingImage);
+    document.getElementById("editorOverlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }catch(e){alert("Edit খুলতে সমস্যা: "+e.message);}
 }
 
 async function editPublishedPoem(id){
@@ -1054,6 +1115,7 @@ async function editPublishedPoem(id){
     document.getElementById("editorHeading").textContent="কবিতা Edit করুন";
     document.getElementById("author").value=x.author||"";
     document.getElementById("title").value=x.title||"";
+    document.getElementById("poemDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"") ? x.date : "";
     document.getElementById("body").value=x.body||"";
     document.getElementById("imageFile").value="";
     pendingImage=x.image||"";
@@ -1069,15 +1131,26 @@ async function saveAdminEdit(){
   const author=document.getElementById("author").value.trim();
   const title=document.getElementById("title").value.trim();
   const body=document.getElementById("body").value.trim();
+  const poemDate=document.getElementById("poemDate").value || new Date().toISOString().slice(0,10);
   if(!author||!title||!body){alert("লেখকের নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
   try{
-    await p.updateDoc(p.doc(p.db,"publishedPoems",adminEditingId),{author,title,body,image:pendingImage||""});
-    closeEditor();
-    adminEditingId=null;
-    await loadPublishedAdmin();
-    await loadPublishedFromFirebase();
-    await loadAdminDashboard();
-    alert("কবিতা সফলভাবে Edit হয়েছে।");
+    const data={author,title,body,date:poemDate,image:pendingImage||""};
+    if(String(adminEditingId).startsWith("pending:")){
+      const id=String(adminEditingId).slice(8);
+      await p.updateDoc(p.doc(p.db,"submissions",id),data);
+      closeEditor();
+      adminEditingId=null;
+      await loadPendingPoems();
+      alert("Pending কবিতাটি সফলভাবে Edit হয়েছে।");
+    }else{
+      await p.updateDoc(p.doc(p.db,"publishedPoems",adminEditingId),data);
+      closeEditor();
+      adminEditingId=null;
+      await loadPublishedAdmin();
+      await loadPublishedFromFirebase();
+      await loadAdminDashboard();
+      alert("কবিতা সফলভাবে Edit হয়েছে।");
+    }
   }catch(e){alert("Edit failed: "+e.message);}
 }
 
@@ -1086,8 +1159,15 @@ async function deletePublishedPoem(id){
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
   if(!confirm("এই প্রকাশিত কবিতাটি Delete করতে চান? এটি সবার website থেকে মুছে যাবে।")) return;
   try{
-    await p.deleteDoc(p.doc(p.db,"publishedPoems",id));
-    poems=poems.filter(x=>x.id!=="fb-"+id);
+    const isOriginal=initialPoems.some(x=>x.id===id);
+    if(isOriginal){
+      // Original HTML poems-এর Firestore copy-কে hidden করে দিই,
+      // যাতে আবার initialPoems fallback হিসেবে না আসে।
+      await p.updateDoc(p.doc(p.db,"publishedPoems",id),{deleted:true,deletedAt:p.serverTimestamp()});
+    }else{
+      await p.deleteDoc(p.doc(p.db,"publishedPoems",id));
+    }
+    poems=poems.filter(x=>x.id!==id && x.id!=="fb-"+id);
     render();
     await loadPublishedAdmin();
     await loadAdminDashboard();
@@ -1102,11 +1182,22 @@ async function loadPublishedFromFirebase(){
     const q=p.query(p.collection(p.db,"publishedPoems"),p.orderBy("publishedAt","desc"));
     const snap=await p.getDocs(q);
     const remote=[];
-    snap.forEach(d=>remote.push({id:"fb-"+d.id,...d.data()}));
-    if(remote.length){
-      poems=[...remote,...initialPoems];
-      render();
-    }
+    const originalIds=new Set(initialPoems.map(x=>x.id));
+    const remoteOriginalIds=new Set();
+    snap.forEach(d=>{
+      const x=d.data();
+      if(x.deleted) return;
+      if(originalIds.has(d.id)){
+        remote.push({id:d.id,...x});
+        remoteOriginalIds.add(d.id);
+      }else{
+        remote.push({id:"fb-"+d.id,...x});
+      }
+    });
+    // Firestore version থাকলে সেটাই ব্যবহার হবে; না থাকলে পুরোনো HTML version থাকবে।
+    const fallbackInitial=initialPoems.filter(x=>!remoteOriginalIds.has(x.id));
+    poems=[...remote,...fallbackInitial];
+    render();
   }catch(e){ console.warn("Published poems could not load:",e.message); }
 }
 window.addEventListener("load",loadPublishedFromFirebase);
