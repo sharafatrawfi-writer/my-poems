@@ -4,8 +4,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#09090b">
-<meta name="description" content="শারাফাত রাওফির কবিতার ব্যক্তিগত আর্কাইভ।">
-<title>নীরবতার চিঠি — Sharafat Rawfi</title>
+<meta name="description" content="কবিতার আঙিনা — সবার কবিতা, সবার জন্য।">
+<title>কবিতার আঙিনা — Bengali Poetry Archive</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -119,6 +119,18 @@ footer strong{color:#b9b0a3}
 .pending-card .meta{font-size:12px;color:#999;margin-bottom:12px}
 .pending-card .pending-body{white-space:pre-wrap;line-height:1.8;color:#ddd}
 .pending-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.admin-section{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.admin-section h3{font-size:20px;margin:0 0 12px;color:var(--gold2)}
+.admin-small{color:#777;font-size:12px;line-height:1.7}
+.btn.danger{border-color:rgba(220,90,90,.4);color:#f0aaaa}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.dashboard-stat{border:1px solid var(--line);border-radius:16px;padding:18px;background:rgba(255,255,255,.035)}
+.dashboard-stat .label{font-size:12px;color:#999;margin-bottom:8px}
+.dashboard-stat .value{font-size:30px;color:var(--gold2);font-weight:700}
+.dashboard-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}
+.admin-user{font-size:12px;color:#777;margin-top:-6px;margin-bottom:14px}
+@media(max-width:760px){.dashboard-grid{grid-template-columns:1fr}}
+
 
 </style>
 
@@ -162,7 +174,7 @@ footer strong{color:#b9b0a3}
 </head>
 <body style="">
 <nav class="nav">
-  <a class="brand" href="#top">SHARAFAT RAWFI</a>
+  <a class="brand" href="#top">কবিতার আঙিনা</a>
   <div class="nav-right">
     <button class="btn" onclick="document.getElementById(&#39;archive&#39;).scrollIntoView()">কবিতাগুলো</button>
     <button class="btn" onclick="openAdmin()">Admin Login</button>
@@ -182,7 +194,7 @@ footer strong{color:#b9b0a3}
 
 <section class="section" id="archive">
   <div class="section-head">
-    <div><div class="eyebrow">The archive</div><h2>আমার কবিতাগুলো</h2></div>
+    <div><div class="eyebrow">The archive</div><h2>কবিতাগুলো</h2></div>
     <div class="count" id="count">4টি কবিতা</div>
   </div>
   <div class="tools">
@@ -627,6 +639,7 @@ const STORAGE_KEY="sharafatPoems_v2";
 let poems = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || initialPoems;
 let currentId = null;
 let pendingImage = "";
+let adminEditingId = null;
 
 function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 
@@ -669,6 +682,7 @@ function openReader(id){
 function closeReader(){document.getElementById("readerOverlay").classList.remove("show");document.body.style.overflow=""}
 
 function openEditor(){
+ adminEditingId=null;
  currentId=null;
  pendingImage="";
  document.getElementById("editorHeading").textContent="নতুন কবিতা যোগ করুন";
@@ -732,6 +746,7 @@ async function savePoem(){
  if(!author||!title||!body){alert("তোমার নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
  const p=window.firebasePoem;
  if(!p){alert("Submission system configure করা হয়নি।");return}
+ if(adminEditingId){ await saveAdminEdit(); return; }
  try{
    await p.addDoc(p.collection(p.db,"submissions"),{
      author,title,body,image:pendingImage||"",status:"pending",createdAt:p.serverTimestamp()
@@ -751,11 +766,27 @@ render();
 <div id="adminOverlay" class="overlay">
   <div class="modal">
     <div class="modal-head">
-      <div><div class="eyebrow">Private control</div><h2>Admin approval</h2></div>
+      <div><div class="eyebrow">Private control</div><h2>Admin Dashboard</h2></div>
       <button class="close" onclick="closeAdmin()">×</button>
     </div>
-    <p class="editor-note">এখানে visitor-দের জমা দেওয়া কবিতা approve করলে সবার website-এ প্রকাশ হবে। Reject করলে প্রকাশ হবে না।</p>
+    <div id="adminDashboard" style="display:none">
+      <div class="admin-user">🔐 Admin হিসেবে লগইন করা হয়েছে: <span id="loggedAdminEmail"></span></div>
+      <div class="dashboard-grid">
+        <div class="dashboard-stat"><div class="label">Pending</div><div class="value" id="statPending">0</div></div>
+        <div class="dashboard-stat"><div class="label">Published</div><div class="value" id="statPublished">0</div></div>
+        <div class="dashboard-stat"><div class="label">Rejected</div><div class="value" id="statRejected">0</div></div>
+      </div>
+      <div class="dashboard-actions">
+        <button class="btn" onclick="loadAdminDashboard()">↻ Refresh</button>
+        <button class="btn" onclick="adminLogout()">Logout</button>
+      </div>
+    </div>
+    <p class="editor-note">এখান থেকে pending কবিতা Approve/Reject এবং প্রকাশিত কবিতা Edit/Delete করতে পারবে।</p>
     <div id="pendingList"></div>
+    <div class="admin-section" id="publishedSection" style="display:none">
+      <h3>প্রকাশিত কবিতা</h3>
+      <div id="publishedList"></div>
+    </div>
     <div id="adminLogin" style="display:none">
       <div class="field"><label>Admin email</label><input id="adminEmail" type="email" autocomplete="username"></div>
       <div class="field"><label>Password</label><input id="adminPassword" type="password" autocomplete="current-password"></div>
@@ -772,9 +803,13 @@ function openAdmin(){
   if(window.firebasePoemUser && window.firebasePoemUser.email === p.ADMIN_EMAIL){
     document.getElementById("adminLogin").style.display="none";
     document.getElementById("pendingList").style.display="";
+    document.getElementById("publishedSection").style.display="";
+    loadAdminDashboard();
     loadPendingPoems();
+    loadPublishedAdmin();
   }else{
     document.getElementById("pendingList").style.display="none";
+    document.getElementById("publishedSection").style.display="none";
     document.getElementById("adminLogin").style.display="";
     document.getElementById("adminEmail").value=p.ADMIN_EMAIL;
   }
@@ -792,9 +827,43 @@ async function adminLogin(){
       document.getElementById("adminEmail").value.trim(),
       document.getElementById("adminPassword").value);
     alert("Login successful.");
+    document.getElementById("pendingList").style.display="";
+    document.getElementById("publishedSection").style.display="";
+    await loadAdminDashboard();
     await loadPendingPoems();
+    await loadPublishedAdmin();
   }catch(e){ alert("Login failed: "+(e.code||e.message)); }
 }
+
+async function loadAdminDashboard(){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  document.getElementById("loggedAdminEmail").textContent=window.firebasePoemUser.email;
+  document.getElementById("adminDashboard").style.display="";
+  try{
+    const snap=await p.getDocs(p.collection(p.db,"submissions"));
+    let pending=0,rejected=0;
+    snap.forEach(d=>{
+      const s=d.data().status;
+      if(s==="pending") pending++;
+      if(s==="rejected") rejected++;
+    });
+    const pub=await p.getDocs(p.collection(p.db,"publishedPoems"));
+    document.getElementById("statPending").textContent=pending;
+    document.getElementById("statPublished").textContent=pub.size;
+    document.getElementById("statRejected").textContent=rejected;
+  }catch(e){
+    console.warn("Dashboard stats error:",e.message);
+  }
+}
+async function adminLogout(){
+  const p=window.firebasePoem;
+  if(!p) return;
+  await p.signOut(p.auth);
+  closeAdmin();
+  alert("Admin logout হয়েছে।");
+}
+
 async function loadPendingPoems(){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
@@ -840,6 +909,7 @@ async function approvePoem(id){
         author:x.author,title:x.title,body:x.body,image:x.image||"",date:new Date().getFullYear().toString(),publishedAt:p.serverTimestamp()
       });
     }
+    await loadAdminDashboard();
     await loadPendingPoems();
   }catch(e){alert("Approve failed: "+e.message);}
 }
@@ -849,6 +919,7 @@ async function rejectPoem(id){
   if(!confirm("এই কবিতাটি reject করতে চান?")) return;
   try{
     await p.updateDoc(p.doc(p.db,"submissions",id),{status:"rejected",rejectedAt:p.serverTimestamp()});
+    await loadAdminDashboard();
     await loadPendingPoems();
   }catch(e){alert("Reject failed: "+e.message);}
 }
@@ -856,6 +927,83 @@ async function rejectPoem(id){
 
 
 <script>
+async function loadPublishedAdmin(){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  const box=document.getElementById("publishedList");
+  box.innerHTML="<p>Loading…</p>";
+  try{
+    const q=p.query(p.collection(p.db,"publishedPoems"),p.orderBy("publishedAt","desc"));
+    const snap=await p.getDocs(q);
+    const items=[];
+    snap.forEach(d=>items.push({id:d.id,...d.data()}));
+    if(!items.length){box.innerHTML="<p class='admin-small'>কোনো published কবিতা নেই।</p>";return;}
+    box.innerHTML=items.map(x=>`
+      <div class="pending-card">
+        <h3>${escapeHTML(x.title||"Untitled")}</h3>
+        <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="pending-body">${escapeHTML(x.body||"")}</div>
+        <div class="pending-actions">
+          <button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button>
+          <button class="btn danger" onclick="deletePublishedPoem('${x.id}')">🗑️ Delete</button>
+        </div>
+      </div>`).join("");
+  }catch(e){ box.innerHTML="<p class='admin-small'>Firestore error: "+escapeHTML(e.message)+"</p>"; }
+}
+
+async function editPublishedPoem(id){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  try{
+    const snap=await p.getDocs(p.collection(p.db,"publishedPoems"));
+    const d=snap.docs.find(x=>x.id===id);
+    if(!d) return alert("কবিতাটি পাওয়া যায়নি।");
+    const x=d.data();
+    adminEditingId=id;
+    document.getElementById("editorHeading").textContent="কবিতা Edit করুন";
+    document.getElementById("author").value=x.author||"";
+    document.getElementById("title").value=x.title||"";
+    document.getElementById("body").value=x.body||"";
+    document.getElementById("imageFile").value="";
+    pendingImage=x.image||"";
+    showPreview(pendingImage);
+    document.getElementById("editorOverlay").classList.add("show");
+    document.body.style.overflow="hidden";
+  }catch(e){ alert("Edit খুলতে সমস্যা: "+e.message); }
+}
+
+async function saveAdminEdit(){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  const author=document.getElementById("author").value.trim();
+  const title=document.getElementById("title").value.trim();
+  const body=document.getElementById("body").value.trim();
+  if(!author||!title||!body){alert("লেখকের নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
+  try{
+    await p.updateDoc(p.doc(p.db,"publishedPoems",adminEditingId),{author,title,body,image:pendingImage||""});
+    closeEditor();
+    adminEditingId=null;
+    await loadPublishedAdmin();
+    await loadPublishedFromFirebase();
+    await loadAdminDashboard();
+    alert("কবিতা সফলভাবে Edit হয়েছে।");
+  }catch(e){alert("Edit failed: "+e.message);}
+}
+
+async function deletePublishedPoem(id){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  if(!confirm("এই প্রকাশিত কবিতাটি Delete করতে চান? এটি সবার website থেকে মুছে যাবে।")) return;
+  try{
+    await p.deleteDoc(p.doc(p.db,"publishedPoems",id));
+    poems=poems.filter(x=>x.id!=="fb-"+id);
+    render();
+    await loadPublishedAdmin();
+    await loadAdminDashboard();
+    alert("কবিতাটি Delete হয়েছে।");
+  }catch(e){alert("Delete failed: "+e.message);}
+}
+
 async function loadPublishedFromFirebase(){
   const p=window.firebasePoem;
   if(!p) return;
