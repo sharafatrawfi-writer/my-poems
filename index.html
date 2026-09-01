@@ -8,7 +8,7 @@
 <title>নীরবতার চিঠি — Sharafat Rawfi</title>
 <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-<link href="./নীরবতার চিঠি — Sharafat Rawfi_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#070709; --panel:rgba(255,255,255,.055); --line:rgba(255,255,255,.11);
@@ -110,11 +110,59 @@ footer strong{color:#b9b0a3}
  .favorite-filter{margin-left:0}
 }
 
+
+.author{color:#9f978b;font-size:12px;margin-top:8px}
+.editor-note{color:#777;font-size:12px;line-height:1.7;margin:8px 0 18px}
+
+.pending-card{border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;background:#111}
+.pending-card h3{margin:0 0 6px}
+.pending-card .meta{font-size:12px;color:#999;margin-bottom:12px}
+.pending-card .pending-body{white-space:pre-wrap;line-height:1.8;color:#ddd}
+.pending-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+
 </style>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+  import { getFirestore, collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+  // === STEP 1: Replace these values with your Firebase project's Web App config ===
+  const firebaseConfig = {
+    apiKey: "AIzaSyAZbhGghu0nZ0jCBlDHIQTWOoHUbF7X1_Q",
+    authDomain: "sr-poems.firebaseapp.com",
+    databaseURL: "https://sr-poems-default-rtdb.firebaseio.com",
+    projectId: "sr-poems",
+    storageBucket: "sr-poems.firebasestorage.app",
+    messagingSenderId: "611245580684",
+    appId: "1:611245580684:web:dd09b44bd068c884a0f6a9",
+    measurementId: "G-R1B1JR6H2G"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Set your admin email here. The same email must be created in Firebase Authentication.
+  const ADMIN_EMAIL = "sharafatrawfi16@gmail.com";
+
+  window.firebasePoem = {
+    auth, db, ADMIN_EMAIL, signInWithEmailAndPassword, signOut,
+    collection, addDoc, getDocs, query, orderBy, serverTimestamp, doc, updateDoc, deleteDoc
+  };
+
+  onAuthStateChanged(auth, async user => {
+    window.firebasePoemUser = user;
+    const admin = !!user && user.email === ADMIN_EMAIL;
+    document.querySelectorAll(".admin-only").forEach(el => el.style.display = admin ? "" : "none");
+    if (admin) await window.loadPendingPoems?.();
+  });
+</script>
+
 </head>
 <body style="">
 <nav class="nav">
-  <a class="brand" href="file:///F:/index.html#top">SHARAFAT RAWFI</a>
+  <a class="brand" href="#top">SHARAFAT RAWFI</a>
   <div class="nav-right">
     <button class="btn" onclick="document.getElementById(&#39;archive&#39;).scrollIntoView()">কবিতাগুলো</button>
     <button class="btn gold" onclick="openEditor()">+ কবিতা যোগ</button>
@@ -125,7 +173,7 @@ footer strong{color:#b9b0a3}
   <div class="hero-inner">
     <div class="eyebrow">A private poetry archive</div>
     <h1>নীরবতার<br>ভেতরেও শব্দ থাকে</h1>
-    <p>কিছু কথা বলা হয় না। কিছু অনুভূতি শুধু কবিতায় থেকে যায়।<br>এখানে থাকবে শুধু আমার লেখা—আমার শব্দ, আমার নীরবতা।</p>
+    <p>কিছু কথা বলা হয় না। কিছু অনুভূতি শুধু কবিতায় থেকে যায়।<br>এখানে থাকবে আমার লেখা—আর পাঠকদের নতুন কবিতাও আলাদা নামে জমা দিতে পারবে। প্রকাশিত কবিতা কেউ বদলাতে পারবে না।</p>
     <div class="hero-mark">✦</div>
   </div>
   <div class="scroll">SCROLL TO READ</div>
@@ -289,7 +337,7 @@ footer strong{color:#b9b0a3}
 
 <section class="section">
   <div class="manuscript">
-    <img src="./নীরবতার চিঠি — Sharafat Rawfi_files/poem-manuscript.png" alt="নীরবতার চিঠি — original manuscript">
+    <div style="width:100%;min-height:360px;border-radius:24px;border:1px solid var(--line);background:radial-gradient(circle at 50% 35%,rgba(217,185,121,.15),transparent 55%),#101012;display:grid;place-items:center;color:var(--gold);font-size:72px;box-shadow:var(--shadow)">✦</div>
     <div class="manuscript-copy">
       <div class="eyebrow">From the first page</div>
       <h2>একটি চিঠি,<br>যা নীরবতায় লেখা।</h2>
@@ -299,6 +347,7 @@ footer strong{color:#b9b0a3}
   </div>
 </section>
 
+<button class="btn admin-only" style="display:none;margin:24px auto" onclick="openAdmin()">Admin approval</button>
 <footer>
   <div class="eyebrow">Written by</div>
   <p><strong>শারাফাত রাওফি</strong> · ব্যক্তিগত কবিতা আর্কাইভ</p>
@@ -387,7 +436,7 @@ footer strong{color:#b9b0a3}
 কোনোদিন শেষ হবে না।</div>
     <div class="reader-actions">
       <button class="btn" onclick="closeReader()">ফিরে যান</button>
-      <button class="btn" onclick="editCurrent()">সম্পাদনা</button>
+      
     </div>
   </article>
 </div>
@@ -396,8 +445,10 @@ footer strong{color:#b9b0a3}
   <article class="reader modal">
     <button class="close" onclick="closeEditor()">×</button>
     <div class="eyebrow">Your words</div>
+    <div class="editor-note">নতুন কবিতা জমা দেওয়া যাবে। Admin approve করার পরেই তা সবার website-এ প্রকাশ হবে; প্রকাশিত কবিতা visitor-রা edit বা delete করতে পারবে না।</div>
     <h2 id="editorHeading">নতুন কবিতা যোগ করুন</h2>
-    <div class="field"><label>কবিতার নাম</label><input id="title" placeholder="যেমন: শেষ চিঠি"></div>
+    <div class="field"><label>তোমার নাম</label><input id="author" placeholder="যেমন: রাফি"></div>
+<div class="field"><label>কবিতার নাম</label><input id="title" placeholder="যেমন: শেষ চিঠি"></div>
     <div class="field"><label>কবিতা</label><textarea id="body" placeholder="এখানে তোমার কবিতা লিখো..."></textarea></div>
     <div class="field">
       <label>কবিতার ছবি</label>
@@ -419,10 +470,128 @@ footer strong{color:#b9b0a3}
 </div>
 
 <script>
-const initialPoems = [{
- id:"silence-letter",
- title:"নীরবতার চিঠি",
- body:`রাত ৩ টা ৪৭.....
+const initialPoems = [
+ {
+  id:"p-1788281580204",
+  author:"শারাফাত রাওফি",
+  title:"তুমি পূর্ণ, আমি শূন্য",
+  body:`তুমি পূর্ণ এক আকাশ—
+তারাভরা নীরবতায় যার রাত কেটে যায়,
+আর আমি—
+জানালার ধারে পড়ে থাকা এক টুকরো অন্ধকার,
+যার কোনো সকাল হয় না।
+
+তুমি মেঘের মতো এসেছিলে,
+আমার খরার্ত হৃদয়ে বৃষ্টি হয়ে নেমেছিলে,
+আমি ভেবেছিলাম—
+এই বুঝি আমার ঋতু বদলালো,
+এই বুঝি দীর্ঘ প্রতীক্ষার শেষে
+কেউ আমাকে আপন করে ডাকলো।
+
+কিন্তু কিছু মানুষ
+জীবনে আসে থাকার জন্য নয়,
+শুধু শূন্যতার সংজ্ঞাটা
+আরও গভীর করে দিয়ে যাওয়ার জন্য।
+
+তুমি ছিলে আমার অসমাপ্ত প্রার্থনা,
+ঠোঁট ছুঁয়ে ফিরে যাওয়া কোনো দোয়া,
+যার প্রতিটি অক্ষরে তোমার নাম ছিল—
+অথচ ভাগ্যের পাতায়
+আমার জন্য লেখা ছিল না তোমার ঠিকানা।
+
+তুমি পূর্ণ ছিলে—
+তোমার চারপাশে ছিল আলো,
+মানুষ, স্বপ্ন আর বসন্তের গন্ধ;
+আর আমি ধীরে ধীরে
+নিজের ভেতরেই হারিয়ে যাচ্ছিলাম,
+যেন সন্ধ্যার শেষে
+শেষ আলোটুকুও নিঃশব্দে নিভে যায়।
+
+তোমাকে ভালোবাসতে গিয়ে
+আমি শিখেছি—
+সব পাওয়া ভালোবাসার পরিণতি নয়,
+কিছু ভালোবাসা
+শুধু বুকের ভেতর বেঁচে থাকে
+একটি দীর্ঘশ্বাস হয়ে।
+
+আজও কখনো গভীর রাতে
+শহরের সব শব্দ যখন থেমে যায়,
+আমি নিঃশব্দে তোমাকে খুঁজি—
+পুরোনো কোনো স্মৃতির ভাঁজে,
+অচেনা কোনো গন্ধে,
+অথবা হঠাৎ বয়ে যাওয়া বাতাসে।
+
+তুমি হয়তো জানোও না,
+কেউ একজন এখনো
+তোমার অনুপস্থিতির সাথেই কথা বলে।
+
+তুমি পূর্ণ—
+তাই তোমার হারানোর ভয় নেই।
+আর আমি শূন্য—
+তাই হারানোর মতো
+আমার কাছে আর কিছুই নেই।
+
+তবু তোমার জন্য
+আমার কোনো অভিযোগ নেই।
+
+কারণ তুমি আমাকে ভালোবাসোনি—
+এটা আমার দুঃখ নয়;
+
+আমার দুঃখ হলো—
+আমি তোমাকে এতটা ভালোবেসেছিলাম
+যে তোমার চলে যাওয়ার পর
+নিজেকেই আর ভালোবাসতে পারিনি।
+
+তুমি পূর্ণ, আমি শূন্য—
+তবু এই শূন্যতার গভীরেই
+তোমার জন্য এক পৃথিবী রেখে দিয়েছি।
+
+যে পৃথিবীতে
+তুমি কোনোদিন ফিরবে না,
+কিন্তু তোমার স্মৃতি
+কোনোদিন শেষ হবে না।`,
+  date:"2026",
+  image:""
+ },
+ {
+  id:"p-1788281151737",
+  author:"শারাফাত রাওফি",
+  title:"ঝরে পড়ার আগে",
+  body:`তুমি আমার সেই অনন্তহীন কাঠগোলাপ,
+যে ফুটেছিলে ঠিকই, কিন্তু আমার উঠোনে ঝরে পড়ার জন্য নয়।
+তোমার ওই স্নিগ্ধ ঘ্রাণ আজও আমার নিঃশ্বাসে আটকে আছে,
+অথচ তোমার অস্তিত্ব এখন অন্য কারো বাগানের শোভা।
+
+আমি তোমায় আগলে রাখতে চেয়েছিলাম এক বুক হাহাকার দিয়ে,
+কিন্তু কাঠগোলাপের ধর্মই তো হলো ডাল ছেড়ে মাটিতে মিশে যাওয়া।
+তুমি চলে গেছ, রেখে গেছ কেবল এক দীর্ঘশ্বাসের পাণ্ডুলিপি;
+যেখানে প্রতিটি শব্দে তোমার নাম লেখা,
+কিন্তু কোনো লাইনেই তোমাকে পাওয়ার অধিকারটুকু নেই।
+
+মানুষ বলে সময় সব ক্ষত মুছে দেয়,
+কিন্তু এই বিষাদ তো সময়ের চেয়েও প্রাচীন।
+তুমি ছিলে আমার না হওয়া বসন্তের সেই শেষ ফুল,
+যাকে ছোঁয়া যায়, ভালোবাসা যায়—
+কিন্তু কোনোদিন নিজের বলে দাবি করা যায় না।`,
+  date:"2026",
+  image:""
+ },
+ {
+  id:"p-1788280664562",
+  author:"শারাফাত রাওফি",
+  title:"নগরের আড়ালে",
+  body:`শহরের এই ব্যস্ত মিছিলে আমি নেই কোনো ভিড়ে,
+আড়াল করেছি নিজেকে আজ স্মৃতির গহীনে ফিরে।
+হারাইনি আমি এই পাথুরে নগরের চোরাবালিতে,
+শুধু খুঁজে নিচ্ছি নিজেকে, এক চিলতে নির্জনতায় আর শান্তিতে।`,
+  date:"2026",
+  image:""
+ },
+ {
+  id:"silence-letter",
+  author:"শারাফাত রাওফি",
+  title:"নীরবতার চিঠি",
+  body:`রাত ৩ টা ৪৭.....
 
 ঘড়ির কাঁটা চলতে থাকে, আর আমি বসে থাকি,-
 একটা মৃত ঘরের ভেতর, যেখানে শব্দ নেই,
@@ -449,11 +618,13 @@ const initialPoems = [{
 
 “নীরবতা মানে কিছুই না বলা নয়,
 নীরবতা মানে- সব বলে ফেললেও, কেউ শোনে না।”`,
- date:"২০২৫–২০২৬",
- image:""
-}];
+  date:"২০২৫–২০২৬",
+  image:""
+ }
+];
 
-let poems = JSON.parse(localStorage.getItem("sharafatPoems") || "null") || initialPoems;
+const STORAGE_KEY="sharafatPoems_v2";
+let poems = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || initialPoems;
 let currentId = null;
 let pendingImage = "";
 
@@ -476,7 +647,7 @@ function render(){
     <div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,"0")}</div>
     <h3>${escapeHTML(p.title)}</h3>
     <div class="excerpt">${escapeHTML(p.body)}</div>
-    <div class="date">${escapeHTML(p.date||"")}</div>
+    <div class="date">${escapeHTML(p.author ? "লেখক: "+p.author : (p.date||""))}</div>
    </article>`;
  }).join("");
 }
@@ -496,21 +667,20 @@ function openReader(id){
 
 function closeReader(){document.getElementById("readerOverlay").classList.remove("show");document.body.style.overflow=""}
 
-function openEditor(id=null){
- currentId=id;
- const p=id?poems.find(x=>x.id===id):null;
- pendingImage=p?.image||"";
- document.getElementById("editorHeading").textContent=p?"কবিতা সম্পাদনা":"নতুন কবিতা যোগ করুন";
- document.getElementById("title").value=p?.title||"";
- document.getElementById("body").value=p?.body||"";
+function openEditor(){
+ currentId=null;
+ pendingImage="";
+ document.getElementById("editorHeading").textContent="নতুন কবিতা যোগ করুন";
+ document.getElementById("author").value="";
+ document.getElementById("title").value="";
+ document.getElementById("body").value="";
  document.getElementById("imageFile").value="";
- showPreview(pendingImage);
+ showPreview("");
  document.getElementById("editorOverlay").classList.add("show");
  document.body.style.overflow="hidden";
 }
 
 function closeEditor(){document.getElementById("editorOverlay").classList.remove("show");document.body.style.overflow=""}
-function editCurrent(){closeReader();openEditor(currentId)}
 
 function previewImage(input){
  const file=input.files && input.files[0];
@@ -556,26 +726,150 @@ function toggleFavorite(event,id){
  render();
 }
 
-function savePoem(){
- const title=document.getElementById("title").value.trim(), body=document.getElementById("body").value.trim();
- if(!title||!body){alert("কবিতার নাম ও কবিতা—দুটোই লিখতে হবে।");return}
- if(currentId){
-   const i=poems.findIndex(p=>p.id===currentId);
-   poems[i]={...poems[i],title,body,image:pendingImage};
- }else{
-   poems.unshift({id:"p-"+Date.now(),title,body,date:new Date().getFullYear().toString(),image:pendingImage});
- }
+async function savePoem(){
+ const author=document.getElementById("author").value.trim(), title=document.getElementById("title").value.trim(), body=document.getElementById("body").value.trim();
+ if(!author||!title||!body){alert("তোমার নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
+ const p=window.firebasePoem;
+ if(!p){alert("Submission system configure করা হয়নি।");return}
  try{
-   localStorage.setItem("sharafatPoems",JSON.stringify(poems));
+   await p.addDoc(p.collection(p.db,"submissions"),{
+     author,title,body,image:pendingImage||"",status:"pending",createdAt:p.serverTimestamp()
+   });
+   closeEditor();
+   alert("তোমার কবিতা জমা হয়েছে। Admin approve করার পর সবার website-এ প্রকাশ হবে।");
  }catch(err){
-   alert("Browser storage পূর্ণ হয়ে গেছে। কিছু পুরোনো/বড় ছবি সরিয়ে আবার চেষ্টা করুন।");
-   return;
+   alert("কবিতা জমা দেওয়া যায়নি: "+err.message);
  }
- closeEditor(); render();
 }
 
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeReader();closeEditor()}})
 render();
+</script>
+
+
+<div id="adminOverlay" class="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <div><div class="eyebrow">Private control</div><h2>Admin approval</h2></div>
+      <button class="close" onclick="closeAdmin()">×</button>
+    </div>
+    <p class="editor-note">এখানে visitor-দের জমা দেওয়া কবিতা approve করলে সবার website-এ প্রকাশ হবে। Reject করলে প্রকাশ হবে না।</p>
+    <div id="pendingList"></div>
+    <div id="adminLogin" style="display:none">
+      <div class="field"><label>Admin email</label><input id="adminEmail" type="email" autocomplete="username"></div>
+      <div class="field"><label>Password</label><input id="adminPassword" type="password" autocomplete="current-password"></div>
+      <button class="btn gold" onclick="adminLogin()">Login</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+function openAdmin(){
+  const p = window.firebasePoem;
+  if(!p) return alert("Firebase এখনও configure করা হয়নি।");
+  if(window.firebasePoemUser && window.firebasePoemUser.email === p.ADMIN_EMAIL){
+    document.getElementById("adminLogin").style.display="none";
+    document.getElementById("pendingList").style.display="";
+    loadPendingPoems();
+  }else{
+    document.getElementById("pendingList").style.display="none";
+    document.getElementById("adminLogin").style.display="";
+    document.getElementById("adminEmail").value=p.ADMIN_EMAIL;
+  }
+  document.getElementById("adminOverlay").classList.add("show");
+  document.body.style.overflow="hidden";
+}
+function closeAdmin(){
+  document.getElementById("adminOverlay").classList.remove("show");
+  document.body.style.overflow="";
+}
+async function adminLogin(){
+  const p=window.firebasePoem;
+  try{
+    await p.signInWithEmailAndPassword(p.auth,
+      document.getElementById("adminEmail").value.trim(),
+      document.getElementById("adminPassword").value);
+    alert("Login successful.");
+    await loadPendingPoems();
+  }catch(e){ alert("Login failed: "+(e.code||e.message)); }
+}
+async function loadPendingPoems(){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  const box=document.getElementById("pendingList");
+  box.innerHTML="<p>Loading…</p>";
+  try{
+    const q=p.query(p.collection(p.db,"submissions"),p.orderBy("createdAt","desc"));
+    const snap=await p.getDocs(q);
+    const items=[];
+    snap.forEach(d=>{
+      const x=d.data();
+      if(x.status==="pending") items.push({id:d.id,...x});
+    });
+    if(!items.length){box.innerHTML="<p class='editor-note'>কোনো pending কবিতা নেই।</p>";return;}
+    box.innerHTML=items.map(x=>`
+      <div class="pending-card">
+        <h3>${escapeHTML(x.title||"Untitled")}</h3>
+        <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="pending-body">${escapeHTML(x.body||"")}</div>
+        <div class="pending-actions">
+          <button class="btn gold" onclick="approvePoem('${x.id}')">Approve & Publish</button>
+          <button class="btn" onclick="rejectPoem('${x.id}')">Reject</button>
+        </div>
+      </div>`).join("");
+  }catch(e){
+    box.innerHTML="<p class='editor-note'>Firestore error: "+escapeHTML(e.message)+"</p>";
+  }
+}
+async function approvePoem(id){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  try{
+    await p.updateDoc(p.doc(p.db,"submissions",id),{
+      status:"approved", approvedAt:p.serverTimestamp()
+    });
+    alert("Approved. এখন সবার website-এ দেখানোর জন্য published collection-এ যোগ হবে।");
+    // Move/copy approved data into the public poems collection.
+    const snap=await p.getDocs(p.collection(p.db,"submissions"));
+    const target=snap.docs.find(d=>d.id===id);
+    if(target){
+      const x=target.data();
+      await p.addDoc(p.collection(p.db,"publishedPoems"),{
+        author:x.author,title:x.title,body:x.body,image:x.image||"",date:new Date().getFullYear().toString(),publishedAt:p.serverTimestamp()
+      });
+    }
+    await loadPendingPoems();
+  }catch(e){alert("Approve failed: "+e.message);}
+}
+async function rejectPoem(id){
+  const p=window.firebasePoem;
+  if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
+  if(!confirm("এই কবিতাটি reject করতে চান?")) return;
+  try{
+    await p.updateDoc(p.doc(p.db,"submissions",id),{status:"rejected",rejectedAt:p.serverTimestamp()});
+    await loadPendingPoems();
+  }catch(e){alert("Reject failed: "+e.message);}
+}
+</script>
+
+
+<script>
+async function loadPublishedFromFirebase(){
+  const p=window.firebasePoem;
+  if(!p) return;
+  try{
+    const q=p.query(p.collection(p.db,"publishedPoems"),p.orderBy("publishedAt","desc"));
+    const snap=await p.getDocs(q);
+    const remote=[];
+    snap.forEach(d=>remote.push({id:"fb-"+d.id,...d.data()}));
+    if(remote.length){
+      poems=[...remote,...initialPoems];
+      render();
+    }
+  }catch(e){ console.warn("Published poems could not load:",e.message); }
+}
+window.addEventListener("load",loadPublishedFromFirebase);
 </script>
 
 </body></html>
