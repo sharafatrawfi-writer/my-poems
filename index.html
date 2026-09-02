@@ -146,6 +146,8 @@ footer strong{color:#b9b0a3}
 .admin-small{color:#777;font-size:12px;line-height:1.7}
 .btn.danger{border-color:rgba(220,90,90,.4);color:#f0aaaa}
 .dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.admin-layout{display:grid;grid-template-columns:190px 1fr;gap:18px;margin-top:18px}.admin-sidebar{border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.025);height:max-content;position:sticky;top:12px}.admin-nav{width:100%;display:flex;flex-direction:column;gap:7px}.admin-nav button{width:100%;text-align:left;border:1px solid transparent;background:transparent;color:#bdb6ad;border-radius:12px;padding:11px 12px;cursor:pointer;font:inherit}.admin-nav button:hover,.admin-nav button.active{background:rgba(217,185,121,.1);border-color:rgba(217,185,121,.25);color:#ead5a7}.admin-nav .req-count{float:right;min-width:22px;height:22px;line-height:22px;text-align:center;border-radius:999px;background:#8d2929;color:#fff;font-size:11px}.admin-panel{min-width:0}.admin-panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.admin-panel-title h3{margin:0;color:var(--gold2)}
+@media(max-width:760px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static}.admin-nav{display:grid;grid-template-columns:repeat(3,1fr)}.admin-nav button{font-size:12px;text-align:center;padding:10px 7px}.admin-nav .req-count{float:none;display:inline-flex;align-items:center;justify-content:center;margin-left:4px}}
 .dashboard-stat{border:1px solid var(--line);border-radius:16px;padding:18px;background:rgba(255,255,255,.035)}
 .dashboard-stat .label{font-size:12px;color:#999;margin-bottom:8px}
 .dashboard-stat .value{font-size:30px;color:var(--gold2);font-weight:700}
@@ -970,13 +972,32 @@ render();
         <button class="btn" onclick="adminLogout()">Logout</button>
       </div>
     </div>
-    <p class="editor-note">এখান থেকে pending কবিতা Approve/Reject এবং প্রকাশিত কবিতা Edit/Delete করতে পারবে।</p>
-    <div id="pendingList"></div>
-    <div class="admin-section" id="publishedSection" style="display:none">
-      <h3>প্রকাশিত কবিতা</h3>
-      <div id="publishedList"></div>
+    <div class="admin-layout" id="adminControlArea" style="display:none">
+      <aside class="admin-sidebar">
+        <div class="eyebrow" style="padding:8px 10px 6px">CONTROL CENTER</div>
+        <nav class="admin-nav">
+          <button class="active" id="adminNavDashboard" onclick="showAdminPanel('dashboard')">⌂ Dashboard</button>
+          <button id="adminNavRequests" onclick="showAdminPanel('requests')">↗ Requests <span class="req-count" id="requestCount">0</span></button>
+          <button id="adminNavPublished" onclick="showAdminPanel('published')">◈ Published</button>
+        </nav>
+      </aside>
+      <main class="admin-panel">
+        <section id="adminPanelDashboard">
+          <div class="admin-panel-title"><h3>Admin Overview</h3></div>
+          <p class="editor-note">এখানে পুরো সাইটের সংক্ষিপ্ত অবস্থা দেখবে। নতুন লেখা এলে <b>Requests</b> থেকে এক জায়গায় Approve / Reject / Edit করতে পারবে।</p>
+        </section>
+        <section id="adminPanelRequests" style="display:none">
+          <div class="admin-panel-title"><h3>লেখার Requests</h3><button class="btn" onclick="loadAllRequests()">↻ Refresh</button></div>
+          <p class="admin-small">সব pending submission এখানে এক জায়গায় থাকবে—কবিতা, ভৌতিক গল্প এবং না-বলা কথা।</p>
+          <div id="pendingList"></div>
+          <div class="admin-section"><h3>বিশেষ বিভাগ — Requests</h3><div id="specialAdminList"></div></div>
+        </section>
+        <section id="adminPanelPublished" style="display:none">
+          <div class="admin-panel-title"><h3>প্রকাশিত কবিতা</h3><button class="btn" onclick="loadPublishedAdmin()">↻ Refresh</button></div>
+          <div id="publishedList"></div>
+        </section>
+      </main>
     </div>
-    <div class="admin-section"><h3>বিশেষ বিভাগ</h3><div class="dashboard-actions"><button class="btn" onclick="loadSpecialAdmin()">↻ Special Refresh</button></div><div id="specialAdminList"></div></div>
     <div id="adminLogin" style="display:none">
       <div class="field"><label>Admin email</label><input id="adminEmail" type="email" autocomplete="username"></div>
       <div class="field"><label>Password</label><input id="adminPassword" type="password" autocomplete="current-password"></div>
@@ -987,20 +1008,28 @@ render();
 
 
 <script>
+function showAdminPanel(panel){
+  ['dashboard','requests','published'].forEach(x=>{
+    const sec=document.getElementById('adminPanel'+x.charAt(0).toUpperCase()+x.slice(1));
+    const nav=document.getElementById('adminNav'+x.charAt(0).toUpperCase()+x.slice(1));
+    if(sec)sec.style.display=x===panel?'':'none';
+    if(nav)nav.classList.toggle('active',x===panel);
+  });
+  if(panel==='requests'){loadPendingPoems();loadSpecialAdmin();}
+  if(panel==='published'){loadPublishedAdmin();}
+}
+async function loadAllRequests(){await loadPendingPoems();await loadSpecialAdmin();await loadAdminDashboard();}
 function openAdmin(){
   const p = window.firebasePoem;
   if(!p) return alert("Firebase এখনও configure করা হয়নি।");
   if(window.firebasePoemUser && window.firebasePoemUser.email === p.ADMIN_EMAIL){
     document.getElementById("adminLogin").style.display="none";
-    document.getElementById("pendingList").style.display="";
-    document.getElementById("publishedSection").style.display="";
+    document.getElementById("adminDashboard").style.display="";
+    document.getElementById("adminControlArea").style.display="";
+    showAdminPanel('dashboard');
     loadAdminDashboard();
-    loadPendingPoems();
-    loadPublishedAdmin();
-    loadSpecialAdmin();
   }else{
-    document.getElementById("pendingList").style.display="none";
-    document.getElementById("publishedSection").style.display="none";
+    document.getElementById("adminControlArea").style.display="none";
     document.getElementById("adminLogin").style.display="";
     document.getElementById("adminEmail").value=p.ADMIN_EMAIL;
   }
@@ -1018,12 +1047,9 @@ async function adminLogin(){
       document.getElementById("adminEmail").value.trim(),
       document.getElementById("adminPassword").value);
     alert("Login successful.");
-    document.getElementById("pendingList").style.display="";
-    document.getElementById("publishedSection").style.display="";
+    document.getElementById("adminControlArea").style.display="";
     await loadAdminDashboard();
-    await loadPendingPoems();
-    await loadPublishedAdmin();
-    await loadSpecialAdmin();
+    showAdminPanel('requests');
   }catch(e){ alert("Login failed: "+(e.code||e.message)); }
 }
 
@@ -1053,13 +1079,19 @@ async function loadAdminDashboard(){
     // প্রথমবার Admin খুললে আগের HTML-এর কবিতাগুলোও Firestore-এ রাখা হবে,
     // যাতে Admin এগুলো edit/delete করলে সবার website-এ পরিবর্তন দেখা যায়।
     await ensureInitialPoemsPublished();
-    const snap=await p.getDocs(p.collection(p.db,"submissions"));
+    const [snap,ghostSnap,unsaidSnap]=await Promise.all([
+      p.getDocs(p.collection(p.db,"submissions")),
+      p.getDocs(p.collection(p.db,"ghostStorySubmissions")),
+      p.getDocs(p.collection(p.db,"unsaidSubmissions"))
+    ]);
     let pending=0,rejected=0;
-    snap.forEach(d=>{
+    [snap,ghostSnap,unsaidSnap].forEach(group=>group.forEach(d=>{
       const s=d.data().status;
       if(s==="pending") pending++;
       if(s==="rejected") rejected++;
-    });
+    }));
+    const req=document.getElementById('requestCount');
+    if(req)req.textContent=pending;
     const pub=await p.getDocs(p.collection(p.db,"publishedPoems"));
     let published=0;
     pub.forEach(d=>{if(!d.data().deleted) published++;});
