@@ -133,7 +133,7 @@ footer strong{color:#b9b0a3}
 }
 
 
-.author{color:#f1c27d;font-size:16px;font-weight:700;margin-top:10px;padding:7px 12px;display:inline-block;border:1px solid rgba(241,194,125,.45);border-radius:10px;background:rgba(241,194,125,.08)}
+.author-type{color:#cdb681;font-size:12px;margin-right:5px}.author{color:#f1c27d;font-size:16px;font-weight:700;margin-top:10px;padding:7px 12px;display:inline-block;border:1px solid rgba(241,194,125,.45);border-radius:10px;background:rgba(241,194,125,.08)}
 .editor-note{color:#777;font-size:12px;line-height:1.7;margin:8px 0 18px}
 
 .pending-card{border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;background:#111}
@@ -546,6 +546,7 @@ footer strong{color:#b9b0a3}
     <div class="editor-note">নতুন কবিতা জমা দেওয়া যাবে। Admin approve করার পরেই তা সবার website-এ প্রকাশ হবে। Admin Login করলে সব প্রকাশিত কবিতা Edit/Delete এবং pending কবিতা Edit করতে পারবে।</div>
     <h2 id="editorHeading">নতুন কবিতা যোগ করুন</h2>
     <div class="field"><label>তোমার নাম</label><input id="author" placeholder="যেমন: রাফি"></div>
+    <div class="field"><label>তুমি কীভাবে নামটি দেখাতে চাও?</label><select id="authorType" style="width:100%;background:#0a0a0c;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none"><option value="লেখক">লেখক</option><option value="লেখিকা">লেখিকা</option></select></div>
 <div class="field"><label>কবিতার নাম</label><input id="title" placeholder="যেমন: শেষ চিঠি"></div>
     <div class="field"><label>কবিতাটি লেখার তারিখ</label><input id="poemDate" type="date"></div>
     <div class="field"><label>কবিতা</label><textarea id="body" placeholder="এখানে তোমার কবিতা লিখো..."></textarea></div>
@@ -794,7 +795,7 @@ function render(){
     <button class="favorite ${fav?'active':''}" title="${fav?'Favorite থেকে সরান':'Favorite করুন'}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button>
     <div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,"0")}</div>
     <h3>${escapeHTML(p.title)}</h3>
-    ${p.author ? `<div class="author">✍ লেখক: ${escapeHTML(p.author)}</div>` : ""}
+    ${p.author ? `<div class="author">✍ <span class="author-type">${escapeHTML(p.authorType||"লেখক")}:</span>${escapeHTML(p.author)}</div>` : ""}
     <div class="excerpt">${escapeHTML(p.body)}</div>
     <div class="date">${escapeHTML(p.date||"")}</div>
    </article>`;
@@ -880,7 +881,7 @@ function toggleFavorite(event,id){
 }
 
 async function savePoem(){
- const author=document.getElementById("author").value.trim(), title=document.getElementById("title").value.trim(), body=document.getElementById("body").value.trim();
+ const author=document.getElementById("author").value.trim(), authorType=document.getElementById("authorType").value || "লেখক", title=document.getElementById("title").value.trim(), body=document.getElementById("body").value.trim();
  const poemDate=document.getElementById("poemDate").value || new Date().toISOString().slice(0,10);
  if(!author||!title||!body){alert("তোমার নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
  const p=window.firebasePoem;
@@ -890,7 +891,7 @@ async function savePoem(){
    let safeImage=pendingImage||"";
    if(safeImage && safeImage.length>950000){alert("ছবিটি খুব বড় হয়ে গেছে। Crop করে আবার Save করুন।");return}
    await p.addDoc(p.collection(p.db,"submissions"),{
-     author,title,body,date:poemDate,image:safeImage,status:"pending",createdAt:p.serverTimestamp()
+     author,authorType,title,body,date:poemDate,image:safeImage,status:"pending",createdAt:p.serverTimestamp()
    });
    closeEditor();
    alert("তোমার কবিতা জমা হয়েছে। Admin approve করার পর সবার website-এ প্রকাশ হবে।");
@@ -1078,7 +1079,7 @@ async function ensureInitialPoemsPublished(){
       const snap=await p.getDocs(p.query(p.collection(p.db,"publishedPoems")));
       const existing=snap.docs.find(d=>d.id===poem.id);
       if(!existing){
-        await p.setDoc(ref,{author:poem.author||"",title:poem.title||"",body:poem.body||"",image:poem.image||"",date:poem.date||"",publishedAt:p.serverTimestamp(),source:"admin-original",deleted:false});
+        await p.setDoc(ref,{author:poem.author||"",authorType:poem.authorType||"লেখক",title:poem.title||"",body:poem.body||"",image:poem.image||"",date:poem.date||"",publishedAt:p.serverTimestamp(),source:"admin-original",deleted:false});
       }
     }catch(e){
       console.warn("Initial poem migration error:",poem.id,e.message);
@@ -1145,7 +1146,7 @@ async function loadPendingPoems(){
     box.innerHTML=items.map(x=>`
       <div class="pending-card">
         <h3>${escapeHTML(x.title||"Untitled")}</h3>
-        <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="meta">${escapeHTML(x.authorType||"লেখক")}: ${escapeHTML(x.author||"অজানা")}</div>
         <div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div>
         <div class="pending-body">${escapeHTML(x.body||"")}</div>
         <div class="pending-actions">
@@ -1172,7 +1173,7 @@ async function approvePoem(id){
     if(target){
       const x=target.data();
       await p.addDoc(p.collection(p.db,"publishedPoems"),{
-        author:x.author,title:x.title,body:x.body,image:x.image||"",date:x.date||new Date().toISOString().slice(0,10),publishedAt:p.serverTimestamp()
+        author:x.author,authorType:x.authorType||"লেখক",title:x.title,body:x.body,image:x.image||"",date:x.date||new Date().toISOString().slice(0,10),publishedAt:p.serverTimestamp()
       });
     }
     await loadAdminDashboard();
@@ -1218,7 +1219,7 @@ async function loadPublishedAdmin(){
     box.innerHTML=items.map(x=>`
       <div class="pending-card">
         <h3>${escapeHTML(x.title||"Untitled")}</h3>
-        <div class="meta">লেখক: ${escapeHTML(x.author||"অজানা")}</div>
+        <div class="meta">${escapeHTML(x.authorType||"লেখক")}: ${escapeHTML(x.author||"অজানা")}</div>
         <div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div>
         <div class="pending-body">${escapeHTML(x.body||"")}</div>
         <div class="pending-actions">
@@ -1240,6 +1241,7 @@ async function editPendingPoem(id){
     adminEditingId="pending:"+id;
     document.getElementById("editorHeading").textContent="Pending কবিতা Edit করুন";
     document.getElementById("author").value=x.author||"";
+    document.getElementById("authorType").value=x.authorType||"লেখক";
     document.getElementById("title").value=x.title||"";
     document.getElementById("poemDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"") ? x.date : "";
     document.getElementById("body").value=x.body||"";
@@ -1263,6 +1265,7 @@ async function editPublishedPoem(id){
     adminEditingId=id;
     document.getElementById("editorHeading").textContent="কবিতা Edit করুন";
     document.getElementById("author").value=x.author||"";
+    document.getElementById("authorType").value=x.authorType||"লেখক";
     document.getElementById("title").value=x.title||"";
     document.getElementById("poemDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"") ? x.date : "";
     document.getElementById("body").value=x.body||"";
@@ -1286,7 +1289,7 @@ async function saveAdminEdit(){
   try{
     const safeImage=(pendingImage!==undefined && pendingImage!==null) ? pendingImage : (adminOriginalImage||"");
     if(safeImage && safeImage.length>950000){alert("ছবিটি খুব বড়। Crop করে আবার Save করুন।");return}
-    const data={author,title,body,date:poemDate,image:safeImage};
+    const data={author,authorType,title,body,date:poemDate,image:safeImage};
     if(safeImage && !safeImage.startsWith('data:image/')){ alert('ছবির ফরম্যাট সঠিক নয়। আবার Crop করে ছবি সেট করুন।'); return; }
     if(String(adminEditingId).startsWith("pending:")){
       const id=String(adminEditingId).slice(8);
@@ -1401,13 +1404,13 @@ let activeTag='সব';
 function poemTags(p){const t=(p.title+' '+p.body).toLowerCase(),a=[];if(/ভালোবাসা|প্রেম|তুমি|হৃদয়|হৃদয়|ভালবাস/.test(t))a.push('প্রেম');if(/বিষাদ|শূন্য|হার|চলে|বিদায়|বিরহ|কষ্ট/.test(t))a.push('বিরহ');if(/জীবন|মানুষ|সময়|সময়/.test(t))a.push('জীবন');if(/নীরব|নিঃসঙ্গ|নির্জন|শহর|অন্ধকার|রাত/.test(t))a.push('নির্জনতা');return a.length?a:['জীবন']}
 function setTag(tag,el){activeTag=tag;document.querySelectorAll('.tag').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
 function premiumMatch(p,q){if(!q)return true;const x=q.toLowerCase().trim();const hay=(p.title+' '+(p.author||'')+' '+p.body+' '+poemTags(p).join(' ')).toLowerCase();const trans=searchReady(p.title+' '+(p.author||'')+' '+p.body);const qtr=searchReady(x);const author=String(p.author||'').toLowerCase();return hay.includes(x)||(qtr&&trans.includes(qtr))||(author.includes(x))}
-render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${p.author?`<div class="author">✍ লেখক: ${escapeHTML(p.author)}</div>`:''}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
+render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${p.author?`<div class="author">✍ <span class="author-type">${escapeHTML(p.authorType||"লেখক")}:</span>${escapeHTML(p.author)}</div>`:''}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
 function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');if(sp)sp.textContent=poems.length;if(sf)sf.textContent=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
 function openFeatured(){if(window.featuredId)openReader(window.featuredId)}
-const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ ${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
+const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ <span class="author-type">${escapeHTML(p.authorType||"লেখক")}:</span>${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
 function toggleReadingMode(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");const on=rd.classList.toggle("reader-reading");ov.classList.toggle("reading-light",on)}
 async function shareCurrentPoem(){const p=poems.find(x=>x.id===currentId);if(!p)return;try{if(navigator.share)await navigator.share({title:p.title,text:p.body,url:location.href});else{await navigator.clipboard.writeText(location.href);document.getElementById('shareNote').textContent='লিংক কপি হয়েছে।'}}catch(e){}}
-async function copyCurrentPoem(){const p=poems.find(x=>x.id===currentId);if(!p)return;try{await navigator.clipboard.writeText(`${p.title}\n— ${p.author||'কবিতার আঙিনা'}\n\n${p.body}`);document.getElementById('shareNote').textContent='কবিতাটি কপি হয়েছে।'}catch(e){}}
+async function copyCurrentPoem(){const p=poems.find(x=>x.id===currentId);if(!p)return;try{await navigator.clipboard.writeText(`${p.title}\n— ${(p.authorType||"লেখক")}: ${p.author||"কবিতার আঙিনা"}\n\n${p.body}`);document.getElementById('shareNote').textContent='কবিতাটি কপি হয়েছে।'}catch(e){}}
 window.addEventListener('scroll',()=>document.querySelector('.nav')?.classList.toggle('scrolled',scrollY>30),{passive:true});setTimeout(()=>{render();updatePremiumStats();renderWriterChips()},300);
 
 let activeMood='সব';
