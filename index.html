@@ -167,6 +167,19 @@ footer strong{color:#b9b0a3}
 
 /* V2 premium polish */
 .hero-inner{animation:heroIn .9s ease both}.hero-mark{animation:floatMark 4s ease-in-out infinite}.card,.feature-card,.special-card{will-change:transform}.section{scroll-margin-top:90px}.hub-kicker{display:inline-flex;padding:7px 11px;border:1px solid rgba(217,185,121,.2);border-radius:999px;background:rgba(217,185,121,.05)}#cropCanvas{aspect-ratio:3/4}.crop-wrap{max-height:70vh;max-width:430px}.special-meta{color:#8f8980;font-size:12px;margin:8px 0 14px}.admin-special-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes floatMark{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* PREMIUM V3 */
+.nav.scrolled{background:rgba(7,7,9,.88);box-shadow:0 12px 40px rgba(0,0,0,.25);border-bottom:1px solid rgba(255,255,255,.08)}
+.discover-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.feature-spot{border:1px solid var(--line);border-radius:28px;padding:32px;background:linear-gradient(135deg,rgba(217,185,121,.12),rgba(255,255,255,.025));min-height:245px;position:relative;overflow:hidden}.feature-spot h2{font-size:34px;font-weight:500;margin:14px 0 10px}.feature-spot p{color:var(--muted);line-height:1.9;max-width:650px}.spot-label{color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini-stat{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(255,255,255,.035)}.mini-stat b{display:block;font-size:29px;color:var(--gold2)}.mini-stat span{font-size:12px;color:#888}.tagbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.tag{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aaa;padding:8px 12px;border-radius:999px;cursor:pointer;font-size:12px}.tag.active,.tag:hover{color:#17130d;background:var(--gold);border-color:var(--gold)}.card .card-meta{display:flex;gap:7px;align-items:center;color:#777;font-size:12px;margin-top:8px;flex-wrap:wrap}.badge{padding:4px 8px;border-radius:999px;border:1px solid rgba(217,185,121,.25);color:#cdb681;background:rgba(217,185,121,.05)}/* Reading Mode: keep every reader element visible on the light page */
+.reader-reading{background:#f7f1e6!important;color:#2a251e!important;border-color:#d8cdbb!important;}
+.reader-reading h2,.reader-reading .rnum,.reader-reading .poem,.reader-reading .card-meta,.reader-reading .share-note{color:#2a251e!important;}
+.reader-reading .rnum{color:#8a6a32!important;}
+.reader-reading .poem{opacity:1!important;visibility:visible!important;display:block!important;}
+.reader-reading .close{color:#4d453a!important;border-color:#cfc5b4!important;background:#f7f1e6!important;}
+.reader-reading .btn{color:#3b342a!important;border-color:#cfc5b4!important;background:#eee5d7!important;}
+.reader-reading .reader-cover{border-color:#d8cdbb!important;}
+#readerOverlay.reading-light{background:rgba(247,241,230,.96)!important;backdrop-filter:blur(10px);}
+.reader-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.share-note{font-size:12px;color:#777;margin-top:8px}@media(max-width:760px){.discover-grid{grid-template-columns:1fr}.feature-spot h2{font-size:28px}.mini-stat{padding:17px}}
 </style>
 
 <script type="module">
@@ -231,11 +244,18 @@ footer strong{color:#b9b0a3}
   <div class="scroll">SCROLL TO READ</div>
 </header>
 
+<section class="section discover" id="discover">
+<div class="discover-grid">
+<article class="feature-spot"><div class="spot-label">Tonight's reading</div><h2 id="spotTitle">আজ একটি লেখা বেছে নাও</h2><p id="spotExcerpt">কবিতার আঙিনায় ধীরে পড়ো—পছন্দের লেখা রেখে দাও, আর নতুন শব্দের সন্ধান করো।</p><button class="btn gold" onclick="openFeatured()">এখনই পড়ুন →</button></article>
+<div class="mini-stats"><div class="mini-stat"><b id="statPoems">0</b><span>প্রকাশিত কবিতা</span></div><div class="mini-stat"><b id="statFav">0</b><span>তোমার পছন্দ</span></div><div class="mini-stat"><b>3:4</b><span>প্রিমিয়াম কভার</span></div><div class="mini-stat"><b>∞</b><span>নতুন গল্পের জায়গা</span></div></div>
+</div></section>
+
 <section class="section" id="archive">
   <div class="section-head">
     <div><div class="eyebrow">The archive</div><h2>কবিতাগুলো</h2></div>
     <div class="count" id="count">4টি কবিতা</div>
   </div>
+  <div class="tagbar" id="tagbar"><button class="tag active" onclick="setTag('সব',this)">সব</button><button class="tag" onclick="setTag('প্রেম',this)">প্রেম</button><button class="tag" onclick="setTag('বিরহ',this)">বিরহ</button><button class="tag" onclick="setTag('জীবন',this)">জীবন</button><button class="tag" onclick="setTag('নির্জনতা',this)">নির্জনতা</button></div>
   <div class="tools">
     <input id="search" class="search" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
     <button class="btn gold" onclick="openEditor()">নতুন কবিতা</button>
@@ -420,7 +440,7 @@ footer strong{color:#b9b0a3}
     <div class="rnum" id="rnum">POEM 01</div>
     <div id="rcoverWrap"></div>
     <h2 id="rtitle">তুমি পূর্ণ, আমি শূন্য</h2>
-    <div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
+    <div class="card-meta" id="rmeta"></div><div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
 তারাভরা নীরবতায় যার রাত কেটে যায়,
 আর আমি—
 জানালার ধারে পড়ে থাকা এক টুকরো অন্ধকার,
@@ -495,7 +515,7 @@ footer strong{color:#b9b0a3}
 তুমি কোনোদিন ফিরবে না,
 কিন্তু তোমার স্মৃতি
 কোনোদিন শেষ হবে না।</div>
-    <div class="reader-actions">
+    <div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button></div><div class="share-note" id="shareNote"></div><div class="reader-actions">
       <button class="btn" onclick="closeReader()">ফিরে যান</button>
       
     </div>
@@ -777,7 +797,7 @@ function openReader(id){
  document.body.style.overflow="hidden";
 }
 
-function closeReader(){document.getElementById("readerOverlay").classList.remove("show");document.body.style.overflow=""}
+function closeReader(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");ov.classList.remove("show","reading-light");rd.classList.remove("reader-reading");document.body.style.overflow=""}
 
 function openEditor(){
   const dateInput=document.getElementById("poemDate"); if(dateInput) dateInput.value=new Date().toISOString().slice(0,10);
@@ -1301,5 +1321,20 @@ function closeSpecialEdit(){document.getElementById('specialEditOverlay').classL
 async function saveSpecialEdit(){const p=window.firebasePoem;if(!specialEditState)return;const a=document.getElementById('specialEditAuthor').value.trim(),title=document.getElementById('specialEditTitle').value.trim(),body=document.getElementById('specialEditBody').value.trim(),date=document.getElementById('specialEditDate').value||new Date().toISOString().slice(0,10);let data={author:a,date};if(specialEditState.type==='ghost')data={...data,title,body};else if(specialEditState.type==='unsaid')data={...data,to:title,body};else data={...data,starter:body};try{await p.updateDoc(p.doc(p.db,specialEditState.col,specialEditState.id),data);closeSpecialEdit();specialEditState=null;loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();alert('Special লেখা Edit হয়েছে।')}catch(e){alert('Edit failed: '+e.message)}}
 async function deleteSpecial(type,id,col){const p=window.firebasePoem;if(!p||!confirm('এই লেখা Delete করতে চান?'))return;try{await p.deleteDoc(p.doc(p.db,col,id));loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();alert('Delete হয়েছে।')}catch(e){alert('Delete failed: '+e.message)}}
 
+</script>
+
+<script>
+let activeTag='সব';
+function poemTags(p){const t=(p.title+' '+p.body).toLowerCase(),a=[];if(/ভালোবাসা|প্রেম|তুমি|হৃদয়|হৃদয়|ভালবাস/.test(t))a.push('প্রেম');if(/বিষাদ|শূন্য|হার|চলে|বিদায়|বিরহ|কষ্ট/.test(t))a.push('বিরহ');if(/জীবন|মানুষ|সময়|সময়/.test(t))a.push('জীবন');if(/নীরব|নিঃসঙ্গ|নির্জন|শহর|অন্ধকার|রাত/.test(t))a.push('নির্জনতা');return a.length?a:['জীবন']}
+function setTag(tag,el){activeTag=tag;document.querySelectorAll('.tag').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
+function premiumMatch(p,q){if(!q)return true;const x=q.toLowerCase().trim();const hay=(p.title+' '+(p.author||'')+' '+p.body+' '+poemTags(p).join(' ')).toLowerCase();const trans=searchReady(p.title+' '+(p.author||'')+' '+p.body);const qtr=searchReady(x);const author=String(p.author||'').toLowerCase();return hay.includes(x)||(qtr&&trans.includes(qtr))||(author.includes(x))}
+render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${p.author?`<div class="author">✍ লেখক: ${escapeHTML(p.author)}</div>`:''}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats()}})(render);
+function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');if(sp)sp.textContent=poems.length;if(sf)sf.textContent=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
+function openFeatured(){if(window.featuredId)openReader(window.featuredId)}
+const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ ${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
+function toggleReadingMode(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");const on=rd.classList.toggle("reader-reading");ov.classList.toggle("reading-light",on)}
+async function shareCurrentPoem(){const p=poems.find(x=>x.id===currentId);if(!p)return;try{if(navigator.share)await navigator.share({title:p.title,text:p.body,url:location.href});else{await navigator.clipboard.writeText(location.href);document.getElementById('shareNote').textContent='লিংক কপি হয়েছে।'}}catch(e){}}
+async function copyCurrentPoem(){const p=poems.find(x=>x.id===currentId);if(!p)return;try{await navigator.clipboard.writeText(`${p.title}\n— ${p.author||'কবিতার আঙিনা'}\n\n${p.body}`);document.getElementById('shareNote').textContent='কবিতাটি কপি হয়েছে।'}catch(e){}}
+window.addEventListener('scroll',()=>document.querySelector('.nav')?.classList.toggle('scrolled',scrollY>30),{passive:true});setTimeout(()=>{render();updatePremiumStats()},300);
 </script>
 </body></html>
