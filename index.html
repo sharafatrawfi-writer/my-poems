@@ -172,19 +172,25 @@ footer strong{color:#b9b0a3}
 
 /* PREMIUM V3 */
 .nav.scrolled{background:rgba(7,7,9,.88);box-shadow:0 12px 40px rgba(0,0,0,.25);border-bottom:1px solid rgba(255,255,255,.08)}
-.discover-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.feature-spot{border:1px solid var(--line);border-radius:28px;padding:32px;background:linear-gradient(135deg,rgba(217,185,121,.12),rgba(255,255,255,.025));min-height:245px;position:relative;overflow:hidden}.feature-spot h2{font-size:34px;font-weight:500;margin:14px 0 10px}.feature-spot p{color:var(--muted);line-height:1.9;max-width:650px}.spot-label{color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini-stat{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(255,255,255,.035)}.mini-stat b{display:block;font-size:29px;color:var(--gold2)}.mini-stat span{font-size:12px;color:#888}.tagbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.tag{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aaa;padding:8px 12px;border-radius:999px;cursor:pointer;font-size:12px}.tag.active,.tag:hover{color:#17130d;background:var(--gold);border-color:var(--gold)}.card .card-meta{display:flex;gap:7px;align-items:center;color:#777;font-size:12px;margin-top:8px;flex-wrap:wrap}.badge{padding:4px 8px;border-radius:999px;border:1px solid rgba(217,185,121,.25);color:#cdb681;background:rgba(217,185,121,.05)}/* Reading Mode: keep every reader element visible on the light page */
-.reader-reading{background:#f7f1e6!important;color:#2a251e!important;border-color:#d8cdbb!important;}
-.reader-reading h2,.reader-reading .rnum,.reader-reading .poem,.reader-reading .card-meta,.reader-reading .share-note{color:#2a251e!important;}
-.reader-reading .rnum{color:#8a6a32!important;}
-.reader-reading .poem{opacity:1!important;visibility:visible!important;display:block!important;}
-.reader-reading .close{color:#4d453a!important;border-color:#cfc5b4!important;background:#f7f1e6!important;}
-.reader-reading .btn{color:#3b342a!important;border-color:#cfc5b4!important;background:#eee5d7!important;}
-.reader-reading .reader-cover{border-color:#d8cdbb!important;}
-#readerOverlay.reading-light{background:rgba(247,241,230,.96)!important;backdrop-filter:blur(10px);}
+.discover-grid{display:grid;grid-template-columns:1.35fr .65fr;gap:18px}.feature-spot{border:1px solid var(--line);border-radius:28px;padding:32px;background:linear-gradient(135deg,rgba(217,185,121,.12),rgba(255,255,255,.025));min-height:245px;position:relative;overflow:hidden}.feature-spot h2{font-size:34px;font-weight:500;margin:14px 0 10px}.feature-spot p{color:var(--muted);line-height:1.9;max-width:650px}.spot-label{color:var(--gold);font-size:11px;letter-spacing:.18em;text-transform:uppercase}.mini-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini-stat{border:1px solid var(--line);border-radius:20px;padding:22px;background:rgba(255,255,255,.035)}.mini-stat b{display:block;font-size:29px;color:var(--gold2)}.mini-stat span{font-size:12px;color:#888}.tagbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 24px}.tag{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aaa;padding:8px 12px;border-radius:999px;cursor:pointer;font-size:12px}.tag.active,.tag:hover{color:#17130d;background:var(--gold);border-color:var(--gold)}.card .card-meta{display:flex;gap:7px;align-items:center;color:#777;font-size:12px;margin-top:8px;flex-wrap:wrap}.badge{padding:4px 8px;border-radius:999px;border:1px solid rgba(217,185,121,.25);color:#cdb681;background:rgba(217,185,121,.05)}/* Reading Mode: only the poem area becomes a clean light reading sheet */
+.reader-reading{background:#101012!important;color:var(--text)!important;border-color:var(--line)!important;}
+.reader-reading h2,.reader-reading .rnum,.reader-reading .card-meta,.reader-reading .share-note{color:inherit!important;}
+.reader-reading .rnum{color:var(--gold)!important;}
+.reader-reading .poem{opacity:1!important;visibility:visible!important;display:block!important;background:#f7f1e6!important;color:#2a251e!important;border:1px solid #d8cdbb!important;border-radius:20px!important;padding:30px!important;box-shadow:0 12px 35px rgba(0,0,0,.22)!important;}
+.reader-reading .close{color:#ddd!important;border-color:var(--line)!important;background:#101012!important;}
+.reader-reading .btn{color:#ddd!important;border-color:var(--line)!important;background:#151518!important;}
+.reader-reading .reader-cover{border-color:var(--line)!important;}
+#readerOverlay.reading-light{background:rgba(0,0,0,.78)!important;backdrop-filter:blur(10px);}
 .reader-tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.share-note{font-size:12px;color:#777;margin-top:8px}@media(max-width:760px){.discover-grid{grid-template-columns:1fr}.feature-spot h2{font-size:28px}.mini-stat{padding:17px}}
 
 /* FINAL V1.1 — discovery & writer polish */
 .quick-hub{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}.hub-panel{border:1px solid var(--line);border-radius:24px;padding:22px;background:rgba(255,255,255,.035)}.hub-panel h3{margin:0 0 12px;font-size:18px}.mood-row,.writer-row{display:flex;gap:8px;flex-wrap:wrap}.mood-btn,.writer-chip{border:1px solid var(--line);background:rgba(255,255,255,.03);color:#aaa;padding:9px 12px;border-radius:999px;cursor:pointer}.mood-btn.active,.mood-btn:hover,.writer-chip:hover{background:var(--gold);color:#17130d;border-color:var(--gold)}.bookmark-btn{position:absolute;right:18px;top:66px;z-index:4;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.16);background:rgba(5,5,7,.58);color:#aaa;cursor:pointer;font-size:17px}.bookmark-btn.active{color:var(--gold2);border-color:rgba(217,185,121,.65)}.card .card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:13px;color:#777;font-size:11px}.reader-reading .bookmark-btn{color:#4d453a;background:#eee5d7;border-color:#cfc5b4}.profile-list{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.profile-card{border:1px solid var(--line);border-radius:18px;padding:18px;background:rgba(255,255,255,.035);cursor:pointer}.profile-card b{font-size:19px}.profile-card span{display:block;color:#888;font-size:12px;margin-top:5px}.modal-profile{max-width:760px}@media(max-width:760px){.quick-hub,.profile-list{grid-template-columns:1fr}}
+
+/* Final Reading Mode: only the poem text sheet becomes light. */
+#readerOverlay.reading-light{background:rgba(0,0,0,.72)!important;backdrop-filter:blur(10px)!important;}
+#readerOverlay.reading-light .reader{background:var(--panel)!important;color:var(--text)!important;}
+#readerOverlay.reading-light .reader .poem{background:#f7f1e6!important;color:#2a251e!important;}
+.reader-reading .poem{background:#f7f1e6!important;color:#2a251e!important;}
 </style>
 
 <script type="module">
@@ -417,12 +423,14 @@ footer strong{color:#b9b0a3}
 </section>
 
 <section class="section" id="specialSpaces">
-  <div class="section-head"><div><div class="eyebrow">Special spaces</div><h2>শব্দের আলাদা জগৎ</h2></div><div class="count">৪টি বিশেষ সুবিধা</div></div>
+  <div class="section-head"><div><div class="eyebrow">Special spaces</div><h2>শব্দের আলাদা জগৎ</h2></div><div class="count">৬টি বিশেষ সুবিধা</div></div>
   <div class="feature-grid">
     <button class="feature-card" onclick="openGhostSpace()"><span class="feature-icon">☾</span><span><b>ভৌতিক গল্প</b><small>শুধু ভূতের গল্প ও রহস্যময় লেখা জমা দিন</small></span><span>→</span></button>
     <button class="feature-card" onclick="openCollabSpace()"><span class="feature-icon">✒</span><span><b>দুই লাইন থেকে কবিতা</b><small>তুমি দুই লাইন দাও, অন্যরা তার সঙ্গে যোগ করুক</small></span><span>→</span></button>
     <button class="feature-card" onclick="openUnsaidSpace()"><span class="feature-icon">♡</span><span><b>না-বলা কথা</b><small>প্রেমিক/প্রেমিকাকে বলা হয়নি—এমন কথা প্রকাশ করুন</small></span><span>→</span></button>
     <button class="feature-card" onclick="document.getElementById('archive').scrollIntoView({behavior:'smooth'})"><span class="feature-icon">⌕</span><span><b>স্মার্ট খোঁজ</b><small>বাংলা, English, Banglish ও লেখকের নামে খুঁজুন</small></span><span>→</span></button>
+    <button class="feature-card" onclick="openFeelingSpace()"><span class="feature-icon">✦</span><span><b>অনুভূতির কথা</b><small>মনের অনুভূতি, উপলব্ধি ও ছোট ছোট স্বীকারোক্তি লিখুন</small></span><span>→</span></button>
+    <button class="feature-card" onclick="openNovelSpace()"><span class="feature-icon">▣</span><span><b>ছোট উপন্যাস</b><small>ছোট আকারের উপন্যাস ও ধারাবাহিক সাহিত্য পড়ুন</small></span><span>→</span></button>
   </div>
 </section>
 
@@ -449,7 +457,8 @@ footer strong{color:#b9b0a3}
     <div class="rnum" id="rnum">POEM 01</div>
     <div id="rcoverWrap"></div>
     <h2 id="rtitle">তুমি পূর্ণ, আমি শূন্য</h2>
-    <div class="card-meta" id="rmeta"></div><div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
+    <div class="card-meta" id="rmeta"></div><div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button></div><div class="share-note" id="shareNote"></div>
+    <div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
 তারাভরা নীরবতায় যার রাত কেটে যায়,
 আর আমি—
 জানালার ধারে পড়ে থাকা এক টুকরো অন্ধকার,
@@ -523,8 +532,7 @@ footer strong{color:#b9b0a3}
 যে পৃথিবীতে
 তুমি কোনোদিন ফিরবে না,
 কিন্তু তোমার স্মৃতি
-কোনোদিন শেষ হবে না।</div>
-    <div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button></div><div class="share-note" id="shareNote"></div><div class="reader-actions">
+কোনোদিন শেষ হবে না।</div><div class="reader-actions">
       <button class="btn" onclick="closeReader()">ফিরে যান</button>
       
     </div>
@@ -813,6 +821,7 @@ function openEditor(){
  adminEditingId=null;
  currentId=null;
  pendingImage="";
+ adminOriginalImage="";
  document.getElementById("editorHeading").textContent="নতুন কবিতা যোগ করুন";
  document.getElementById("author").value="";
  document.getElementById("title").value="";
@@ -843,7 +852,7 @@ function openCropper(src){const img=new Image();img.onload=()=>{cropImg=img;crop
 function drawCrop(){const c=document.getElementById('cropCanvas');c.width=CROP_W;c.height=CROP_H;const ctx=c.getContext('2d');ctx.clearRect(0,0,CROP_W,CROP_H);ctx.fillStyle='#111';ctx.fillRect(0,0,CROP_W,CROP_H);if(cropImg)ctx.drawImage(cropImg,cropOffsetX,cropOffsetY,cropImg.width*cropScale,cropImg.height*cropScale);ctx.save();ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=5;ctx.strokeRect(3,3,CROP_W-6,CROP_H-6);ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2;for(let i=1;i<3;i++){let x=CROP_W*i/3,y=CROP_H*i/3;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,CROP_H);ctx.stroke();ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(CROP_W,y);ctx.stroke()}ctx.restore()}
 function zoomCrop(f){if(!cropImg)return;const old=cropScale,min=cropMinScale();cropScale=Math.max(min,Math.min(old*f,6));const cx=CROP_W/2,cy=CROP_H/2;cropOffsetX=cx-(cx-cropOffsetX)*(cropScale/old);cropOffsetY=cy-(cy-cropOffsetY)*(cropScale/old);drawCrop()}
 function resetCrop(){if(!cropImg)return;cropScale=cropMinScale();cropOffsetX=(CROP_W-cropImg.width*cropScale)/2;cropOffsetY=(CROP_H-cropImg.height*cropScale)/2;drawCrop()}
-function applyCrop(){if(!cropImg)return;const c=document.createElement('canvas');c.width=900;c.height=1200;const ctx=c.getContext('2d');const fx=900/CROP_W,fy=1200/CROP_H;ctx.drawImage(cropImg,cropOffsetX*fx,cropOffsetY*fy,cropImg.width*cropScale*fx,cropImg.height*cropScale*fy);pendingImage=c.toDataURL('image/jpeg',.84);document.getElementById('cropTools').classList.remove('active');showPreview(pendingImage)}
+function applyCrop(){if(!cropImg)return;const c=document.createElement('canvas');c.width=720;c.height=960;const ctx=c.getContext('2d');const fx=720/CROP_W,fy=960/CROP_H;ctx.drawImage(cropImg,cropOffsetX*fx,cropOffsetY*fy,cropImg.width*cropScale*fx,cropImg.height*cropScale*fy);let q=.78,out='';do{out=c.toDataURL('image/jpeg',q);q-=.06}while(out.length>900000&&q>.42);pendingImage=out;document.getElementById('cropTools').classList.remove('active');showPreview(pendingImage)}
 const cropCanvas=document.getElementById('cropCanvas');
 function cropPointerStart(e){if(!cropImg)return;cropDragging=true;const p=e.touches?e.touches[0]:e;cropLastX=p.clientX;cropLastY=p.clientY;cropCanvas.style.cursor='grabbing';e.preventDefault()}
 function cropPointerMove(e){if(!cropDragging)return;const p=e.touches?e.touches[0]:e,r=cropCanvas.getBoundingClientRect(),sx=CROP_W/r.width;cropOffsetX+=(p.clientX-cropLastX)*sx;cropOffsetY+=(p.clientY-cropLastY)*sx;cropLastX=p.clientX;cropLastY=p.clientY;drawCrop();e.preventDefault()}
@@ -878,8 +887,10 @@ async function savePoem(){
  if(!p){alert("Submission system configure করা হয়নি।");return}
  if(adminEditingId){ await saveAdminEdit(); return; }
  try{
+   let safeImage=pendingImage||"";
+   if(safeImage && safeImage.length>950000){alert("ছবিটি খুব বড় হয়ে গেছে। Crop করে আবার Save করুন।");return}
    await p.addDoc(p.collection(p.db,"submissions"),{
-     author,title,body,date:poemDate,image:pendingImage||"",status:"pending",createdAt:p.serverTimestamp()
+     author,title,body,date:poemDate,image:safeImage,status:"pending",createdAt:p.serverTimestamp()
    });
    closeEditor();
    alert("তোমার কবিতা জমা হয়েছে। Admin approve করার পর সবার website-এ প্রকাশ হবে।");
@@ -950,6 +961,11 @@ render();
   </article>
 </div>
 
+<div class="overlay" id="feelingOverlay" onclick="if(event.target===this)closeSpecial('feelingOverlay')"><article class="reader modal wide-modal"><button class="close" onclick="closeSpecial('feelingOverlay')">×</button><div class="eyebrow">Inner feelings</div><h2>✦ অনুভূতির কথা</h2><p class="section-intro">মনের অনুভূতি, উপলব্ধি, অভিমান বা ছোট্ট স্বীকারোক্তি লিখে রাখুন। Admin approve করার পর প্রকাশিত হবে।</p><div id="feelingList" class="special-list"></div><button class="btn gold" onclick="openFeelingEditor()">+ অনুভূতির কথা লিখুন</button></article></div>
+<div class="overlay" id="feelingEditorOverlay" onclick="if(event.target===this)closeSpecial('feelingEditorOverlay')"><article class="reader modal"><button class="close" onclick="closeSpecial('feelingEditorOverlay')">×</button><div class="eyebrow">Inner feelings</div><h2>অনুভূতির কথা লিখুন</h2><div class="field"><label>তোমার নাম (ইচ্ছা হলে ছদ্মনাম)</label><input id="feelingAuthor" placeholder="যেমন: অচেনা একজন"></div><div class="field"><label>শিরোনাম</label><input id="feelingTitle" placeholder="যেমন: আজ নিজেকে বুঝলাম"></div><div class="field"><label>লেখার তারিখ</label><input id="feelingDate" type="date"></div><div class="field"><label>অনুভূতি</label><textarea id="feelingBody" placeholder="তোমার মনের কথাগুলো লিখুন..."></textarea></div><div class="reader-actions"><button class="btn" onclick="closeSpecial('feelingEditorOverlay')">বাতিল</button><button class="btn gold" onclick="saveFeeling()">জমা দিন</button></div></article></div>
+<div class="overlay" id="novelOverlay" onclick="if(event.target===this)closeSpecial('novelOverlay')"><article class="reader modal wide-modal"><button class="close" onclick="closeSpecial('novelOverlay')">×</button><div class="eyebrow">Short novels</div><h2>▣ ছোট উপন্যাস</h2><p class="section-intro">ছোট আকারের উপন্যাস ও ধারাবাহিক গল্পের জন্য আলাদা জায়গা। নতুন লেখা Admin review-এর পর প্রকাশিত হবে।</p><div id="novelList" class="special-list"></div><button class="btn gold" onclick="openNovelEditor()">+ ছোট উপন্যাস জমা দিন</button></article></div>
+<div class="overlay" id="novelEditorOverlay" onclick="if(event.target===this)closeSpecial('novelEditorOverlay')"><article class="reader modal"><button class="close" onclick="closeSpecial('novelEditorOverlay')">×</button><div class="eyebrow">Short novels</div><h2>ছোট উপন্যাস লিখুন</h2><div class="field"><label>লেখকের নাম</label><input id="novelAuthor" placeholder="যেমন: শারাফাত রাওফি"></div><div class="field"><label>উপন্যাসের নাম</label><input id="novelTitle" placeholder="যেমন: শেষ বিকেলের শহর"></div><div class="field"><label>লেখার তারিখ</label><input id="novelDate" type="date"></div><div class="field"><label>উপন্যাস</label><textarea id="novelBody" placeholder="উপন্যাসের লেখা এখানে লিখুন..."></textarea></div><div class="reader-actions"><button class="btn" onclick="closeSpecial('novelEditorOverlay')">বাতিল</button><button class="btn gold" onclick="saveNovel()">প্রকাশের জন্য জমা দিন</button></div></article></div>
+
 <div class="overlay" id="specialEditOverlay" onclick="if(event.target===this)closeSpecialEdit()"><article class="reader modal"><button class="close" onclick="closeSpecialEdit()">×</button><div class="eyebrow">Admin editor</div><h2 id="specialEditHeading">Special লেখা Edit</h2><div class="field"><label>লেখক</label><input id="specialEditAuthor"></div><div class="field"><label>শিরোনাম / উদ্দেশ্য</label><input id="specialEditTitle"></div><div class="field"><label>লেখা</label><textarea id="specialEditBody"></textarea></div><div class="field"><label>তারিখ</label><input id="specialEditDate" type="date"></div><div class="reader-actions"><button class="btn" onclick="closeSpecialEdit()">বাতিল</button><button class="btn gold" onclick="saveSpecialEdit()">সংরক্ষণ করুন</button></div></article></div>
 
 <div class="overlay" id="profileOverlay" onclick="if(event.target===this)closeProfile()"><article class="reader modal modal-profile"><button class="close" onclick="closeProfile()">×</button><div class="eyebrow">Writer profile</div><h2 id="profileName">লেখক</h2><div id="profileStats" class="special-meta"></div><div id="profileWorks" class="special-list"></div></article></div>
@@ -988,7 +1004,7 @@ render();
         </section>
         <section id="adminPanelRequests" style="display:none">
           <div class="admin-panel-title"><h3>লেখার Requests</h3><button class="btn" onclick="loadAllRequests()">↻ Refresh</button></div>
-          <p class="admin-small">সব pending submission এখানে এক জায়গায় থাকবে—কবিতা, ভৌতিক গল্প এবং না-বলা কথা।</p>
+          <p class="admin-small">সব pending submission এখানে এক জায়গায় থাকবে—কবিতা, ভৌতিক গল্প, না-বলা কথা, অনুভূতির কথা ও ছোট উপন্যাস।</p>
           <div id="pendingList"></div>
           <div class="admin-section"><h3>বিশেষ বিভাগ — Requests</h3><div id="specialAdminList"></div></div>
         </section>
@@ -1079,13 +1095,15 @@ async function loadAdminDashboard(){
     // প্রথমবার Admin খুললে আগের HTML-এর কবিতাগুলোও Firestore-এ রাখা হবে,
     // যাতে Admin এগুলো edit/delete করলে সবার website-এ পরিবর্তন দেখা যায়।
     await ensureInitialPoemsPublished();
-    const [snap,ghostSnap,unsaidSnap]=await Promise.all([
+    const [snap,ghostSnap,unsaidSnap,feelingSnap,novelSnap]=await Promise.all([
       p.getDocs(p.collection(p.db,"submissions")),
       p.getDocs(p.collection(p.db,"ghostStorySubmissions")),
-      p.getDocs(p.collection(p.db,"unsaidSubmissions"))
+      p.getDocs(p.collection(p.db,"unsaidSubmissions")),
+      p.getDocs(p.collection(p.db,"feelingSubmissions")),
+      p.getDocs(p.collection(p.db,"novelSubmissions"))
     ]);
     let pending=0,rejected=0;
-    [snap,ghostSnap,unsaidSnap].forEach(group=>group.forEach(d=>{
+    [snap,ghostSnap,unsaidSnap,feelingSnap,novelSnap].forEach(group=>group.forEach(d=>{
       const s=d.data().status;
       if(s==="pending") pending++;
       if(s==="rejected") rejected++;
@@ -1227,6 +1245,7 @@ async function editPendingPoem(id){
     document.getElementById("body").value=x.body||"";
     document.getElementById("imageFile").value="";
     pendingImage=x.image||"";
+    adminOriginalImage=x.image||"";
     showPreview(pendingImage);
     document.getElementById("editorOverlay").classList.add("show");
     document.body.style.overflow="hidden";
@@ -1249,6 +1268,7 @@ async function editPublishedPoem(id){
     document.getElementById("body").value=x.body||"";
     document.getElementById("imageFile").value="";
     pendingImage=x.image||"";
+    adminOriginalImage=x.image||"";
     showPreview(pendingImage);
     document.getElementById("editorOverlay").classList.add("show");
     document.body.style.overflow="hidden";
@@ -1264,7 +1284,10 @@ async function saveAdminEdit(){
   const poemDate=document.getElementById("poemDate").value || new Date().toISOString().slice(0,10);
   if(!author||!title||!body){alert("লেখকের নাম, কবিতার নাম ও কবিতা—তিনটিই লিখতে হবে।");return}
   try{
-    const data={author,title,body,date:poemDate,image:pendingImage||""};
+    const safeImage=(pendingImage!==undefined && pendingImage!==null) ? pendingImage : (adminOriginalImage||"");
+    if(safeImage && safeImage.length>950000){alert("ছবিটি খুব বড়। Crop করে আবার Save করুন।");return}
+    const data={author,title,body,date:poemDate,image:safeImage};
+    if(safeImage && !safeImage.startsWith('data:image/')){ alert('ছবির ফরম্যাট সঠিক নয়। আবার Crop করে ছবি সেট করুন।'); return; }
     if(String(adminEditingId).startsWith("pending:")){
       const id=String(adminEditingId).slice(8);
       await p.updateDoc(p.doc(p.db,"submissions",id),data);
@@ -1273,11 +1296,12 @@ async function saveAdminEdit(){
       await loadPendingPoems();
       alert("Pending কবিতাটি সফলভাবে Edit হয়েছে।");
     }else{
-      await p.updateDoc(p.doc(p.db,"publishedPoems",adminEditingId),data);
+      await p.setDoc(p.doc(p.db,"publishedPoems",adminEditingId),data,{merge:true});
+      // Re-fetch from Firestore after saving so the homepage uses the persisted image.
+      await loadPublishedFromFirebase();
       closeEditor();
       adminEditingId=null;
       await loadPublishedAdmin();
-      await loadPublishedFromFirebase();
       await loadAdminDashboard();
       alert("কবিতা সফলভাবে Edit হয়েছে।");
     }
@@ -1351,15 +1375,23 @@ async function saveUnsaid(){const p=window.firebasePoem;if(!p)return;const autho
 async function loadUnsaid(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('unsaidList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'unsaidLetters'));const items=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)items.push({id:d.id,...x})});box.innerHTML=items.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card"><h3>♡ ${escapeHTML(x.to||'প্রিয় মানুষ')}</h3><div class="special-meta">${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো না-বলা কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">বার্তাগুলো লোড করা যায়নি।</p>'}}
 </script>
 <script>
-async function loadSpecialAdmin(){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const box=document.getElementById('specialAdminList');box.innerHTML='<p>Loading…</p>';try{const [g,u]=await Promise.all([p.getDocs(p.collection(p.db,'ghostStorySubmissions')),p.getDocs(p.collection(p.db,'unsaidSubmissions'))]);let html='<h4>Pending ভৌতিক গল্প</h4>';g.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>${escapeHTML(x.title||'')}</h3><div class="meta">${escapeHTML(x.author||'')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveGhost('${d.id}')">Approve</button><button class="btn" onclick="rejectGhost('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('ghost','${d.id}')">✏️ Edit</button></div></div>`});html+='<h4>Pending না-বলা কথা</h4>';u.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>♡ ${escapeHTML(x.to||'প্রিয় মানুষ')}</h3><div class="meta">${escapeHTML(x.author||'')}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveUnsaid('${d.id}')">Approve</button><button class="btn" onclick="rejectUnsaid('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('unsaid','${d.id}')">✏️ Edit</button></div></div>`});box.innerHTML+=html}catch(e){box.innerHTML='<p class="muted-note">Special admin data load failed.</p>'}}
+async function loadSpecialAdmin(){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const box=document.getElementById('specialAdminList');box.innerHTML='<p>Loading…</p>';try{const [g,u,f,n]=await Promise.all([p.getDocs(p.collection(p.db,'ghostStorySubmissions')),p.getDocs(p.collection(p.db,'unsaidSubmissions')),p.getDocs(p.collection(p.db,'feelingSubmissions')),p.getDocs(p.collection(p.db,'novelSubmissions')),p.getDocs(p.collection(p.db,'feelingSubmissions')),p.getDocs(p.collection(p.db,'novelSubmissions'))]);let html='<h4>Pending ভৌতিক গল্প</h4>';g.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>${escapeHTML(x.title||'')}</h3><div class="meta">${escapeHTML(x.author||'')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveGhost('${d.id}')">Approve</button><button class="btn" onclick="rejectGhost('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('ghost','${d.id}')">✏️ Edit</button></div></div>`});html+='<h4>Pending না-বলা কথা</h4>';u.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>♡ ${escapeHTML(x.to||'প্রিয় মানুষ')}</h3><div class="meta">${escapeHTML(x.author||'')}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveUnsaid('${d.id}')">Approve</button><button class="btn" onclick="rejectUnsaid('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('unsaid','${d.id}')">✏️ Edit</button></div></div>`});box.innerHTML+=html;html+='<h4>Pending অনুভূতির কথা</h4>';f.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>✦ ${escapeHTML(x.title||'অনুভূতির কথা')}</h3><div class="meta">${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveFeeling('${d.id}')">Approve</button><button class="btn" onclick="rejectFeeling('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('feeling','${d.id}')">✏️ Edit</button></div></div>`});html+='<h4>Pending ছোট উপন্যাস</h4>';n.forEach(d=>{const x=d.data();if(x.status==='pending')html+=`<div class="pending-card"><h3>▣ ${escapeHTML(x.title||'ছোট উপন্যাস')}</h3><div class="meta">${escapeHTML(x.author||'')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||'')}</div><div class="pending-actions"><button class="btn gold" onclick="approveNovel('${d.id}')">Approve</button><button class="btn" onclick="rejectNovel('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('novel','${d.id}')">✏️ Edit</button></div></div>`});box.innerHTML+=html}catch(e){box.innerHTML='<p class="muted-note">Special admin data load failed.</p>'}}
 async function approveGhost(id){const p=window.firebasePoem;const snap=await p.getDocs(p.collection(p.db,'ghostStorySubmissions'));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.addDoc(p.collection(p.db,'ghostStories'),{author:x.author,title:x.title,body:x.body,date:x.date,publishedAt:p.serverTimestamp()});await p.updateDoc(p.doc(p.db,'ghostStorySubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});alert('ভৌতিক গল্প প্রকাশিত হয়েছে।');loadSpecialAdmin()}
 async function rejectGhost(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'ghostStorySubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 async function approveUnsaid(id){const p=window.firebasePoem;const snap=await p.getDocs(p.collection(p.db,'unsaidSubmissions'));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.addDoc(p.collection(p.db,'unsaidLetters'),{author:x.author,to:x.to,body:x.body,publishedAt:p.serverTimestamp()});await p.updateDoc(p.doc(p.db,'unsaidSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});alert('না-বলা কথাটি প্রকাশিত হয়েছে।');loadSpecialAdmin()}
 async function rejectUnsaid(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'unsaidSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
+function openFeelingSpace(){openSpecial('feelingOverlay');loadFeeling()}function openFeelingEditor(){document.getElementById('feelingDate').value=new Date().toISOString().slice(0,10);openSpecial('feelingEditorOverlay')}
+async function saveFeeling(){const p=window.firebasePoem;if(!p)return;const author=document.getElementById('feelingAuthor').value.trim()||'অচেনা একজন',title=document.getElementById('feelingTitle').value.trim()||'অনুভূতির কথা',body=document.getElementById('feelingBody').value.trim(),date=document.getElementById('feelingDate').value||new Date().toISOString().slice(0,10);if(!body)return alert('তোমার অনুভূতিটি লিখুন।');try{await p.addDoc(p.collection(p.db,'feelingSubmissions'),{author,title,body,date,status:'pending',createdAt:p.serverTimestamp()});closeSpecial('feelingEditorOverlay');alert('অনুভূতির কথাটি জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
+async function loadFeeling(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('feelingList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'feelingLetters'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card"><h3>✦ ${escapeHTML(x.title||'অনুভূতির কথা')}</h3><div class="special-meta">${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো অনুভূতির কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">লেখাগুলো লোড করা যায়নি।</p>'}}
+function openNovelSpace(){openSpecial('novelOverlay');loadNovels()}function openNovelEditor(){document.getElementById('novelDate').value=new Date().toISOString().slice(0,10);openSpecial('novelEditorOverlay')}
+async function saveNovel(){const p=window.firebasePoem;if(!p)return;const author=document.getElementById('novelAuthor').value.trim(),title=document.getElementById('novelTitle').value.trim(),body=document.getElementById('novelBody').value.trim(),date=document.getElementById('novelDate').value||new Date().toISOString().slice(0,10);if(!author||!title||!body)return alert('লেখকের নাম, উপন্যাসের নাম ও লেখা দিন।');try{await p.addDoc(p.collection(p.db,'novelSubmissions'),{author,title,body,date,status:'pending',createdAt:p.serverTimestamp()});closeSpecial('novelEditorOverlay');alert('ছোট উপন্যাস জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
+async function loadNovels(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('novelList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'shortNovels'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card"><h3>▣ ${escapeHTML(x.title||'ছোট উপন্যাস')}</h3><div class="special-meta">লেখক: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো ছোট উপন্যাস প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">উপন্যাসগুলো লোড করা যায়নি।</p>'}}
+async function approveFeeling(id){const p=window.firebasePoem;const s=await p.getDocs(p.collection(p.db,'feelingSubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.addDoc(p.collection(p.db,'feelingLetters'),{author:x.author,title:x.title,body:x.body,date:x.date,publishedAt:p.serverTimestamp()});await p.updateDoc(p.doc(p.db,'feelingSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});loadSpecialAdmin();alert('অনুভূতির কথাটি প্রকাশিত হয়েছে।')}async function rejectFeeling(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'feelingSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
+async function approveNovel(id){const p=window.firebasePoem;const s=await p.getDocs(p.collection(p.db,'novelSubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.addDoc(p.collection(p.db,'shortNovels'),{author:x.author,title:x.title,body:x.body,date:x.date,publishedAt:p.serverTimestamp()});await p.updateDoc(p.doc(p.db,'novelSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});loadSpecialAdmin();alert('ছোট উপন্যাসটি প্রকাশিত হয়েছে।')}async function rejectNovel(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'novelSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 let specialEditState=null;
-async function openSpecialEdit(type,id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const map={ghost:['ghostStories','ভৌতিক গল্প Edit'],unsaid:['unsaidLetters','না-বলা কথা Edit'],thread:['collabThreads','যৌথ কবিতা Edit']};const cfg=map[type];if(!cfg)return;const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();specialEditState={type,id,col:cfg[0]};document.getElementById('specialEditHeading').textContent=cfg[1];document.getElementById('specialEditAuthor').value=x.author||'';document.getElementById('specialEditTitle').value=x.title||x.to||'';document.getElementById('specialEditBody').value=x.body||x.starter||'';document.getElementById('specialEditDate').value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')?x.date:'';document.getElementById('specialEditOverlay').classList.add('show');document.body.style.overflow='hidden'}
+async function openSpecialEdit(type,id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const map={ghost:['ghostStories','ভৌতিক গল্প Edit'],unsaid:['unsaidLetters','না-বলা কথা Edit'],thread:['collabThreads','যৌথ কবিতা Edit'],feeling:['feelingSubmissions','অনুভূতির কথা Edit'],novel:['novelSubmissions','ছোট উপন্যাস Edit']};const cfg=map[type];if(!cfg)return;const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();specialEditState={type,id,col:cfg[0]};document.getElementById('specialEditHeading').textContent=cfg[1];document.getElementById('specialEditAuthor').value=x.author||'';document.getElementById('specialEditTitle').value=x.title||x.to||'';document.getElementById('specialEditBody').value=x.body||x.starter||'';document.getElementById('specialEditDate').value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')?x.date:'';document.getElementById('specialEditOverlay').classList.add('show');document.body.style.overflow='hidden'}
 function closeSpecialEdit(){document.getElementById('specialEditOverlay').classList.remove('show');document.body.style.overflow=''}
-async function saveSpecialEdit(){const p=window.firebasePoem;if(!specialEditState)return;const a=document.getElementById('specialEditAuthor').value.trim(),title=document.getElementById('specialEditTitle').value.trim(),body=document.getElementById('specialEditBody').value.trim(),date=document.getElementById('specialEditDate').value||new Date().toISOString().slice(0,10);let data={author:a,date};if(specialEditState.type==='ghost')data={...data,title,body};else if(specialEditState.type==='unsaid')data={...data,to:title,body};else data={...data,starter:body};try{await p.updateDoc(p.doc(p.db,specialEditState.col,specialEditState.id),data);closeSpecialEdit();specialEditState=null;loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();alert('Special লেখা Edit হয়েছে।')}catch(e){alert('Edit failed: '+e.message)}}
+async function saveSpecialEdit(){const p=window.firebasePoem;if(!specialEditState)return;const a=document.getElementById('specialEditAuthor').value.trim(),title=document.getElementById('specialEditTitle').value.trim(),body=document.getElementById('specialEditBody').value.trim(),date=document.getElementById('specialEditDate').value||new Date().toISOString().slice(0,10);let data={author:a,date};if(specialEditState.type==='ghost')data={...data,title,body};else if(specialEditState.type==='unsaid')data={...data,to:title,body};else if(specialEditState.type==='feeling')data={...data,title,body};else if(specialEditState.type==='novel')data={...data,title,body};else data={...data,starter:body};try{await p.updateDoc(p.doc(p.db,specialEditState.col,specialEditState.id),data);closeSpecialEdit();specialEditState=null;loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();alert('Special লেখা Edit হয়েছে।')}catch(e){alert('Edit failed: '+e.message)}}
 async function deleteSpecial(type,id,col){const p=window.firebasePoem;if(!p||!confirm('এই লেখা Delete করতে চান?'))return;try{await p.deleteDoc(p.doc(p.db,col,id));loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();alert('Delete হয়েছে।')}catch(e){alert('Delete failed: '+e.message)}}
 
 </script>
