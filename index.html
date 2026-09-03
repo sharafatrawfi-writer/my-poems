@@ -184,6 +184,22 @@ footer strong{color:#b9b0a3}
 /* V2 premium polish */
 .hero-inner{animation:heroIn .9s ease both}.hero-mark{animation:floatMark 4s ease-in-out infinite}.card,.feature-card,.special-card{will-change:transform}.section{scroll-margin-top:90px}.hub-kicker{display:inline-flex;padding:7px 11px;border:1px solid rgba(217,185,121,.2);border-radius:999px;background:rgba(217,185,121,.05)}#cropCanvas{aspect-ratio:3/4}.crop-wrap{max-height:70vh;max-width:430px}.special-meta{color:#8f8980;font-size:12px;margin:8px 0 14px}.admin-special-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes floatMark{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
+/* SPECIAL READING + ADMIN POLISH */
+.special-card{padding:22px 24px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+.special-card h3{font-family:"Noto Serif Bengali",serif;font-size:24px;font-weight:600;letter-spacing:0}
+.special-meta{font-family:"Noto Serif Bengali",serif;font-size:13px;line-height:1.8}
+.special-body,.special-lines{font-family:"Noto Serif Bengali",serif;font-size:18px;line-height:2.15;letter-spacing:.01em;color:#e9e3da;max-width:850px}
+.special-cover-thumb{display:block;width:min(100%,520px);max-height:360px;object-fit:cover;border-radius:18px;margin:0 0 18px}
+.published-admin-section{margin:0 0 30px;padding:20px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.018)}
+.published-admin-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.published-admin-section-head h3{margin:0;font-family:"Noto Serif Bengali",serif;font-size:22px}
+.published-admin-section-head span{color:var(--gold);font-size:12px}
+.published-special-card{display:flex;gap:20px;align-items:flex-start;margin-top:14px}
+.published-special-card .published-admin-cover{flex:0 0 180px;width:180px;height:130px;margin:0}
+.published-special-copy{flex:1;min-width:0}
+.special-admin-body{max-height:170px;overflow:auto;padding-right:8px}
+@media(min-width:900px){.special-card{padding:28px 32px}.special-body,.special-lines{font-size:19px;line-height:2.2;max-width:900px}}
+@media(max-width:700px){.published-special-card{display:block}.published-special-card .published-admin-cover{width:100%;height:190px;margin-bottom:16px}.special-body,.special-lines{font-size:17px;line-height:2.05}}
 /* STORY ROOM PRO */
 .story-tools{display:grid;grid-template-columns:1fr auto;gap:10px;margin:20px 0}.story-tools input,.story-tools select{width:100%;background:#0a0a0c;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px}.story-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:22px;background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.02));transition:transform .25s,border-color .25s,box-shadow .25s}.story-card:hover{transform:translateY(-3px);border-color:rgba(217,185,121,.38);box-shadow:0 18px 45px rgba(0,0,0,.22)}.story-cover{width:100%;height:190px;object-fit:cover;display:block;filter:saturate(.82)}.story-cover-fallback{height:190px;display:grid;place-items:center;background:radial-gradient(circle at 30% 20%,rgba(217,185,121,.22),transparent 45%),linear-gradient(135deg,#171310,#09090b);font-size:52px;color:rgba(217,185,121,.75)}.story-content{padding:20px}.story-badge{display:inline-flex;padding:5px 9px;border:1px solid rgba(217,185,121,.25);border-radius:999px;color:var(--gold2);font-size:10px;margin-bottom:10px}.story-card h3{font-size:24px;margin:0 0 8px}.story-excerpt{color:#c5c0b8;line-height:1.8;margin:0 0 14px}.story-info{display:flex;gap:10px;flex-wrap:wrap;color:#8f8980;font-size:11px}.story-read{margin-top:16px}.story-empty{padding:35px 20px;text-align:center;border:1px dashed var(--line);border-radius:18px;color:#777}.story-reader-title{font-size:32px;margin-bottom:8px}.story-reader-body{white-space:pre-wrap;line-height:2.05;color:#e5e0d8;font-size:16px}.story-reader-head{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:22px}.story-form-note{font-size:11px;color:#777;line-height:1.7;margin-top:7px}
 @media(max-width:760px){.story-tools{grid-template-columns:1fr}.story-cover,.story-cover-fallback{height:150px}.story-card h3{font-size:21px}}
@@ -1341,29 +1357,52 @@ async function loadPublishedAdmin(){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
   const box=document.getElementById("publishedList");
+  if(!box)return;
   box.innerHTML="<p>Loading…</p>";
   try{
     await ensureInitialPoemsPublished();
-    const q=p.query(p.collection(p.db,"publishedPoems"),p.orderBy("publishedAt","desc"));
-    const snap=await p.getDocs(q);
-    const items=[];
-    snap.forEach(d=>{
-      const x=d.data();
-      if(!x.deleted) items.push({id:d.id,...x});
-    });
-    if(!items.length){box.innerHTML="<p class='admin-small'>কোনো published কবিতা নেই।</p>";return;}
-    box.innerHTML=items.map(x=>`
-      <div class="pending-card">
-        <h3>${escapeHTML(x.title||"Untitled")}</h3>
-        <div class="meta">${escapeHTML(normalizeAuthorType(x.authorType))}: ${escapeHTML(x.author||"অজানা")}</div>
-        <div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div>
-        <div class="pending-body">${escapeHTML(x.body||"")}</div>
-        <div class="pending-actions">
-          <button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button>
-          <button class="btn danger" onclick="deletePublishedPoem('${x.id}')">🗑️ Delete</button>
-        </div>
-      </div>`).join("");
-  }catch(e){ box.innerHTML="<p class='admin-small'>Firestore error: "+escapeHTML(e.message)+"</p>"; }
+    const read=async col=>{try{return await p.getDocs(p.collection(p.db,col))}catch(e){console.warn("Published read skipped:",col,e.message);return null}};
+    const [poemSnap,storySnap,ghostSnap,unsaidSnap,feelingSnap,novelSnap]=await Promise.all([
+      read("publishedPoems"),read("stories"),read("ghostStories"),read("unsaidLetters"),read("feelingLetters"),read("shortNovels")
+    ]);
+    const sections=[];
+    const addSection=(title,docs,type)=>{
+      const items=[];
+      if(docs) docs.forEach(d=>{const x=d.data();if(!x.deleted) items.push({id:d.id,...x})});
+      items.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+      sections.push(`<div class="published-admin-section"><div class="published-admin-section-head"><h3>${title}</h3><span>${items.length}টি</span></div>${items.length?items.map(x=>{
+        const body=x.body||x.starter||"", titleText=x.title||x.to||"Untitled", cover=x.cover||x.image||"";
+        return `<div class="pending-card published-special-card">${cover?`<img class="special-cover-thumb published-admin-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}<div class="published-special-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||"অচেনা একজন")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body special-admin-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="openPublishedSpecialEdit('${type}','${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedSpecial('${type}','${x.id}')">🗑️ Delete</button></div></div></div>`;
+      }).join(''):'<p class="muted-note">এই বিভাগে কোনো প্রকাশিত লেখা নেই।</p>'}</div>`);
+    };
+    addSection("✦ প্রকাশিত কবিতা",poemSnap,"poem");
+    addSection("▣ গল্প ঘর",storySnap,"story");
+    addSection("☾ ভৌতিক গল্প",ghostSnap,"ghost");
+    addSection("♡ না-বলা কথা",unsaidSnap,"unsaid");
+    addSection("✦ অনুভূতির কথা",feelingSnap,"feeling");
+    addSection("▣ ছোট উপন্যাস",novelSnap,"novel");
+    box.innerHTML=sections.join("");
+  }catch(e){box.innerHTML="<p class='admin-small'>Firestore error: "+escapeHTML(e.message)+"</p>";}
+}
+
+async function openPublishedSpecialEdit(type,id){
+  const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;
+  const map={story:["stories","গল্প ঘর Edit"],ghost:["ghostStories","ভৌতিক গল্প Edit"],unsaid:["unsaidLetters","না-বলা কথা Edit"],feeling:["feelingLetters","অনুভূতির কথা Edit"],novel:["shortNovels","ছোট উপন্যাস Edit"]};
+  const cfg=map[type];if(!cfg)return;
+  try{
+    const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return alert("প্রকাশিত লেখাটি পাওয়া যায়নি।");
+    const x=d.data();specialEditState={type,id,col:cfg[0],published:true};
+    document.getElementById("specialEditHeading").textContent=cfg[1];document.getElementById("specialEditCategoryWrap").style.display=type==="story"?"block":"none";document.getElementById("specialEditCoverWrap").style.display="block";document.getElementById("specialEditCategory").value=x.category||"জীবন";
+    specialEditCoverData=x.cover||x.image||"";document.getElementById("specialEditCover").value=specialEditCoverData;document.getElementById("specialEditCoverPreview").innerHTML=specialEditCoverData?`<img src="${escapeHTML(specialEditCoverData)}" alt="কভার ছবির preview">`:"";document.getElementById("specialEditCoverFile").value="";
+    document.getElementById("specialEditAuthor").value=x.author||"";document.querySelectorAll('input[name="specialEditAuthorType"]').forEach(r=>r.checked=r.value===normalizeWriterType(x.authorType));document.getElementById("specialEditTitle").value=x.title||x.to||"";document.getElementById("specialEditBody").value=x.body||x.starter||"";document.getElementById("specialEditDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"")?x.date:"";
+    document.getElementById("specialEditOverlay").classList.add("show");document.body.style.overflow="hidden";
+  }catch(e){alert("Edit খুলতে সমস্যা হয়েছে: "+e.message)}
+}
+
+async function deletePublishedSpecial(type,id){
+  const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;if(!confirm("এই প্রকাশিত লেখাটি Delete করতে চান?"))return;
+  const map={story:"stories",ghost:"ghostStories",unsaid:"unsaidLetters",feeling:"feelingLetters",novel:"shortNovels"},col=map[type];if(!col)return;
+  try{await p.deleteDoc(p.doc(p.db,col,id));await loadPublishedAdmin();if(type==="story")loadStoryRoom();if(type==="ghost")loadGhostStories();if(type==="unsaid")loadUnsaid();if(type==="feeling")loadFeeling();if(type==="novel")loadNovels();alert("প্রকাশিত লেখাটি Delete হয়েছে।")}catch(e){alert("Delete failed: "+e.message)}
 }
 
 async function editPendingPoem(id){
@@ -1658,7 +1697,7 @@ async function saveSpecialEdit(){
   else if(specialEditState.type==='ghost'||specialEditState.type==='feeling'||specialEditState.type==='novel') data={...data,title,body,image:editCover};
   else if(specialEditState.type==='unsaid') data={...data,to:title,body,image:editCover};
   else data={...data,starter:body,image:editCover};
-  try{await p.updateDoc(p.doc(p.db,specialEditState.col,specialEditState.id),data);closeSpecialEdit();specialEditState=null;specialEditCoverData='';loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();loadStoryRoom();alert('Special লেখা Edit হয়েছে।')}catch(e){alert('Edit failed: '+e.message)}}
+  try{await p.updateDoc(p.doc(p.db,specialEditState.col,specialEditState.id),data);closeSpecialEdit();specialEditState=null;specialEditCoverData='';loadSpecialAdmin();loadPublishedAdmin();loadGhostStories();loadUnsaid();loadFeeling();loadNovels();loadStoryRoom();alert('Special লেখা Edit হয়েছে।')}catch(e){alert('Edit failed: '+e.message)}}
 async function deleteSpecial(type,id,col){const p=window.firebasePoem;if(!p||!confirm('এই লেখা Delete করতে চান?'))return;try{await p.deleteDoc(p.doc(p.db,col,id));loadSpecialAdmin();loadGhostStories();loadUnsaid();loadCollab();loadStoryRoom();alert('Delete হয়েছে।')}catch(e){alert('Delete failed: '+e.message)}}
 
 </script>
