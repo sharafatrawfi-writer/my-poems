@@ -1239,19 +1239,32 @@ async function approvePoem(id){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
   try{
+    // First read the pending submission, then publish it, and only after a
+    // successful publish mark the original submission as approved. This
+    // prevents an "approved but unpublished" state if the publish write fails.
+    const snap=await p.getDocs(p.collection(p.db,"submissions"));
+    const target=snap.docs.find(d=>d.id===id);
+    if(!target) return alert("কবিতাটি খুঁজে পাওয়া যায়নি।");
+    const x=target.data();
+    if(x.status!=="pending") return alert("এই কবিতাটি আর pending নেই।");
+
+    await p.addDoc(p.collection(p.db,"publishedPoems"),{
+      author:x.author||"",
+      authorType:x.authorType||"লেখক",
+      title:x.title||"",
+      body:x.body||"",
+      image:x.image||"",
+      date:x.date||new Date().toISOString().slice(0,10),
+      publishedAt:p.serverTimestamp(),
+      sourceSubmissionId:id
+    });
+
     await p.updateDoc(p.doc(p.db,"submissions",id),{
       status:"approved", approvedAt:p.serverTimestamp()
     });
-    alert("Approved. এখন সবার website-এ দেখানোর জন্য published collection-এ যোগ হবে।");
-    // Move/copy approved data into the public poems collection.
-    const snap=await p.getDocs(p.collection(p.db,"submissions"));
-    const target=snap.docs.find(d=>d.id===id);
-    if(target){
-      const x=target.data();
-      await p.addDoc(p.collection(p.db,"publishedPoems"),{
-        author:x.author,authorType:x.authorType||"লেখক",title:x.title,body:x.body,image:x.image||"",date:x.date||new Date().toISOString().slice(0,10),publishedAt:p.serverTimestamp()
-      });
-    }
+
+    alert("কবিতাটি সফলভাবে প্রকাশিত হয়েছে।");
+    await loadPublishedFromFirebase();
     await loadAdminDashboard();
     await loadPendingPoems();
   }catch(e){alert("Approve failed: "+e.message);}
@@ -1475,7 +1488,12 @@ async function loadPublishedFromFirebase(){
     render();
   }
 }
-window.addEventListener("load",loadPublishedFromFirebase);
+// Firebase may finish initializing after the normal page load event, so run
+// once on load and once shortly afterward.
+window.addEventListener("load",()=>{
+  loadPublishedFromFirebase();
+  setTimeout(loadPublishedFromFirebase,1200);
+});
 </script>
 
 
