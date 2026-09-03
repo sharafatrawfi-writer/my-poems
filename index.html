@@ -374,6 +374,24 @@ footer strong{color:#b9b0a3}
   .published-special-card .published-admin-cover{width:110px!important;height:80px!important;margin:0 0 8px!important}
 }
 </style>
+
+<style id="premium-v3">
+:root{--gold:#d8b56a;--gold2:#f0d79a;--ink:#f7f1e6;--muted:#a9a19a;--panel:rgba(255,255,255,.045);--line:rgba(216,181,106,.18);--shadow:0 22px 70px rgba(0,0,0,.28)}
+html{scroll-behavior:smooth}.nav{transition:.35s ease;backdrop-filter:blur(18px)}.nav.scrolled{background:rgba(9,9,12,.88);box-shadow:0 10px 35px rgba(0,0,0,.22)}
+.hero{position:relative;overflow:hidden}.hero:before,.hero:after{content:"";position:absolute;border-radius:50%;filter:blur(8px);pointer-events:none}.hero:before{width:420px;height:420px;right:-140px;top:30px;background:radial-gradient(circle,rgba(216,181,106,.18),transparent 68%)}.hero:after{width:360px;height:360px;left:-170px;bottom:-150px;background:radial-gradient(circle,rgba(255,255,255,.07),transparent 68%)}
+.hero-inner{position:relative;z-index:1}.hero h1{letter-spacing:-.035em;text-shadow:0 12px 50px rgba(0,0,0,.35)}.hero .hero-pills span{transition:.25s}.hero .hero-pills span:hover{transform:translateY(-3px);border-color:rgba(216,181,106,.5);background:rgba(216,181,106,.08)}
+.discover-grid,.hub-panel,.feature-card,.card,.special-card,.published-admin-section{box-shadow:var(--shadow)}
+.card{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08);transition:transform .3s ease,box-shadow .3s ease,border-color .3s ease}.card:after{content:"";position:absolute;inset:auto 0 0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.35}.card:hover{transform:translateY(-7px);box-shadow:0 30px 80px rgba(0,0,0,.38);border-color:rgba(216,181,106,.3)}.card-media{overflow:hidden}.card-media img{transition:transform .55s ease;will-change:transform}.card:hover .card-media img{transform:scale(1.045)}.card h3{line-height:1.35}.excerpt{display:-webkit-box;-webkit-line-clamp:6;-webkit-box-orient:vertical;overflow:hidden}.favorite{z-index:4}
+.author{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.author-type{color:var(--gold2);font-weight:700}.author-link{cursor:pointer;text-decoration:none!important}.author-link:hover{color:var(--gold2)}
+.archive-toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 18px}.archive-toolbar .filter-label{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}.premium-filter{border:1px solid var(--line);background:var(--panel);color:inherit;border-radius:999px;padding:9px 13px;cursor:pointer}.premium-filter.active{background:rgba(216,181,106,.14);border-color:rgba(216,181,106,.48);color:var(--gold2)}
+.reader{box-shadow:0 35px 100px rgba(0,0,0,.5)}.reader-reading{max-width:860px!important}.reader-reading #rpoem,.reader-reading #rtitle{font-size:clamp(21px,2.2vw,29px);line-height:2.15;letter-spacing:.015em}.reader-reading #rtitle{font-size:clamp(28px,4vw,48px);line-height:1.25}.reader-reading .reader-tools{position:sticky;bottom:12px;z-index:8}.reading-controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}.reading-controls .btn{min-width:42px}.reader-nav{display:flex;justify-content:space-between;gap:8px;margin-top:16px}.reader-nav .btn{flex:1}.reader-progress{height:3px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0}.reader-progress i{display:block;height:100%;width:0;background:var(--gold);transition:width .2s}
+.premium-featured{display:grid;grid-template-columns:1.4fr .6fr;gap:14px;margin:18px 0}.premium-featured .pf-main,.premium-featured .pf-side{border:1px solid var(--line);border-radius:22px;padding:22px;background:linear-gradient(135deg,rgba(216,181,106,.10),rgba(255,255,255,.025));box-shadow:var(--shadow)}.pf-main h3{font-size:clamp(24px,4vw,42px);margin:6px 0 10px}.pf-side .pf-number{font-size:42px;color:var(--gold2);font-weight:800}.pf-side p{color:var(--muted);line-height:1.8}
+.profile-hero{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end}.profile-work-card{cursor:pointer;border:1px solid rgba(255,255,255,.07);padding:13px;border-radius:16px;margin:8px 0;transition:.2s}.profile-work-card:hover{border-color:var(--line);transform:translateX(4px)}
+.admin-quality-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.aq-card{padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}.aq-card b{font-size:24px;color:var(--gold2);display:block}.aq-card span{font-size:12px;color:var(--muted)}
+.loading-shimmer{background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:shimmer 1.5s infinite}@keyframes shimmer{to{background-position:-200% 0}}
+@media(max-width:760px){.premium-featured{grid-template-columns:1fr}.admin-quality-strip{grid-template-columns:repeat(2,1fr)}.reader-nav{position:sticky;bottom:6px;z-index:9}.hero h1{font-size:clamp(42px,12vw,72px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+</style>
 </head>
 <body style="">
 <nav class="nav">
@@ -415,6 +433,12 @@ footer strong{color:#b9b0a3}
     <div class="hub-panel"><h3>🎭 আজকের অনুভূতি</h3><div class="mood-row"><button class="mood-btn active" onclick="setMood('সব',this)">সব</button><button class="mood-btn" onclick="setMood('প্রেম',this)">❤️ প্রেম</button><button class="mood-btn" onclick="setMood('বিষণ্ণ',this)">🌧️ বিষণ্ণ</button><button class="mood-btn" onclick="setMood('শান্ত',this)">🌿 শান্ত</button><button class="mood-btn" onclick="setMood('রাত',this)">🌙 রাতজাগা</button></div></div>
     <div class="hub-panel"><h3>✍️ লেখক আবিষ্কার</h3><div class="writer-row" id="writerChips"><span class="muted-note">লেখকদের সাজানো হচ্ছে…</span></div></div>
   </div>
+
+<div class="premium-featured" id="premiumFeatured">
+  <div class="pf-main"><div class="eyebrow">Editor's pick</div><h3 id="pfTitle">আজকের নির্বাচিত লেখা</h3><p id="pfExcerpt">কবিতার আঙিনা থেকে একটি লেখা—ধীরে পড়ার জন্য।</p><button class="btn gold" id="pfOpen" onclick="openFeatured()">পড়তে শুরু করুন →</button></div>
+  <div class="pf-side"><div class="eyebrow">Archive pulse</div><div class="pf-number" id="pfCount">0</div><p>প্রকাশিত কবিতা। প্রতিটি লেখার সঙ্গে থাকবে আলাদা reading experience.</p></div>
+</div>
+<div class="archive-toolbar" id="premiumFilters"><span class="filter-label">Filter</span><button class="premium-filter active" data-filter="all" onclick="setPremiumFilter('all',this)">সব</button><button class="premium-filter" data-filter="favorite" onclick="setPremiumFilter('favorite',this)">♥ পছন্দ</button><button class="premium-filter" data-filter="recent" onclick="setPremiumFilter('recent',this)">সাম্প্রতিক</button></div>
   <div class="tools">
     <input id="search" class="search" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
     <button class="btn gold" onclick="openEditor()">নতুন কবিতা</button>
@@ -611,7 +635,7 @@ footer strong{color:#b9b0a3}
     <div class="rnum" id="rnum">POEM 01</div>
     <div id="rcoverWrap"></div>
     <h2 id="rtitle">তুমি পূর্ণ, আমি শূন্য</h2>
-    <div class="card-meta" id="rmeta"></div><div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button></div><div class="share-note" id="shareNote"></div>
+    <div class="card-meta" id="rmeta"></div><div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button><button class="btn" onclick="togglePoemBookmark()">🔖 Save</button></div><div class="reading-controls"><button class="btn" onclick="changeReaderFont(-1)">A−</button><button class="btn" onclick="resetReaderFont()">A</button><button class="btn" onclick="changeReaderFont(1)">A+</button></div><div class="reader-progress"><i id="readerProgress"></i></div><div class="reader-nav"><button class="btn" onclick="openAdjacentPoem(-1)">← আগের</button><button class="btn" onclick="openAdjacentPoem(1)">পরের →</button></div><div class="share-note" id="shareNote"></div>
     <div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
 তারাভরা নীরবতায় যার রাত কেটে যায়,
 আর আমি—
@@ -955,6 +979,10 @@ function syncAuthorTypeUI(){
   setAuthorType(checked ? checked.value : (document.getElementById("authorType")?.value || "লেখক"));
 }
 
+function cleanAuthorName(value){return String(value||"").replace(/\s+/g," ").trim().replace(/^(?:লেখক|লেখিকা)\s*:\s*/,"").replace(/^(?:লেখক|লেখিকা)\s+/,"").trim();}
+function authorTypeLabel(value){const v=String(value||"").replace(/\s+/g,"").trim();return v==="লেখিকা"?"লেখিকা":"লেখক";}
+function renderAuthorHTML(p,extraClass=""){const name=cleanAuthorName(p?.author);if(!name)return "";return `<div class="author ${extraClass}"><span class="author-type">✍ ${escapeHTML(authorTypeLabel(p?.authorType))}:</span> <span class="author-name">${escapeHTML(name)}</span></div>`;}
+
 function render(){
  const q=document.getElementById("search").value.trim().toLowerCase();
  const qBanglish=searchReady(q);
@@ -980,7 +1008,7 @@ function render(){
     <button class="favorite ${fav?'active':''}" title="${fav?'Favorite থেকে সরান':'Favorite করুন'}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button>
     <div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,"0")}</div>
     <h3>${escapeHTML(p.title)}</h3>
-    ${p.author ? `<div class="author">✍ <span class="author-type">${escapeHTML(String(p.authorType||"লেখক").trim()==="লেখিকা" ? "লেখিকা" : "লেখক")}:</span> ${escapeHTML(p.author)}</div>` : ""}
+    ${renderAuthorHTML(p)}
     <div class="excerpt">${escapeHTML(p.body)}</div>
     <div class="date">${escapeHTML(p.date||"")}</div>
    </article>`;
@@ -993,14 +1021,15 @@ function openReader(id){
  document.getElementById("rnum").textContent=`POEM ${String(poems.indexOf(p)+1).padStart(2,"0")}`;
  document.getElementById("rtitle").textContent=p.title;
  const rmeta=document.getElementById("rmeta");
- if(rmeta){rmeta.innerHTML=p.author ? `<div class="author reader-author">✍ <span class="author-type">${escapeHTML(normalizeAuthorType(p.authorType))}:</span> ${escapeHTML(p.author)}</div>` : "";}
+ if(rmeta){rmeta.innerHTML=renderAuthorHTML(p,"reader-author");}
  document.getElementById("rpoem").textContent=p.body;
  document.getElementById("rcoverWrap").innerHTML=p.image ? `<img class="reader-cover" src="${p.image}" alt="${escapeHTML(p.title)}">` : "";
  document.getElementById("readerOverlay").classList.add("show");
  document.body.style.overflow="hidden";
 }
 
-function closeReader(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");ov.classList.remove("show","reading-light");rd.classList.remove("reader-reading");document.body.style.overflow=""}
+let readerReturnScrollY=0;
+function closeReader(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");ov.classList.remove("show","reading-light");rd.classList.remove("reader-reading");document.body.style.overflow="";window.requestAnimationFrame(()=>window.scrollTo(0,readerReturnScrollY))}
 
 function openEditor(){
   const dateInput=document.getElementById("poemDate"); if(dateInput) dateInput.value=new Date().toISOString().slice(0,10);
@@ -1203,7 +1232,7 @@ render();
       <button class="close" onclick="closeAdmin()">×</button>
     </div>
     <div id="adminDashboard" style="display:none">
-      <div class="admin-user">🔐 Admin হিসেবে লগইন করা হয়েছে: <span id="loggedAdminEmail"></span></div>
+      <div class="admin-user">🔐 Admin হিসেবে লগইন করা হয়েছে: <span id="loggedAdminEmail"></span></div><div class="admin-quality-strip"><div class="aq-card"><b id="aqPublished">0</b><span>Published poems</span></div><div class="aq-card"><b id="aqFavorites">0</b><span>Local favorites</span></div><div class="aq-card"><b id="aqAuthors">0</b><span>Unique authors</span></div><div class="aq-card"><b id="aqImages">0%</b><span>Poem image coverage</span></div></div>
       <div class="dashboard-grid">
         <div class="dashboard-stat"><div class="label">Pending</div><div class="value" id="statPending">0</div></div>
         <div class="dashboard-stat"><div class="label">Published</div><div class="value" id="statPublished">0</div></div>
@@ -1546,7 +1575,7 @@ async function saveAdminEdit(){
   try{
     const safeImage=(pendingImage!==undefined && pendingImage!==null) ? pendingImage : (adminOriginalImage||"");
     if(safeImage && safeImage.length>950000){alert("ছবিটি খুব বড়। Crop করে আবার Save করুন।");return}
-    const data={author,authorType:String(authorType||"লেখক"),title,body,date:poemDate,image:safeImage,editedAt:p.serverTimestamp()};
+    const data={author:cleanAuthorName(author),authorType:authorTypeLabel(authorType),title,body,date:poemDate,image:safeImage,editedAt:p.serverTimestamp()};
     if(safeImage && !safeImage.startsWith('data:image/')){ alert('ছবির ফরম্যাট সঠিক নয়। আবার Crop করে ছবি সেট করুন।'); return; }
     if(String(adminEditingId).startsWith("pending:")){
       const id=String(adminEditingId).slice(8);
@@ -1800,8 +1829,8 @@ let activeTag='সব';
 function poemTags(p){const t=(p.title+' '+p.body).toLowerCase(),a=[];if(/ভালোবাসা|প্রেম|তুমি|হৃদয়|হৃদয়|ভালবাস/.test(t))a.push('প্রেম');if(/বিষাদ|শূন্য|হার|চলে|বিদায়|বিরহ|কষ্ট/.test(t))a.push('বিরহ');if(/জীবন|মানুষ|সময়|সময়/.test(t))a.push('জীবন');if(/নীরব|নিঃসঙ্গ|নির্জন|শহর|অন্ধকার|রাত/.test(t))a.push('নির্জনতা');return a.length?a:['জীবন']}
 function setTag(tag,el){activeTag=tag;document.querySelectorAll('.tag').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
 function premiumMatch(p,q){if(!q)return true;const x=q.toLowerCase().trim();const hay=(p.title+' '+(p.author||'')+' '+p.body+' '+poemTags(p).join(' ')).toLowerCase();const trans=searchReady(p.title+' '+(p.author||'')+' '+p.body);const qtr=searchReady(x);const author=String(p.author||'').toLowerCase();return hay.includes(x)||(qtr&&trans.includes(qtr))||(author.includes(x))}
-render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${p.author?`<div class="author">✍ <span class="author-type">${escapeHTML(normalizeAuthorType(p.authorType))}:</span> ${escapeHTML(p.author)}</div>`:''}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
-function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');if(sp)sp.textContent=poems.length;if(sf)sf.textContent=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
+render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${renderAuthorHTML(p)}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
+function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');const favs=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;if(sp)sp.textContent=poems.length;if(sf)sf.textContent=favs;const aqp=document.getElementById('aqPublished'),aqf=document.getElementById('aqFavorites'),aqa=document.getElementById('aqAuthors'),aqi=document.getElementById('aqImages');if(aqp)aqp.textContent=poems.length;if(aqf)aqf.textContent=favs;if(aqa)aqa.textContent=new Set(poems.map(p=>String(p.author||'').trim()).filter(Boolean)).size;if(aqi)aqi.textContent=(poems.length?Math.round(poems.filter(p=>p.image).length/poems.length*100):0)+'%';const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
 function openFeatured(){if(window.featuredId)openReader(window.featuredId)}
 const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ ${escapeHTML(normalizeAuthorType(p.authorType))}: ${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
 function toggleReadingMode(){const ov=document.getElementById("readerOverlay");const rd=ov.querySelector(".reader");const on=rd.classList.toggle("reader-reading");ov.classList.toggle("reading-light",on)}
@@ -1817,5 +1846,35 @@ function setMood(m,el){activeMood=m;document.querySelectorAll('.mood-btn').forEa
 function renderWriterChips(){const box=document.getElementById('writerChips');if(!box)return;const names=[...new Set(poems.map(x=>(x.author||'অজ্ঞাত লেখক').trim()).filter(Boolean))];box.innerHTML=names.slice(0,10).map(n=>`<button class="writer-chip" onclick="openProfileByName(decodeURIComponent('${encodeURIComponent(''+n)}'))">${escapeHTML(n)}</button>`).join('')||'<span class="muted-note">এখনো লেখক তথ্য নেই।</span>'}
 function openProfileByName(name){const works=poems.filter(p=>(p.author||'অজ্ঞাত লেখক').trim()===name);document.getElementById('profileName').textContent=name;document.getElementById('profileStats').textContent=`${works.length}টি প্রকাশিত লেখা · কবিতার আঙিনা`;document.getElementById('profileWorks').innerHTML=works.map(p=>`<article class="special-card" onclick="closeProfile();openReader('${p.id}')"><h3>${escapeHTML(p.title)}</h3><div class="special-meta">${escapeHTML(p.date||'')} · ${poemTags(p).join(' · ')}</div><div class="special-body">${escapeHTML((p.body||'').replace(/\s+/g,' ').slice(0,180))}…</div></article>`).join('');document.getElementById('profileOverlay').classList.add('show');document.body.style.overflow='hidden'}
 function closeProfile(){document.getElementById('profileOverlay').classList.remove('show');document.body.style.overflow=''}
+</script>
+
+<script id="premium-v3-js">
+(function(){
+  const _render=window.render;
+  function safeType(v){const x=String(v??'').replace(/\s+/g,'').trim();return x==='লেখিকা'?'লেখিকা':(x==='লেখক'?'লেখক':'');}
+  function poemKey(p){return 'fav-'+p.id}
+  window.setPremiumFilter=function(type,el){window.__premiumFilter=type;document.querySelectorAll('.premium-filter').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');window.render()};
+  window.render=function(){
+    if(typeof _render==='function')_render();
+    const filter=window.__premiumFilter||'all';
+    const grid=document.getElementById('grid'); if(!grid)return;
+    const cards=[...grid.querySelectorAll('.card')];
+    cards.forEach((card,i)=>{const p=poems?.find(x=>x.id===card.getAttribute('onclick')?.match(/'([^']+)'/)?.[1])||poems?.[i];let show=true;if(filter==='favorite')show=!!p&&localStorage.getItem(poemKey(p))==='1';if(filter==='recent')show=i<6;card.style.display=show?'':'none';
+      const author=card.querySelector('.author'); if(author&&p){author.classList.add('author-link');author.title='লেখকের সব লেখা দেখুন';author.onclick=e=>{e.stopPropagation();openProfileByName(cleanAuthorName(p.author))};}
+      const img=card.querySelector('img');if(img){img.loading='lazy';img.decoding='async';}
+    });
+    const visible=cards.filter(c=>c.style.display!=='none').length;const c=document.getElementById('count');if(c)c.textContent=visible+'টি কবিতা';
+    updatePremiumFeature();
+  };
+  function updatePremiumFeature(){const list=poems||[];const p=list[0];const title=document.getElementById('pfTitle'),ex=document.getElementById('pfExcerpt'),count=document.getElementById('pfCount');if(count)count.textContent=list.length;if(!p)return;if(title)title.textContent=p.title||'আজকের নির্বাচিত লেখা';if(ex)ex.textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,190)+(String(p.body||'').length>190?'…':'');window.featuredId=p.id;}
+  window.changeReaderFont=function(delta){const el=document.getElementById('rpoem');if(!el)return;let n=parseFloat(getComputedStyle(el).fontSize)||20;n=Math.min(38,Math.max(15,n+delta*2));el.style.fontSize=n+'px';localStorage.setItem('reader-font',n)};
+  window.resetReaderFont=function(){const el=document.getElementById('rpoem');if(el){el.style.fontSize='';localStorage.removeItem('reader-font')}};
+  window.togglePoemBookmark=function(){if(!currentId)return;const k='bookmark-'+currentId;const on=localStorage.getItem(k)==='1';localStorage.setItem(k,on?'0':'1');const b=[...document.querySelectorAll('.reader-tools .btn')].find(x=>x.textContent.includes('Save'));if(b)b.textContent=on?'🔖 Save':'🔖 Saved';};
+  window.openAdjacentPoem=function(dir){const a=poems||[];if(!currentId||!a.length)return;let i=a.findIndex(x=>x.id===currentId);if(i<0)return;i=(i+dir+a.length)%a.length;openReader(a[i].id)};
+  function decorateReader(){const el=document.getElementById('rpoem');if(el){const n=localStorage.getItem('reader-font');if(n)el.style.fontSize=n+'px';}const b=[...document.querySelectorAll('.reader-tools .btn')].find(x=>x.textContent.includes('Save'));if(b&&currentId)b.textContent=localStorage.getItem('bookmark-'+currentId)==='1'?'🔖 Saved':'🔖 Save';}
+  const oldOpen=window.openReader;
+  window.openReader=function(id){readerReturnScrollY=window.scrollY||window.pageYOffset||0;oldOpen(id);decorateReader();const ov=document.getElementById('readerOverlay');const prog=document.getElementById('readerProgress');if(ov&&prog){ov.onscroll=()=>{const r=ov.scrollTop/(ov.scrollHeight-ov.clientHeight||1);prog.style.width=Math.max(0,Math.min(100,r*100))+'%'}}};
+  window.addEventListener('load',()=>{setTimeout(()=>window.render(),250)});
+})();
 </script>
 </body></html>
