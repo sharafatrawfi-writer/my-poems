@@ -422,9 +422,28 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
 @media(max-width:760px){.brand-wordmark small{display:none}.brand-logo{width:38px;height:38px}.nav{padding:15px 4vw}.nav-right .btn:nth-child(-n+2){display:none}}
 @media(prefers-reduced-motion:reduce){.hero-mark,.loader-logo,.loader-line i{animation:none!important}.card{animation:none!important}}
 </style>
+
+<style id="phase6-wow-css">
+.phase6-hub{margin:34px 0 10px;display:grid;grid-template-columns:1.35fr .65fr;gap:18px}
+.p6-panel{border:1px solid var(--line);background:linear-gradient(145deg,rgba(255,255,255,.035),rgba(255,255,255,.012));border-radius:24px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.16)}
+.p6-panel h3{margin:0 0 8px;font-size:22px}.p6-note{color:var(--muted);font-size:13px;line-height:1.8;margin:0 0 16px}
+.p6-moods{display:flex;gap:8px;flex-wrap:wrap}.p6-mood,.p6-action{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:9px 13px;cursor:pointer;transition:transform .2s,border-color .2s,background .2s}.p6-mood:hover,.p6-action:hover{transform:translateY(-2px);border-color:rgba(217,185,121,.55)}
+.p6-random{min-height:100%;display:flex;flex-direction:column;justify-content:space-between}.p6-random-title{font-size:25px;margin:4px 0 8px}.p6-random-excerpt{color:#bdb5aa;line-height:1.8;font-size:14px}.p6-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.p6-trending{margin-top:18px}.p6-trend-list{display:grid;gap:10px;margin-top:12px}.p6-trend{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:15px;cursor:pointer;background:rgba(255,255,255,.018);transition:transform .2s,background .2s}.p6-trend:hover{transform:translateX(3px);background:rgba(217,185,121,.06)}.p6-trend b{font-size:14px}.p6-trend small{color:var(--muted)}
+.p6-highlight{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.p6-highlight-card{padding:18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.018);cursor:pointer;transition:transform .22s,box-shadow .22s}.p6-highlight-card:hover{transform:translateY(-4px);box-shadow:0 14px 35px rgba(0,0,0,.2)}.p6-highlight-card h4{margin:8px 0 6px;font-size:17px}.p6-highlight-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+.reader-community{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}.reader-community h3{margin:0 0 12px;font-size:20px}.p6-comment-form{display:flex;gap:8px}.p6-comment-form input{flex:1;min-width:0;background:#0a0a0c;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none}.p6-comments{display:grid;gap:8px;margin-top:12px}.p6-comment{padding:11px 13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.018);font-size:13px}.p6-comment small{display:block;color:var(--muted);margin-top:4px}
+@media(max-width:760px){.phase6-hub{grid-template-columns:1fr}.p6-highlight{grid-template-columns:1fr}.p6-comment-form{flex-direction:column}}
+</style>
+
+
+<style id="wow-entry-experience">
+.page-loader{background:#050506!important;z-index:100000;display:grid!important;place-items:center;transition:opacity .9s ease,visibility .9s ease}.page-loader:before,.page-loader:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.page-loader:before{width:65vw;height:65vw;max-width:760px;max-height:760px;background:radial-gradient(circle,rgba(217,185,121,.10),transparent 68%);animation:wowGlow 4s ease-in-out infinite}.page-loader:after{inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.025) 50%,transparent 65%);transform:translateX(-100%);animation:wowSweep 2.2s ease .25s both}.page-loader.hide{opacity:0;visibility:hidden;pointer-events:none}.wow-entry{position:relative;z-index:2;text-align:center;width:min(92vw,680px);animation:wowEntryIn 1.1s cubic-bezier(.2,.8,.2,1) both}.wow-symbol{width:82px;height:82px;margin:0 auto 24px;border:1px solid rgba(217,185,121,.48);border-radius:20px;display:grid;place-items:center;position:relative;background:linear-gradient(145deg,rgba(217,185,121,.15),rgba(255,255,255,.025));box-shadow:0 0 70px rgba(217,185,121,.15),inset 0 0 25px rgba(217,185,121,.05);animation:wowFloat 3.5s ease-in-out infinite;overflow:hidden}.wow-symbol:before{content:"";position:absolute;inset:5px;border:1px solid rgba(241,220,174,.20);border-radius:14px}.wow-logo-main{position:relative;z-index:1;font:700 38px var(--font-body);line-height:1;color:var(--gold2);transform:translate(-4px,-2px);text-shadow:0 0 20px rgba(217,185,121,.28)}.wow-logo-sub{position:absolute;z-index:2;right:12px;bottom:10px;font:700 17px var(--font-body);font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,121,.3)}.wow-entry-kicker{font:11px "Playfair Display",serif;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}.wow-entry h2{margin:0;color:#f4f0e8;font:500 clamp(27px,6vw,48px)/1.25 "Noto Serif Bengali",serif;letter-spacing:-.02em}.wow-entry p{margin:14px auto 0;color:#8f8980;font-size:13px;letter-spacing:.04em}.wow-line{height:1px;width:0;margin:25px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:wowLine 1.5s ease .55s forwards}.hero-inner{opacity:0;transform:translateY(14px);animation:wowHeroIn 1s cubic-bezier(.2,.8,.2,1) 1.15s forwards}.hero:before{animation:heroGlowDrift 8s ease-in-out infinite alternate}.hero-mark{box-shadow:0 0 70px rgba(217,185,121,.16),inset 0 0 25px rgba(217,185,121,.05)}
+@keyframes wowEntryIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}@keyframes wowLine{to{width:190px}}@keyframes wowFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(2deg)}}@keyframes wowGlow{0%,100%{opacity:.65;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}@keyframes wowSweep{to{transform:translateX(100%)}}@keyframes wowHeroIn{to{opacity:1;transform:none}}@keyframes heroGlowDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-18px,12px,0)}}
+@media(max-width:760px){.wow-symbol{width:68px;height:68px;font-size:25px;margin-bottom:20px}.wow-entry p{font-size:12px}.wow-line{margin-top:20px}}@media(prefers-reduced-motion:reduce){.page-loader:before,.page-loader:after,.wow-symbol,.hero:before{animation:none!important}.hero-inner{animation:none!important;opacity:1;transform:none}}
+</style>
 </head>
 <body style="">
-<div id="pageLoader" class="page-loader" role="status" aria-label="সাইট লোড হচ্ছে"><div class="loader-core"><div class="loader-logo">✦</div><div class="loader-line"><i></i></div><div style="color:var(--muted);font-size:12px">কবিতার আঙিনা প্রস্তুত হচ্ছে…</div></div></div>
+<div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
 <div id="phase5Toast" class="toast" aria-live="polite"></div>
 <nav class="nav">
   <a class="brand brand-lockup" href="#top" aria-label="কবিতার আঙিনা — হোম"><span class="brand-logo" aria-hidden="true"><span>ক</span><i>আ</i></span><span class="brand-wordmark">কবিতার আঙিনা<small>BENGALI LITERARY HOUSE</small></span></a>
@@ -1986,7 +2005,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 <script id="phase5-brand-js">
 (function(){
   const $=id=>document.getElementById(id);
-  function hideLoader(){setTimeout(()=>$("pageLoader")?.classList.add("hide"),180)}
+  function hideLoader(){setTimeout(()=>$("pageLoader")?.classList.add("hide"),1850)}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hideLoader,{once:true});else hideLoader();
   window.addEventListener("load",hideLoader,{once:true});
   let toastTimer; window.phase5Toast=function(msg){const t=$("phase5Toast");if(!t)return;t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200)};
@@ -2002,4 +2021,50 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   document.addEventListener('keydown',e=>{if(e.key==='Escape'){document.querySelectorAll('.overlay.show').forEach(o=>o.setAttribute('data-p5-escape','1'))}});
 })();
 </script>
+
+<script id="phase6-wow-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  const key=(x)=>'p6-'+x;
+  function safeText(v){return String(v??'').replace(/[<>]/g,'')}
+  function likes(p){return Number(localStorage.getItem('like-'+p.id)||0)}
+  function views(p){return Number(localStorage.getItem(key('views-'+p.id))||0)}
+  function bumpView(id){localStorage.setItem(key('views-'+id),String(views({id})+1))}
+  function score(p){return likes(p)*5+views(p)}
+  function getTop(n=5){return [...(window.poems||[])].sort((a,b)=>score(b)-score(a)).slice(0,n)}
+  function ensureHub(){
+    if($('phase6Hub')||!$('archive'))return;
+    const sec=document.createElement('section');sec.className='phase6-hub';sec.id='phase6Hub';
+    sec.innerHTML=`
+      <div class="p6-panel">
+        <div class="eyebrow">Your reading mood</div><h3>আজ তোমার মনের জন্য কোন কবিতাটি?</h3>
+        <p class="p6-note">একটি অনুভূতি বেছে নাও। আঙিনা তোমার জন্য মিলিয়ে একটি লেখা সাজিয়ে দেবে।</p>
+        <div class="p6-moods">
+          <button class="p6-mood" onclick="phase6Mood('প্রেম')">❤️ প্রেম</button><button class="p6-mood" onclick="phase6Mood('বিষণ্ণ')">🌧️ বিষণ্ণ</button><button class="p6-mood" onclick="phase6Mood('শান্ত')">🌿 শান্ত</button><button class="p6-mood" onclick="phase6Mood('রাত')">🌙 রাতজাগা</button>
+        </div>
+        <div class="p6-highlight" id="p6Highlights"></div>
+      </div>
+      <div class="p6-panel p6-random"><div><div class="eyebrow">A little surprise</div><div class="p6-random-title" id="p6RandomTitle">আজ একটি কবিতা বেছে নাও</div><p class="p6-random-excerpt" id="p6RandomExcerpt">হঠাৎ কোনো একটি কবিতা—হয়তো আজ ঠিক তোমার জন্যই।</p></div><div class="p6-actions"><button class="btn gold" onclick="phase6Surprise()">🎲 আমাকে একটি কবিতা দাও</button><button class="p6-action" onclick="phase6Trending()">🔥 আলোচিত লেখা</button></div></div>
+      <div class="p6-panel p6-trending" style="grid-column:1/-1"><div class="eyebrow">This week's pulse</div><h3>🔥 আলোচিত লেখা</h3><div class="p6-trend-list" id="p6Trending"></div></div>`;
+    $('archive').insertAdjacentElement('afterend',sec); renderHub();
+  }
+  function renderHub(){
+    const list=window.poems||[]; if(!list.length)return;
+    const hi=$('p6Highlights'); if(hi){hi.innerHTML=getTop(3).map((p,i)=>`<article class="p6-highlight-card" onclick="phase6Open('${p.id}')"><small>${i===0?'🏆 সপ্তাহের সেরা':i===1?'❤️ পাঠকের পছন্দ':'✦ আলোচিত লেখা'}</small><h4>${safeText(p.title)}</h4><p>${safeText(String(p.body||'').replace(/\s+/g,' ').slice(0,95))}…</p></article>`).join('')}
+    const tr=$('p6Trending'); if(tr){tr.innerHTML=getTop(5).map((p,i)=>`<div class="p6-trend" onclick="phase6Open('${p.id}')"><div><b>${i+1}. ${safeText(p.title)}</b><small>${safeText(cleanAuthorName(p.author)||'অজ্ঞাত লেখক')}</small></div><small>♥ ${likes(p)} · 👁 ${views(p)}</small></div>`).join('')}
+  }
+  window.phase6Open=function(id){bumpView(id);window.openReader(id);setTimeout(renderHub,80)};
+  window.phase6Surprise=function(){const a=window.poems||[];if(!a.length)return;const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'আজকের কবিতা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+(String(p.body||'').length>180?'…':'');phase6Open(p.id)};
+  window.phase6Mood=function(m){window.setMood?.(m,document.querySelector('.mood-btn'));const a=(window.poems||[]).filter(p=>window.moodMatch?window.moodMatch(p):true);if(a.length){const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'তোমার জন্য একটি লেখা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+'…';phase6Open(p.id)}else phase6Surprise()};
+  window.phase6Trending=function(){$('p6Trending')?.scrollIntoView({behavior:'smooth',block:'center'})};
+  window.addPhase6Comment=function(){if(!window.currentId)return;const input=$('p6CommentInput');const text=input?.value.trim();if(!text)return;const k=key('comments-'+currentId),arr=JSON.parse(localStorage.getItem(k)||'[]');arr.unshift({text,at:new Date().toLocaleString('bn-BD')});localStorage.setItem(k,JSON.stringify(arr.slice(0,20)));input.value='';renderPhase6Comments()};
+  function renderPhase6Comments(){const host=$('p6Comments');if(!host||!window.currentId)return;const arr=JSON.parse(localStorage.getItem(key('comments-'+currentId))||'[]');host.innerHTML=arr.length?arr.map(x=>`<div class="p6-comment">${escapeHTML(x.text)}<small>${escapeHTML(x.at)}</small></div>`).join(''):'<small class="muted-note">এখনও কোনো মন্তব্য নেই। প্রথম কথাটি তুমি লিখতে পারো।</small>'}
+  function injectCommunity(){const host=$('shareNote');if(!host||$('phase6Community'))return;const w=document.createElement('div');w.id='phase6Community';w.className='reader-community';w.innerHTML='<h3>💬 পাঠকের কথা</h3><div class="p6-comment-form"><input id="p6CommentInput" maxlength="240" placeholder="এই কবিতাটি নিয়ে কিছু বলো…"><button class="btn gold" onclick="addPhase6Comment()">পাঠাও</button></div><div class="p6-comments" id="p6Comments"></div>';host.parentNode.insertBefore(w,host.nextSibling);renderPhase6Comments()}
+  const oldOpen=window.openReader; window.openReader=function(id){oldOpen(id);bumpView(id);injectCommunity();renderPhase6Comments();setTimeout(renderHub,60)};
+  const oldLike=window.togglePoemLike; window.togglePoemLike=function(){oldLike?.();setTimeout(renderHub,40)};
+  window.addEventListener('load',()=>setTimeout(ensureHub,350));
+  setTimeout(ensureHub,900);
+})();
+</script>
+
 </body></html>
