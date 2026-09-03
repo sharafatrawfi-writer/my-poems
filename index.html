@@ -428,7 +428,7 @@ html{scroll-behavior:smooth}.nav{transition:.35s ease;backdrop-filter:blur(18px)
 .admin-quality-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}.aq-card{padding:15px;border:1px solid var(--line);border-radius:16px;background:var(--panel)}.aq-card b{font-size:24px;color:var(--gold2);display:block}.aq-card span{font-size:12px;color:var(--muted)}
 .loading-shimmer{background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.08),rgba(255,255,255,.03));background-size:200% 100%;animation:shimmer 1.5s infinite}@keyframes shimmer{to{background-position:-200% 0}}
 @media(max-width:760px){.premium-featured{grid-template-columns:1fr}.admin-quality-strip{grid-template-columns:repeat(2,1fr)}.reader-nav{position:sticky;bottom:6px;z-index:9}.hero h1{font-size:clamp(42px,12vw,72px)}}
-@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+@media(prefers-reduced-motion:reduce){#kaLuxuryMenu{transition:none!important}.ka-menu-head,.ka-menu-label,.ka-menu-item,.ka-menu-foot{animation:none!important;opacity:1!important;transform:none!important}*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 
 /* PHASE 5 — BRAND + TYPOGRAPHY + STATES */
 :root{--font-display:"Playfair Display","Noto Serif Bengali",serif;--font-body:"Noto Serif Bengali",serif;--ease:cubic-bezier(.22,1,.36,1)}
@@ -452,7 +452,7 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
 .state-box{grid-column:1/-1;border:1px dashed rgba(255,255,255,.14);border-radius:22px;padding:42px 22px;text-align:center;background:rgba(255,255,255,.025);color:var(--muted);animation:cardIn .45s var(--ease) both}.state-icon{font-size:32px;color:var(--gold2);margin-bottom:8px}.state-box h3{color:var(--text);margin:0 0 7px;font-size:21px}.state-box p{margin:0;line-height:1.8}.error-state{border-color:rgba(220,130,130,.28)}.error-state .state-icon{color:#e6a3a3}
 .toast{position:fixed;left:50%;bottom:24px;z-index:10001;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 16px;border:1px solid var(--line);border-radius:999px;background:rgba(12,12,15,.94);backdrop-filter:blur(14px);box-shadow:0 15px 50px rgba(0,0,0,.35);transition:.3s var(--ease);font-size:13px}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:760px){.brand-wordmark small{display:none}.brand-logo{width:38px;height:38px}.nav{padding:15px 4vw}.nav-right .btn:nth-child(-n+2){display:none}}
-@media(prefers-reduced-motion:reduce){.hero-mark,.loader-logo,.loader-line i{animation:none!important}.card{animation:none!important}}
+@media(prefers-reduced-motion:reduce){#kaLuxuryMenu{transition:none!important}.ka-menu-head,.ka-menu-label,.ka-menu-item,.ka-menu-foot{animation:none!important;opacity:1!important;transform:none!important}.hero-mark,.loader-logo,.loader-line i{animation:none!important}.card{animation:none!important}}
 </style>
 
 <style id="phase6-wow-css">
@@ -471,7 +471,7 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
 <style id="wow-entry-experience">
 .page-loader{background:#050506!important;z-index:100000;display:grid!important;place-items:center;transition:opacity .9s ease,visibility .9s ease}.page-loader:before,.page-loader:after{content:"";position:absolute;border-radius:50%;pointer-events:none}.page-loader:before{width:65vw;height:65vw;max-width:760px;max-height:760px;background:radial-gradient(circle,rgba(217,185,121,.10),transparent 68%);animation:wowGlow 4s ease-in-out infinite}.page-loader:after{inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.025) 50%,transparent 65%);transform:translateX(-100%);animation:wowSweep 2.2s ease .25s both}.page-loader.hide{opacity:0;visibility:hidden;pointer-events:none}.wow-entry{position:relative;z-index:2;text-align:center;width:min(92vw,680px);animation:wowEntryIn 1.1s cubic-bezier(.2,.8,.2,1) both}.wow-symbol{width:82px;height:82px;margin:0 auto 24px;border:1px solid rgba(217,185,121,.48);border-radius:20px;display:grid;place-items:center;position:relative;background:linear-gradient(145deg,rgba(217,185,121,.15),rgba(255,255,255,.025));box-shadow:0 0 70px rgba(217,185,121,.15),inset 0 0 25px rgba(217,185,121,.05);animation:wowFloat 3.5s ease-in-out infinite;overflow:hidden}.wow-symbol:before{content:"";position:absolute;inset:5px;border:1px solid rgba(241,220,174,.20);border-radius:14px}.wow-logo-main{position:relative;z-index:1;font:700 38px var(--font-body);line-height:1;color:var(--gold2);transform:translate(-4px,-2px);text-shadow:0 0 20px rgba(217,185,121,.28)}.wow-logo-sub{position:absolute;z-index:2;right:12px;bottom:10px;font:700 17px var(--font-body);font-style:normal;color:var(--gold);text-shadow:0 0 14px rgba(217,185,121,.3)}.wow-entry-kicker{font:11px "Playfair Display",serif;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}.wow-entry h2{margin:0;color:#f4f0e8;font:500 clamp(27px,6vw,48px)/1.25 "Noto Serif Bengali",serif;letter-spacing:-.02em}.wow-entry p{margin:14px auto 0;color:#8f8980;font-size:13px;letter-spacing:.04em}.wow-line{height:1px;width:0;margin:25px auto 0;background:linear-gradient(90deg,transparent,var(--gold),transparent);animation:wowLine 1.5s ease .55s forwards}.hero-inner{opacity:0;transform:translateY(14px);animation:wowHeroIn 1s cubic-bezier(.2,.8,.2,1) 1.15s forwards}.hero:before{animation:heroGlowDrift 8s ease-in-out infinite alternate}.hero-mark{box-shadow:0 0 70px rgba(217,185,121,.16),inset 0 0 25px rgba(217,185,121,.05)}
 @keyframes wowEntryIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}@keyframes wowLine{to{width:190px}}@keyframes wowFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-7px) rotate(2deg)}}@keyframes wowGlow{0%,100%{opacity:.65;transform:scale(.94)}50%{opacity:1;transform:scale(1.04)}}@keyframes wowSweep{to{transform:translateX(100%)}}@keyframes wowHeroIn{to{opacity:1;transform:none}}@keyframes heroGlowDrift{from{transform:translate3d(0,0,0)}to{transform:translate3d(-18px,12px,0)}}
-@media(max-width:760px){.wow-symbol{width:68px;height:68px;font-size:25px;margin-bottom:20px}.wow-entry p{font-size:12px}.wow-line{margin-top:20px}}@media(prefers-reduced-motion:reduce){.page-loader:before,.page-loader:after,.wow-symbol,.hero:before{animation:none!important}.hero-inner{animation:none!important;opacity:1;transform:none}}
+@media(max-width:760px){.wow-symbol{width:68px;height:68px;font-size:25px;margin-bottom:20px}.wow-entry p{font-size:12px}.wow-line{margin-top:20px}}@media(prefers-reduced-motion:reduce){#kaLuxuryMenu{transition:none!important}.ka-menu-head,.ka-menu-label,.ka-menu-item,.ka-menu-foot{animation:none!important;opacity:1!important;transform:none!important}.page-loader:before,.page-loader:after,.wow-symbol,.hero:before{animation:none!important}.hero-inner{animation:none!important;opacity:1;transform:none}}
 </style>
 
 <!-- STEP 4: SEARCH DISCOVERY SEO -->
@@ -492,10 +492,79 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
   ]
 }
 </script>
+
+<style id="ka-luxury-menu-css">
+#kaMenuToggle{position:fixed;right:22px;top:92px;z-index:10040;width:58px;height:58px;border:1px solid rgba(231,199,107,.42);border-radius:18px;background:linear-gradient(145deg,rgba(25,23,18,.94),rgba(7,7,9,.88));backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -1px 0 rgba(0,0,0,.45),0 12px 40px rgba(0,0,0,.45),0 0 0 1px rgba(212,175,55,.05),0 0 34px rgba(212,175,55,.12);transition:transform .45s cubic-bezier(.2,.8,.2,1),border-color .35s ease,box-shadow .35s ease} #kaMenuToggle:before{content:"";position:absolute;inset:4px;border-radius:14px;border:1px solid rgba(231,199,107,.10);pointer-events:none} #kaMenuToggle:after{content:"";position:absolute;width:7px;height:7px;right:9px;top:8px;border-radius:50%;background:#f3d98a;box-shadow:0 0 10px rgba(243,217,138,.75);opacity:.9}
+#kaMenuToggle:hover{transform:translateY(-3px) scale(1.035);border-color:rgba(231,199,107,.82);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 16px 48px rgba(0,0,0,.52),0 0 38px rgba(212,175,55,.22)} #kaMenuToggle:active{transform:scale(.96)}
+#kaMenuToggle span,#kaMenuToggle span:before,#kaMenuToggle span:after{display:block;width:23px;height:2px;background:linear-gradient(90deg,#b98a2e,#f4d98a,#c79a3d);border-radius:3px;transition:.3s ease;content:"";position:absolute}
+#kaMenuToggle span:before{transform:translateY(-7px)} #kaMenuToggle span:after{transform:translateY(7px)}
+#kaMenuToggle.open span{background:transparent} #kaMenuToggle.open span:before{transform:rotate(45deg)} #kaMenuToggle.open span:after{transform:rotate(-45deg)}
+#kaMenuShade{position:fixed;inset:0;background:radial-gradient(circle at 78% 20%,rgba(212,175,55,.09),transparent 28%),rgba(0,0,0,.66);backdrop-filter:blur(7px) saturate(115%);-webkit-backdrop-filter:blur(7px) saturate(115%);opacity:0;visibility:hidden;z-index:10030;transition:opacity .5s ease,visibility .5s ease}#kaMenuShade:before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(243,217,138,.045) 50%,transparent 70%);transform:translateX(-100%);transition:transform .9s cubic-bezier(.2,.7,.2,1)}#kaMenuShade.show:before{transform:translateX(100%)}
+#kaMenuShade.show{opacity:1;visibility:visible}
+#kaLuxuryMenu{position:fixed;top:0;right:0;width:min(410px,92vw);height:100dvh;z-index:10050;background:linear-gradient(155deg,rgba(25,24,22,.985),rgba(9,9,11,.995) 58%,rgba(5,5,7,.995));border-left:1px solid rgba(231,199,107,.30);box-shadow:-34px 0 100px rgba(0,0,0,.68),-1px 0 30px rgba(212,175,55,.08);transform:translateX(105%);transition:transform .62s cubic-bezier(.16,1,.3,1);overflow-y:auto;padding:30px 21px 36px;isolation:isolate}#kaLuxuryMenu:before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 82% 8%,rgba(231,199,107,.13),transparent 27%),linear-gradient(180deg,rgba(255,255,255,.025),transparent 24%);pointer-events:none}#kaLuxuryMenu:after{content:"";position:absolute;left:-1px;top:9%;width:1px;height:82%;background:linear-gradient(transparent,rgba(243,217,138,.7),transparent);box-shadow:0 0 18px rgba(243,217,138,.28);pointer-events:none}
+#kaLuxuryMenu.show{transform:translateX(0)}.ka-menu-head,.ka-menu-label,.ka-menu-item,.ka-menu-foot{opacity:0;transform:translateX(18px)}#kaLuxuryMenu.show .ka-menu-head{animation:kaMenuIn .55s .08s cubic-bezier(.2,.8,.2,1) forwards}#kaLuxuryMenu.show .ka-menu-label{animation:kaMenuIn .45s .18s cubic-bezier(.2,.8,.2,1) forwards}#kaLuxuryMenu.show .ka-menu-item{animation:kaMenuIn .5s cubic-bezier(.2,.8,.2,1) forwards}#kaLuxuryMenu.show .ka-menu-item:nth-child(1){animation-delay:.22s}#kaLuxuryMenu.show .ka-menu-item:nth-child(2){animation-delay:.25s}#kaLuxuryMenu.show .ka-menu-item:nth-child(3){animation-delay:.28s}#kaLuxuryMenu.show .ka-menu-item:nth-child(4){animation-delay:.31s}#kaLuxuryMenu.show .ka-menu-item:nth-child(5){animation-delay:.34s}#kaLuxuryMenu.show .ka-menu-item:nth-child(6){animation-delay:.37s}#kaLuxuryMenu.show .ka-menu-item:nth-child(7){animation-delay:.40s}#kaLuxuryMenu.show .ka-menu-item:nth-child(8){animation-delay:.43s}#kaLuxuryMenu.show .ka-menu-item:nth-child(9){animation-delay:.46s}#kaLuxuryMenu.show .ka-menu-item:nth-child(10){animation-delay:.49s}#kaLuxuryMenu.show .ka-menu-item:nth-child(11){animation-delay:.52s}#kaLuxuryMenu.show .ka-menu-foot{animation:kaMenuIn .5s .56s cubic-bezier(.2,.8,.2,1) forwards}@keyframes kaMenuIn{to{opacity:1;transform:none}}
+.ka-menu-head{display:flex;align-items:center;justify-content:space-between;padding:6px 6px 24px;border-bottom:1px solid rgba(255,255,255,.08);position:relative}.ka-menu-head:after{content:"";position:absolute;bottom:-1px;left:6px;width:72px;height:1px;background:linear-gradient(90deg,#d9b95f,transparent);box-shadow:0 0 12px rgba(217,185,95,.25)}
+.ka-menu-brand{display:flex;align-items:center;gap:12px}.ka-menu-mark{width:43px;height:43px;border:1px solid rgba(212,175,55,.38);border-radius:13px;display:grid;place-items:center;color:#e7c76b;font-family:serif;font-size:22px;position:relative}.ka-menu-mark i{position:absolute;font-size:12px;right:5px;bottom:3px;font-style:normal}.ka-menu-brand b{font-family:serif;font-size:18px;color:#f4eee0}.ka-menu-brand small{display:block;font:9px/1.2 Arial,sans-serif;letter-spacing:2px;color:#9c927d;margin-top:4px}.ka-menu-close{border:0;background:transparent;color:#aaa;font-size:27px;cursor:pointer;width:42px;height:42px;border-radius:12px}.ka-menu-close:hover{background:rgba(255,255,255,.06);color:#fff}
+.ka-menu-label{margin:22px 7px 9px;font:9px/1 Arial,sans-serif;letter-spacing:2.4px;color:#8f846d}.ka-menu-list{display:grid;gap:5px}.ka-menu-item{width:100%;border:1px solid transparent;background:linear-gradient(90deg,rgba(255,255,255,.018),transparent);color:#ddd7cb;padding:13px 13px;border-radius:14px;display:flex;align-items:center;gap:13px;text-align:left;cursor:pointer;font-family:inherit;font-size:14px;transition:transform .3s cubic-bezier(.2,.8,.2,1),background .3s ease,border-color .3s ease,color .3s ease;position:relative;overflow:hidden}.ka-menu-item:before{content:"";position:absolute;left:0;top:12%;bottom:12%;width:2px;background:linear-gradient(transparent,#e7c76b,transparent);transform:scaleY(0);transition:transform .3s ease}.ka-menu-item:hover:before{transform:scaleY(1)}.ka-menu-item:hover{background:rgba(212,175,55,.08);border-color:rgba(212,175,55,.16);color:#f4d982;transform:translateX(-2px)}.ka-menu-item .ico{width:30px;height:30px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(145deg,rgba(231,199,107,.10),rgba(255,255,255,.035));border:1px solid rgba(231,199,107,.09);font-size:14px;transition:.3s ease}.ka-menu-item:hover .ico{background:rgba(231,199,107,.13);border-color:rgba(231,199,107,.28);box-shadow:0 0 18px rgba(231,199,107,.10);transform:scale(1.05)}.ka-menu-item .arrow{margin-left:auto;color:#776e60;font-size:16px}.ka-menu-foot{margin:22px 7px 0;padding-top:17px;border-top:1px solid rgba(255,255,255,.07);color:#746d60;font-size:11px;line-height:1.8;text-align:center}
+body.ka-menu-lock{overflow:hidden}
+@media(max-width:700px){#kaMenuToggle{right:14px;top:78px;width:46px;height:46px;border-radius:14px}.ka-menu-item{padding:12px}.ka-menu-label{margin-top:18px}}
+</style>
+<style id="poetry-card-2-premium">
+/* Poetry Card 2.0 — luxury editorial treatment */
+.card{isolation:isolate;transform:translateZ(0);border:1px solid rgba(217,185,121,.18);border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 58%,rgba(217,185,121,.035));box-shadow:0 18px 50px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.055);padding:28px;min-height:280px;transition:transform .55s cubic-bezier(.2,.8,.2,1),border-color .45s ease,box-shadow .55s ease,background .55s ease}
+.card:before{content:"";position:absolute;inset:0;z-index:-2;border-radius:inherit;background:radial-gradient(circle at 82% 8%,rgba(217,185,121,.13),transparent 34%),linear-gradient(120deg,transparent 30%,rgba(255,255,255,.045) 48%,transparent 64%);opacity:.7;pointer-events:none}
+.card:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-130px;bottom:-145px;background:rgba(217,185,121,.09);filter:blur(18px);z-index:-1;transition:transform .7s ease,opacity .5s ease}
+.card:hover{transform:translateY(-9px) scale(1.012);border-color:rgba(217,185,121,.48);background:linear-gradient(145deg,rgba(255,255,255,.09),rgba(255,255,255,.025) 60%,rgba(217,185,121,.06));box-shadow:0 28px 75px rgba(0,0,0,.34),0 0 0 1px rgba(217,185,121,.07),0 0 35px rgba(217,185,121,.08)}
+.card:hover:after{transform:scale(1.35);opacity:1}
+.card .num{position:relative;display:inline-flex;align-items:center;gap:9px;color:var(--gold);font:11px "Playfair Display",serif;letter-spacing:.22em;text-transform:uppercase}
+.card .num:before{content:"";width:18px;height:1px;background:linear-gradient(90deg,var(--gold),transparent);opacity:.75}
+.card h3{font-size:29px;font-weight:500;line-height:1.35;margin:22px 0 9px;letter-spacing:-.01em;transition:transform .45s ease,color .45s ease;text-wrap:balance}
+.card:hover h3{transform:translateX(3px);color:#f2e8d7}
+.card .author{position:relative;margin-top:5px;display:flex;align-items:center;gap:6px;font-size:13px}
+.card .excerpt{position:relative;color:#bcb5aa;line-height:2;font-size:15px;margin-top:15px;max-width:95%;-webkit-line-clamp:4}
+.card .date{position:absolute;bottom:25px;left:28px;color:#777;font-size:11px;letter-spacing:.08em}
+.card-media{height:225px;margin:-28px -28px 24px;overflow:hidden;position:relative;background:#0d0d0f;border-radius:25px 25px 12px 12px}
+.card-media:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.02) 30%,rgba(0,0,0,.42) 100%),linear-gradient(90deg,rgba(217,185,121,.08),transparent 45%);pointer-events:none;opacity:.8;transition:opacity .5s ease}
+.card-media:before{content:"READ";position:absolute;z-index:2;right:16px;bottom:14px;padding:7px 10px;border:1px solid rgba(255,255,255,.18);border-radius:999px;background:rgba(0,0,0,.28);backdrop-filter:blur(8px);color:rgba(245,235,218,.78);font:9px "Playfair Display",serif;letter-spacing:.2em;opacity:0;transform:translateY(7px);transition:.45s ease}
+.card:hover .card-media:before{opacity:1;transform:translateY(0)}
+.card:hover .card-media:after{opacity:1}
+.card-media img{transition:transform .9s cubic-bezier(.2,.7,.2,1),filter .6s ease}
+.card:hover .card-media img{transform:scale(1.055);filter:saturate(.9) contrast(1.04)}
+.card .favorite{z-index:5;transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease}
+.card .favorite:hover{transform:scale(1.1)}
+@media(max-width:700px){.card{border-radius:22px;padding:22px;min-height:265px}.card-media{height:190px;margin:-22px -22px 20px;border-radius:21px 21px 10px 10px}.card h3{font-size:25px}.card .date{left:22px;bottom:20px}.card:hover{transform:translateY(-5px) scale(1.006)}}
+@media(prefers-reduced-motion:reduce){.card,.card:after,.card h3,.card-media img,.card-media:before{transition:none!important}.card:hover{transform:none}}
+</style>
 </head>
 <body style="">
 <div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
 <div id="phase5Toast" class="toast" aria-live="polite"></div>
+<div id="kaMenuShade" aria-hidden="true"></div>
+<button id="kaMenuToggle" type="button" aria-label="মেনু খুলুন" aria-expanded="false"><span></span></button>
+<aside id="kaLuxuryMenu" aria-label="কবিতার আঙিনা মেনু" aria-hidden="true">
+  <div class="ka-menu-head"><div class="ka-menu-brand"><div class="ka-menu-mark">ক<i>আ</i></div><div><b>কবিতার আঙিনা</b><small>BENGALI LITERARY HOUSE</small></div></div><button class="ka-menu-close" type="button" aria-label="মেনু বন্ধ করুন">×</button></div>
+  <div class="ka-menu-label">EXPLORE THE HOUSE</div>
+  <div class="ka-menu-list">
+    <button class="ka-menu-item" data-target="top"><span class="ico">⌂</span>হোম <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-target="discover"><span class="ico">✦</span>আজকের আবিষ্কার <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-target="archive"><span class="ico">✒</span>কবিতার সংগ্রহ <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-target="specialSpaces"><span class="ico">◈</span>বিশেষ বিভাগ <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="story"><span class="ico">▱</span>গল্পের ঘর <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="ghost"><span class="ico">☾</span>ভৌতিক গল্প <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="collab"><span class="ico">∞</span>যৌথ কবিতা <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="unsaid"><span class="ico">✉</span>না-বলা কথা <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="feeling"><span class="ico">♡</span>অনুভূতির পাতা <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="novel"><span class="ico">▤</span>ছোট উপন্যাস <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-target="about"><span class="ico">i</span>আমাদের সম্পর্কে <span class="arrow">›</span></button>
+  </div>
+  <div class="ka-menu-label">YOUR SPACE</div>
+  <div class="ka-menu-list">
+    <button class="ka-menu-item" data-action="favorites"><span class="ico">♥</span>প্রিয় লেখা <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="submit"><span class="ico">＋</span>নিজের কবিতা যোগ করুন <span class="arrow">›</span></button>
+  </div>
+  <div class="ka-menu-foot">নীরবতারও একটি ভাষা আছে<br>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</div>
+</aside>
+
 <nav class="nav">
   <a class="brand brand-lockup" href="#top" aria-label="কবিতার আঙিনা — হোম"><span class="brand-logo" aria-hidden="true"><span>ক</span><i>আ</i></span><span class="brand-wordmark">কবিতার আঙিনা<small>BENGALI LITERARY HOUSE</small></span></a>
   <div class="nav-right">
@@ -2138,4 +2207,28 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 .external-discovery-copy{max-width:1100px;margin:10px auto 24px;padding:0 22px;color:rgba(245,240,230,.48);font-size:.78rem;line-height:1.8;text-align:center}
 .external-discovery-copy strong{color:rgba(217,185,121,.82)}
 </style>
+
+<script id="ka-luxury-menu-js">
+(function(){
+  const toggle=document.getElementById('kaMenuToggle'), menu=document.getElementById('kaLuxuryMenu'), shade=document.getElementById('kaMenuShade');
+  if(!toggle||!menu||!shade)return;
+  function closeMenu(){menu.classList.remove('show');shade.classList.remove('show');toggle.classList.remove('open');toggle.setAttribute('aria-expanded','false');menu.setAttribute('aria-hidden','true');document.body.classList.remove('ka-menu-lock')}
+  function openMenu(){menu.classList.add('show');shade.classList.add('show');toggle.classList.add('open');toggle.setAttribute('aria-expanded','true');menu.setAttribute('aria-hidden','false');document.body.classList.add('ka-menu-lock')}
+  toggle.addEventListener('click',()=>menu.classList.contains('show')?closeMenu():openMenu()); shade.addEventListener('click',closeMenu); menu.querySelector('.ka-menu-close').addEventListener('click',closeMenu);
+  function go(id){const el=document.getElementById(id);if(!el)return;closeMenu();setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),90)}
+  menu.querySelectorAll('[data-target]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.target)));
+  menu.querySelectorAll('[data-action]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.action;closeMenu();setTimeout(()=>{
+    if(a==='story'&&window.openStoryRoom)window.openStoryRoom();
+    else if(a==='ghost'&&window.openGhostSpace)window.openGhostSpace();
+    else if(a==='collab'&&window.openCollabSpace)window.openCollabSpace();
+    else if(a==='unsaid'&&window.openUnsaidSpace)window.openUnsaidSpace();
+    else if(a==='feeling'&&window.openFeelingSpace)window.openFeelingSpace();
+    else if(a==='novel'&&window.openNovelSpace)window.openNovelSpace();
+    else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorites"]')?.click(),300)}
+    else if(a==='submit'&&window.openEditor)window.openEditor();
+  },100)}));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('show'))closeMenu()});
+  window.addEventListener('scroll',()=>{if(menu.classList.contains('show'))return;toggle.style.opacity=window.scrollY>80?'1':'.92'}, {passive:true});
+})();
+</script>
 </body></html>
