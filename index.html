@@ -184,20 +184,15 @@ footer strong{color:#b9b0a3}
 /* V2 premium polish */
 .hero-inner{animation:heroIn .9s ease both}.hero-mark{animation:floatMark 4s ease-in-out infinite}.card,.feature-card,.special-card{will-change:transform}.section{scroll-margin-top:90px}.hub-kicker{display:inline-flex;padding:7px 11px;border:1px solid rgba(217,185,121,.2);border-radius:999px;background:rgba(217,185,121,.05)}#cropCanvas{aspect-ratio:3/4}.crop-wrap{max-height:70vh;max-width:430px}.special-meta{color:#8f8980;font-size:12px;margin:8px 0 14px}.admin-special-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}@keyframes heroIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}@keyframes floatMark{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 
+
 /* SPECIAL READING + ADMIN POLISH */
 .special-card{padding:22px 24px;background:linear-gradient(145deg,rgba(255,255,255,.055),rgba(255,255,255,.018));border-radius:22px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
 .special-card h3{font-family:"Noto Serif Bengali",serif;font-size:24px;font-weight:600;letter-spacing:0}
 .special-meta{font-family:"Noto Serif Bengali",serif;font-size:13px;line-height:1.8}
 .special-body,.special-lines{font-family:"Noto Serif Bengali",serif;font-size:18px;line-height:2.15;letter-spacing:.01em;color:#e9e3da;max-width:850px}
 .special-cover-thumb{display:block;width:min(100%,520px);max-height:360px;object-fit:cover;border-radius:18px;margin:0 0 18px}
-.published-admin-section{margin:0 0 30px;padding:20px;border:1px solid var(--line);border-radius:22px;background:rgba(255,255,255,.018)}
-.published-admin-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
-.published-admin-section-head h3{margin:0;font-family:"Noto Serif Bengali",serif;font-size:22px}
-.published-admin-section-head span{color:var(--gold);font-size:12px}
-.published-special-card{display:flex;gap:20px;align-items:flex-start;margin-top:14px}
-.published-special-card .published-admin-cover{flex:0 0 180px;width:180px;height:130px;margin:0}
-.published-special-copy{flex:1;min-width:0}
-.special-admin-body{max-height:170px;overflow:auto;padding-right:8px}
+
+
 @media(min-width:900px){.special-card{padding:28px 32px}.special-body,.special-lines{font-size:19px;line-height:2.2;max-width:900px}}
 @media(max-width:700px){.published-special-card{display:block}.published-special-card .published-admin-cover{width:100%;height:190px;margin-bottom:16px}.special-body,.special-lines{font-size:17px;line-height:2.05}}
 /* STORY ROOM PRO */
@@ -249,6 +244,30 @@ footer strong{color:#b9b0a3}
 
 <style>
 .special-cover-thumb{width:100%;max-height:260px;object-fit:cover;border-radius:14px;margin:0 0 12px;display:block;background:#111}.special-image-preview img{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:14px;margin-top:10px}.special-image-note{font-size:12px;opacity:.75;margin-top:6px}.special-crop-tools{display:none}.special-crop-tools.active{display:block}.special-crop-wrap{position:relative;max-width:430px;margin:10px auto;overflow:hidden;border-radius:12px;background:#111;touch-action:none}.special-crop-wrap canvas{display:block;width:100%;height:auto;aspect-ratio:3/4;cursor:grab}.special-crop-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}.special-crop-actions button{border:0;border-radius:10px;padding:9px 13px;cursor:pointer}.special-crop-hint{font-size:13px;opacity:.8;text-align:center}
+
+/* RESTORED ORIGINAL ADMIN PANEL */
+.pending-card{border:1px solid var(--line);border-radius:18px;padding:18px;margin:12px 0;background:#111}
+.pending-card h3{margin:0 0 6px}
+.pending-card .meta{font-size:12px;color:#999;margin-bottom:12px}
+.pending-card .pending-body{white-space:pre-wrap;line-height:1.8;color:#ddd}
+.pending-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.admin-section{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.admin-section h3{font-size:20px;margin:0 0 12px;color:var(--gold2)}
+.admin-small{color:#777;font-size:12px;line-height:1.7}
+.btn.danger{border-color:rgba(220,90,90,.4);color:#f0aaaa}
+.dashboard-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.admin-layout{display:grid;grid-template-columns:190px 1fr;gap:18px;margin-top:18px}.admin-sidebar{border:1px solid var(--line);border-radius:18px;padding:10px;background:rgba(255,255,255,.025);height:max-content;position:sticky;top:12px}.admin-nav{width:100%;display:flex;flex-direction:column;gap:7px}.admin-nav button{width:100%;text-align:left;border:1px solid transparent;background:transparent;color:#bdb6ad;border-radius:12px;padding:11px 12px;cursor:pointer;font:inherit}.admin-nav button:hover,.admin-nav button.active{background:rgba(217,185,121,.1);border-color:rgba(217,185,121,.25);color:#ead5a7}.admin-nav .req-count{float:right;min-width:22px;height:22px;line-height:22px;text-align:center;border-radius:999px;background:#8d2929;color:#fff;font-size:11px}.admin-panel{min-width:0}.admin-panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.admin-panel-title h3{margin:0;color:var(--gold2)}
+@media(max-width:760px){.admin-layout{grid-template-columns:1fr}.admin-sidebar{position:static}.admin-nav{display:grid;grid-template-columns:repeat(3,1fr)}.admin-nav button{font-size:12px;text-align:center;padding:10px 7px}.admin-nav .req-count{float:none;display:inline-flex;align-items:center;justify-content:center;margin-left:4px}}
+.dashboard-stat{border:1px solid var(--line);border-radius:16px;padding:18px;background:rgba(255,255,255,.035)}
+.dashboard-stat .label{font-size:12px;color:#999;margin-bottom:8px}
+.dashboard-stat .value{font-size:30px;color:var(--gold2);font-weight:700}
+.dashboard-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 20px}
+.admin-user{font-size:12px;color:#777;margin-top:-6px;margin-bottom:14px}
+@media(max-width:760px){.dashboard-grid{grid-template-columns:1fr}}
+
+
+
+
 </style>
 </style>
 
@@ -309,6 +328,51 @@ footer strong{color:#b9b0a3}
 .story-image-label{display:inline-flex!important;align-items:center;justify-content:center;cursor:pointer;margin-top:4px;}
 .story-cover-preview{margin-top:10px;max-width:260px;}
 .story-cover-preview img{display:block;width:100%;max-height:260px;object-fit:cover;border-radius:14px;border:1px solid rgba(255,255,255,.12);}
+</style>
+
+<style id="special-reading-writing-comfort">
+/* শুধু বিশেষ বিভাগ: লেখা ও পড়ার আরাম */
+.special-card,.story-card,.story-reader-body,.special-body,.special-lines,
+#storyBody,#ghostBody,#collabLines,#unsaidBody,#feelingBody,#novelBody{
+  font-family:"Noto Serif Bengali","Noto Serif",serif;
+}
+.special-card{padding:28px 30px;border-radius:24px}
+.special-card h3,.story-card h3,.story-reader-title{
+  font-family:"Noto Serif Bengali","Noto Serif",serif;letter-spacing:0
+}
+.special-body,.special-lines,.story-excerpt,.story-reader-body{
+  font-size:18px;line-height:2.15;letter-spacing:.01em;word-spacing:.04em;color:#e8e2d9
+}
+.story-reader-body{font-size:19px;line-height:2.25;max-width:900px}
+#storyBody,#ghostBody,#collabLines,#unsaidBody,#feelingBody,#novelBody{
+  min-height:320px;font-size:17px;line-height:2.05;letter-spacing:.01em;padding:16px 18px
+}
+.story-reader-head{padding-bottom:22px;margin-bottom:28px}
+@media(min-width:900px){
+  .special-card{padding:34px 38px}
+  .special-body,.special-lines{font-size:19px;line-height:2.25}
+  #storyBody,#ghostBody,#collabLines,#unsaidBody,#feelingBody,#novelBody{
+    min-height:380px;font-size:18px;line-height:2.1
+  }
+}
+@media(max-width:700px){
+  .special-card{padding:22px 20px}
+  .special-body,.special-lines,.story-reader-body{font-size:17px;line-height:2.08}
+  #storyBody,#ghostBody,#collabLines,#unsaidBody,#feelingBody,#novelBody{
+    min-height:280px;font-size:16px;line-height:2
+  }
+}
+</style>
+
+<style id="admin-poem-image-size">
+/* Admin panel: ছবির সাইজ কবিতার কার্ডের সাথে ছোট ও ভারসাম্যপূর্ণ */
+.admin-poem-cover,.published-admin-cover{
+  width:110px!important;height:80px!important;object-fit:cover!important;
+  border-radius:10px!important;display:block;
+}
+@media(max-width:700px){
+  .published-special-card .published-admin-cover{width:110px!important;height:80px!important;margin:0 0 8px!important}
+}
 </style>
 </head>
 <body style="">
@@ -1128,7 +1192,7 @@ render();
 
 <div class="overlay" id="specialCropOverlay" onclick="if(event.target===this)closeSpecialCropper()"><article class="reader modal wide-modal"><button class="close" onclick="closeSpecialCropper()">×</button><div class="eyebrow">Image crop</div><h2>ছবি Crop / Resize করুন</h2><div class="special-crop-hint">ছবিটি টেনে position ঠিক করুন • Zoom দিয়ে মাপ মিলান • ৩:৪ কভার</div><div class="special-crop-wrap"><canvas id="specialCropCanvas"></canvas></div><div class="special-crop-actions"><button class="btn" onclick="zoomSpecialCrop(.85)">− Zoom</button><button class="btn" onclick="resetSpecialCrop()">↺ Reset</button><button class="btn" onclick="zoomSpecialCrop(1.15)">+ Zoom</button><button class="btn gold" onclick="applySpecialCrop()">✓ Crop & Save</button></div></article></div>
 
-<div class="overlay" id="specialEditOverlay" onclick="if(event.target===this)closeSpecialEdit()"><article class="reader modal"><button class="close" onclick="closeSpecialEdit()">×</button><div class="eyebrow">Admin editor</div><h2 id="specialEditHeading">Special লেখা Edit</h2><div class="field"><label>লেখক</label><input id="specialEditAuthor"></div><div class="field"><label>নামটি কীভাবে দেখাবে?</label><div class="author-type-select" role="group" aria-label="লেখক বা লেখিকা নির্বাচন"><label class="author-type-option"><input type="radio" name="specialEditAuthorType" value="লেখক" checked> ✍ লেখক</label><label class="author-type-option"><input type="radio" name="specialEditAuthorType" value="লেখিকা"> ✍ লেখিকা</label></div></div><div class="field"><label>শিরোনাম / উদ্দেশ্য</label><input id="specialEditTitle"></div><div class="field" id="specialEditCategoryWrap" style="display:none"><label>গল্পের বিভাগ</label><select id="specialEditCategory"><option>প্রেম</option><option>জীবন</option><option>রহস্য</option><option>অনুপ্রেরণা</option><option>কল্পকাহিনি</option><option>সামাজিক</option></select></div><div class="field" id="specialEditCoverWrap" style="display:none"><label>কভার ছবি</label><label class="file-label story-image-label" for="specialEditCoverFile">🖼️ ছবি বেছে নিন</label><input id="specialEditCoverFile" type="file" accept="image/*" style="display:none" onchange="handleSpecialEditCover(this)"><div id="specialEditCoverPreview" class="story-cover-preview"></div><input id="specialEditCover" type="hidden"></div><div class="field"><label>লেখা</label><textarea id="specialEditBody"></textarea></div><div class="field"><label>তারিখ</label><input id="specialEditDate" type="date"></div><div class="reader-actions"><button class="btn" onclick="closeSpecialEdit()">বাতিল</button><button class="btn gold" onclick="saveSpecialEdit()">সংরক্ষণ করুন</button></div></article></div>
+<div class="overlay" id="specialEditOverlay" onclick="if(event.target===this)closeSpecialEdit()"><article class="reader modal"><button class="close" onclick="closeSpecialEdit()">×</button><div class="eyebrow">Admin editor</div><h2 id="specialEditHeading">Special লেখা Edit</h2><div class="field"><label>লেখক</label><input id="specialEditAuthor"></div><div class="field"><label>নামটি কীভাবে দেখাবে?</label><div class="author-type-select" role="group" aria-label="লেখক বা লেখিকা নির্বাচন"><label class="author-type-option"><input type="radio" name="specialEditAuthorType" value="লেখক" checked> ✍ লেখক</label><label class="author-type-option"><input type="radio" name="specialEditAuthorType" value="লেখিকা"> ✍ লেখিকা</label></div></div><div class="field"><label>শিরোনাম / উদ্দেশ্য</label><input id="specialEditTitle"></div><div class="field" id="specialEditCategoryWrap" style="display:none"><label>গল্পের বিভাগ</label><select id="specialEditCategory"><option>প্রেম</option><option>জীবন</option><option>রহস্য</option><option>অনুপ্রেরণা</option><option>কল্পকাহিনি</option><option>সামাজিক</option></select></div><div class="field" id="specialEditCoverWrap" style="display:none"><label>কভার ছবি</label><label class="file-label story-image-label" for="specialEditCoverFile">🖼️ ছবি বেছে নিন</label><input id="specialEditCoverFile" type="file" accept="image/*" style="display:none" onchange="handleSpecialEditCover(this)"><div id="specialEditCoverPreview" class="story-cover-preview"></div><div class="crop-actions" style="margin-top:10px"><button type="button" class="btn" onclick="cropExistingSpecialEditImage()">✂️ Crop / Resize বর্তমান ছবি</button><button type="button" class="btn" onclick="removeSpecialEditImage()">🗑️ ছবি সরান</button></div><input id="specialEditCover" type="hidden"></div><div class="field"><label>লেখা</label><textarea id="specialEditBody"></textarea></div><div class="field"><label>তারিখ</label><input id="specialEditDate" type="date"></div><div class="reader-actions"><button class="btn" onclick="closeSpecialEdit()">বাতিল</button><button class="btn gold" onclick="saveSpecialEdit()">সংরক্ষণ করুন</button></div></article></div>
 
 <div class="overlay" id="profileOverlay" onclick="if(event.target===this)closeProfile()"><article class="reader modal modal-profile"><button class="close" onclick="closeProfile()">×</button><div class="eyebrow">Writer profile</div><h2 id="profileName">লেখক</h2><div id="profileStats" class="special-meta"></div><div id="profileWorks" class="special-list"></div></article></div>
 
@@ -1171,7 +1235,7 @@ render();
           <div class="admin-section"><h3>বিশেষ বিভাগ — Requests</h3><div id="specialAdminList"></div></div>
         </section>
         <section id="adminPanelPublished" style="display:none">
-          <div class="admin-panel-title"><h3>প্রকাশিত কবিতা</h3><button class="btn" onclick="loadPublishedAdmin()">↻ Refresh</button></div>
+          <div class="admin-panel-title"><h3>Published — কবিতা ও সব বিভাগ</h3><button class="btn" onclick="loadPublishedAdmin()">↻ Refresh</button></div>
           <div id="publishedList"></div>
         </section>
       </main>
@@ -1362,32 +1426,48 @@ async function loadPublishedAdmin(){
   try{
     await ensureInitialPoemsPublished();
     const read=async col=>{try{return await p.getDocs(p.collection(p.db,col))}catch(e){console.warn("Published read skipped:",col,e.message);return null}};
-    const [poemSnap,storySnap,ghostSnap,unsaidSnap,feelingSnap,novelSnap]=await Promise.all([
-      read("publishedPoems"),read("stories"),read("ghostStories"),read("unsaidLetters"),read("feelingLetters"),read("shortNovels")
+    const [poemSnap,storySnap,ghostSnap,collabSnap,unsaidSnap,feelingSnap,novelSnap]=await Promise.all([
+      read("publishedPoems"),read("stories"),read("ghostStories"),read("collabThreads"),read("unsaidLetters"),read("feelingLetters"),read("shortNovels")
     ]);
     const sections=[];
     const addSection=(title,docs,type)=>{
       const items=[];
       if(docs) docs.forEach(d=>{const x=d.data();if(!x.deleted) items.push({id:d.id,...x})});
       items.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
-      sections.push(`<div class="published-admin-section"><div class="published-admin-section-head"><h3>${title}</h3><span>${items.length}টি</span></div>${items.length?items.map(x=>{
+      const isPoem=type==='poem';
+      sections.push(`<section class="published-admin-section"><div class="published-admin-section-head"><h3>${title}</h3><span>${items.length}টি</span></div>${items.length?items.map(x=>{
         const body=x.body||x.starter||"", titleText=x.title||x.to||"Untitled", cover=x.cover||x.image||"";
-        return `<div class="pending-card published-special-card">${cover?`<img class="special-cover-thumb published-admin-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}<div class="published-special-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||"অচেনা একজন")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body special-admin-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="openPublishedSpecialEdit('${type}','${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedSpecial('${type}','${x.id}')">🗑️ Delete</button></div></div></div>`;
-      }).join(''):'<p class="muted-note">এই বিভাগে কোনো প্রকাশিত লেখা নেই।</p>'}</div>`);
+        if(isPoem){
+          return `<div class="pending-card published-poem-card"><div class="published-poem-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeAuthorType(x.authorType))}: ${escapeHTML(x.author||"অজানা")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedPoem('${x.id}')">🗑️ Delete</button></div></div>${cover?`<img class="admin-poem-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}</div>`;
+        }
+        return `<div class="pending-card published-special-card">${cover?`<img class="special-cover-thumb published-admin-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}<div class="published-special-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||"অচেনা একজন")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body special-admin-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="openPublishedSpecialEdit('${type}','${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedSpecial('${type}','${x.id}')">🗑️ Delete</button></div></div>`;
+      }).join(''):'<p class="muted-note">এই বিভাগে কোনো প্রকাশিত লেখা নেই।</p>'}</section>`);
     };
-    addSection("✦ প্রকাশিত কবিতা",poemSnap,"poem");
+    addSection("✦ কবিতা",poemSnap,"poem");
     addSection("▣ গল্প ঘর",storySnap,"story");
     addSection("☾ ভৌতিক গল্প",ghostSnap,"ghost");
+    addSection("✒ দুই লাইন",collabSnap,"collab");
     addSection("♡ না-বলা কথা",unsaidSnap,"unsaid");
     addSection("✦ অনুভূতির কথা",feelingSnap,"feeling");
     addSection("▣ ছোট উপন্যাস",novelSnap,"novel");
-    box.innerHTML=sections.join("");
+    sections.push(`<section class="published-admin-section published-admin-search-section"><div class="published-admin-section-head"><h3>⌕ স্মার্ট খোঁজ</h3><span>Tool</span></div><div class="published-admin-search published-admin-search-inside"><p class="published-admin-search-note">Published-এর ৭টি লেখার বিভাগে দ্রুত খুঁজে বের করো।</p><input id="publishedQuickSearch" placeholder="শিরোনাম / লেখক…" oninput="filterPublishedAdmin(this.value)"><button class="btn" onclick="document.getElementById('publishedQuickSearch').value='';filterPublishedAdmin('')">Clear search</button></div></section>`);
+    box.innerHTML=`<div class="published-admin-grid">${sections.join("")}</div>`;
   }catch(e){box.innerHTML="<p class='admin-small'>Firestore error: "+escapeHTML(e.message)+"</p>";}
+}
+
+function filterPublishedAdmin(term){
+  const q=String(term||'').trim().toLowerCase();
+  document.querySelectorAll('#publishedList .published-admin-section').forEach(sec=>{
+    if(sec.querySelector('.published-admin-search')) return;
+    sec.querySelectorAll('.published-poem-card,.published-special-card').forEach(card=>{
+      card.style.display=!q||card.innerText.toLowerCase().includes(q)?'':'none';
+    });
+  });
 }
 
 async function openPublishedSpecialEdit(type,id){
   const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;
-  const map={story:["stories","গল্প ঘর Edit"],ghost:["ghostStories","ভৌতিক গল্প Edit"],unsaid:["unsaidLetters","না-বলা কথা Edit"],feeling:["feelingLetters","অনুভূতির কথা Edit"],novel:["shortNovels","ছোট উপন্যাস Edit"]};
+  const map={story:["stories","গল্প ঘর Edit"],ghost:["ghostStories","ভৌতিক গল্প Edit"],collab:["collabThreads","দুই লাইন থেকে কবিতা Edit"],unsaid:["unsaidLetters","না-বলা কথা Edit"],feeling:["feelingLetters","অনুভূতির কথা Edit"],novel:["shortNovels","ছোট উপন্যাস Edit"]};
   const cfg=map[type];if(!cfg)return;
   try{
     const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return alert("প্রকাশিত লেখাটি পাওয়া যায়নি।");
@@ -1606,7 +1686,7 @@ function openSpecialCropper(src,type){specialCropTarget=type;const img=new Image
 function drawSpecialCrop(){const c=document.getElementById('specialCropCanvas');if(!c)return;c.width=SPECIAL_CROP_W;c.height=SPECIAL_CROP_H;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#111';ctx.fillRect(0,0,c.width,c.height);if(specialCropImg)ctx.drawImage(specialCropImg,specialCropOffsetX,specialCropOffsetY,specialCropImg.width*specialCropScale,specialCropImg.height*specialCropScale);ctx.save();ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=5;ctx.strokeRect(3,3,c.width-6,c.height-6);ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2;for(let i=1;i<3;i++){let x=c.width*i/3,y=c.height*i/3;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}ctx.restore()}
 function zoomSpecialCrop(f){if(!specialCropImg)return;const old=specialCropScale,min=Math.max(SPECIAL_CROP_W/specialCropImg.width,SPECIAL_CROP_H/specialCropImg.height);specialCropScale=Math.max(min,Math.min(old*f,6));const cx=SPECIAL_CROP_W/2,cy=SPECIAL_CROP_H/2;specialCropOffsetX=cx-(cx-specialCropOffsetX)*(specialCropScale/old);specialCropOffsetY=cy-(cy-specialCropOffsetY)*(specialCropScale/old);drawSpecialCrop()}
 function resetSpecialCrop(){if(!specialCropImg)return;specialCropScale=Math.max(SPECIAL_CROP_W/specialCropImg.width,SPECIAL_CROP_H/specialCropImg.height);specialCropOffsetX=(SPECIAL_CROP_W-specialCropImg.width*specialCropScale)/2;specialCropOffsetY=(SPECIAL_CROP_H-specialCropImg.height*specialCropScale)/2;drawSpecialCrop()}
-function applySpecialCrop(){if(!specialCropImg)return;const c=document.createElement('canvas');c.width=720;c.height=960;const ctx=c.getContext('2d');const fx=720/SPECIAL_CROP_W,fy=960/SPECIAL_CROP_H;ctx.drawImage(specialCropImg,specialCropOffsetX*fx,specialCropOffsetY*fy,specialCropImg.width*specialCropScale*fx,specialCropImg.height*specialCropScale*fy);let q=.80,out=c.toDataURL('image/jpeg',q);while(out.length>300000&&q>.40){q-=.07;out=c.toDataURL('image/jpeg',q)}if(out.length>320000){alert('ছবিটি এখনও বড়। আরও ছোট ছবি ব্যবহার করুন।');return}specialImageData[specialCropTarget]=out;if(specialCropTarget==='story')storyCoverData=out;const previewId=specialCropTarget==='story'?'storyCoverPreview':specialCropTarget+'ImagePreview';const hiddenId=specialCropTarget==='story'?'storyCover':null;const box=document.getElementById(previewId);if(box)box.innerHTML=`<img src="${out}" alt="ছবির preview">`;if(hiddenId){const h=document.getElementById(hiddenId);if(h)h.value=out}closeSpecialCropper()}
+function applySpecialCrop(){if(!specialCropImg)return;const c=document.createElement('canvas');c.width=720;c.height=960;const ctx=c.getContext('2d');const fx=720/SPECIAL_CROP_W,fy=960/SPECIAL_CROP_H;ctx.drawImage(specialCropImg,specialCropOffsetX*fx,specialCropOffsetY*fy,specialCropImg.width*specialCropScale*fx,specialCropImg.height*specialCropScale*fy);let q=.80,out=c.toDataURL('image/jpeg',q);while(out.length>300000&&q>.40){q-=.07;out=c.toDataURL('image/jpeg',q)}if(out.length>320000){alert('ছবিটি এখনও বড়। আরও ছোট ছবি ব্যবহার করুন।');return}if(specialCropTarget==='specialEdit'){specialEditCoverData=out;const h=document.getElementById('specialEditCover');if(h)h.value=out;const box=document.getElementById('specialEditCoverPreview');if(box)box.innerHTML=`<img src="${out}" alt="কভার ছবির preview">`;const f=document.getElementById('specialEditCoverFile');if(f)f.value='';}else{specialImageData[specialCropTarget]=out;if(specialCropTarget==='story')storyCoverData=out;const previewId=specialCropTarget==='story'?'storyCoverPreview':specialCropTarget+'ImagePreview';const hiddenId=specialCropTarget==='story'?'storyCover':null;const box=document.getElementById(previewId);if(box)box.innerHTML=`<img src="${out}" alt="ছবির preview">`;if(hiddenId){const h=document.getElementById(hiddenId);if(h)h.value=out}}closeSpecialCropper()}
 function closeSpecialCropper(){document.getElementById('specialCropOverlay').classList.remove('show');document.body.style.overflow='';specialCropDragging=false}
 const specialCropCanvas=document.getElementById('specialCropCanvas');
 function specialCropPointerStart(e){if(!specialCropImg)return;specialCropDragging=true;const p=e.touches?e.touches[0]:e;specialCropLastX=p.clientX;specialCropLastY=p.clientY;specialCropCanvas.style.cursor='grabbing';e.preventDefault()}
@@ -1684,8 +1764,21 @@ let specialEditCoverData="";
 function handleSpecialEditCover(input){
   const file=input?.files?.[0]; if(!file)return;
   if(!file.type.startsWith('image/')){alert('শুধু ছবি নির্বাচন করুন।');input.value='';return;}
+  if(file.size>8*1024*1024){alert('ছবিটি সর্বোচ্চ 8 MB হতে পারবে।');input.value='';return;}
   const reader=new FileReader();
-  reader.onload=()=>{const img=new Image();img.onload=()=>{const max=1400,scale=Math.min(1,max/Math.max(img.width,img.height)),w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale)),c=document.createElement('canvas');c.width=w;c.height=h;const ctx=c.getContext('2d');ctx.drawImage(img,0,0,w,h);let q=.78,data=c.toDataURL('image/jpeg',q);while(data.length>300000&&q>.40){q-=.07;data=c.toDataURL('image/jpeg',q);}if(data.length>320000){alert('ছবিটি খুব বড়। ছোট ছবি নির্বাচন করুন।');return;}specialEditCoverData=data;document.getElementById('specialEditCover').value=data;document.getElementById('specialEditCoverPreview').innerHTML=`<img src="${data}" alt="কভার ছবির preview">`;};img.src=reader.result;};reader.readAsDataURL(file);
+  reader.onload=()=>openSpecialCropper(String(reader.result),'specialEdit');
+  reader.readAsDataURL(file);
+}
+function cropExistingSpecialEditImage(){
+  const src=specialEditCoverData||document.getElementById('specialEditCover')?.value||'';
+  if(!src)return alert('আগে একটি ছবি নির্বাচন করুন।');
+  openSpecialCropper(src,'specialEdit');
+}
+function removeSpecialEditImage(){
+  specialEditCoverData='';
+  const h=document.getElementById('specialEditCover');if(h)h.value='';
+  const f=document.getElementById('specialEditCoverFile');if(f)f.value='';
+  const box=document.getElementById('specialEditCoverPreview');if(box)box.innerHTML='';
 }
 async function saveSpecialEdit(){
   const p=window.firebasePoem;if(!specialEditState)return;
