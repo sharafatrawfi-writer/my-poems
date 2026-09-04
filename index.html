@@ -463,8 +463,8 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
 .p6-random{min-height:100%;display:flex;flex-direction:column;justify-content:space-between}.p6-random-title{font-size:25px;margin:4px 0 8px}.p6-random-excerpt{color:#bdb5aa;line-height:1.8;font-size:14px}.p6-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
 .p6-trending{margin-top:18px}.p6-trend-list{display:grid;gap:10px;margin-top:12px}.p6-trend{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border:1px solid var(--line);border-radius:15px;cursor:pointer;background:rgba(255,255,255,.018);transition:transform .2s,background .2s}.p6-trend:hover{transform:translateX(3px);background:rgba(217,185,121,.06)}.p6-trend b{font-size:14px}.p6-trend small{color:var(--muted)}
 .p6-highlight{margin-top:18px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.p6-highlight-card{padding:18px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.018);cursor:pointer;transition:transform .22s,box-shadow .22s}.p6-highlight-card:hover{transform:translateY(-4px);box-shadow:0 14px 35px rgba(0,0,0,.2)}.p6-highlight-card h4{margin:8px 0 6px;font-size:17px}.p6-highlight-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
-.reader-community{margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}.reader-community h3{margin:0 0 12px;font-size:20px}.p6-comment-form{display:flex;gap:8px}.p6-comment-form input{flex:1;min-width:0;background:#0a0a0c;border:1px solid var(--line);border-radius:12px;color:var(--text);padding:12px;outline:none}.p6-comments{display:grid;gap:8px;margin-top:12px}.p6-comment{padding:11px 13px;border:1px solid var(--line);border-radius:13px;background:rgba(255,255,255,.018);font-size:13px}.p6-comment small{display:block;color:var(--muted);margin-top:4px}
-@media(max-width:760px){.phase6-hub{grid-template-columns:1fr}.p6-highlight{grid-template-columns:1fr}.p6-comment-form{flex-direction:column}}
+
+@media(max-width:760px){.phase6-hub{grid-template-columns:1fr}.p6-highlight{grid-template-columns:1fr}}
 </style>
 
 
@@ -535,6 +535,60 @@ body.ka-menu-lock{overflow:hidden}
 @media(max-width:700px){.card{border-radius:22px;padding:22px;min-height:265px}.card-media{height:190px;margin:-22px -22px 20px;border-radius:21px 21px 10px 10px}.card h3{font-size:25px}.card .date{left:22px;bottom:20px}.card:hover{transform:translateY(-5px) scale(1.006)}}
 @media(prefers-reduced-motion:reduce){.card,.card:after,.card h3,.card-media img,.card-media:before{transition:none!important}.card:hover{transform:none}}
 </style>
+<style id="reading-experience-2-0">
+/* PRO READING EXPERIENCE 2.0 */
+.reader-tools,.reading-controls{display:none!important}
+.reader{position:relative}
+.reader::before{content:"READING EXPERIENCE";display:block;letter-spacing:.22em;font-size:9px;opacity:.45;margin-bottom:14px}
+.reader-command{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0 22px}
+.reader-command .reading-tools-trigger{border:1px solid rgba(217,185,121,.28);background:rgba(255,255,255,.035);color:inherit;border-radius:999px;padding:9px 14px;font-size:12px;letter-spacing:.06em;cursor:pointer;backdrop-filter:blur(12px);transition:.25s}
+.reader-command .reading-tools-trigger:hover{transform:translateY(-1px);border-color:rgba(217,185,121,.55);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.reader-command .reader-progress-label{font-size:10px;opacity:.45;letter-spacing:.1em}
+.reader-tools.reader-tools-open,.reading-controls.reader-tools-open{display:flex!important}
+.reader-tools.reader-tools-open{gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:10px;border:1px solid rgba(217,185,121,.14);border-radius:18px;background:rgba(0,0,0,.18);animation:readerToolsIn .28s ease both}
+.reading-controls.reader-tools-open{gap:8px;margin:0 0 18px;animation:readerToolsIn .28s ease both}
+.reader-tools.reader-tools-open .btn,.reading-controls.reader-tools-open .btn{border-radius:12px!important}
+@keyframes readerToolsIn{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+@media(max-width:700px){
+ .reader{padding:22px 18px 30px!important}
+ .reader::before{font-size:8px;margin-bottom:10px;letter-spacing:.18em}
+ .reader-command{margin:10px 0 16px}
+ .reader-command .reading-tools-trigger{padding:8px 12px;font-size:11px}
+ .reader-tools.reader-tools-open{position:sticky;bottom:12px;z-index:20;padding:10px;border-radius:18px;box-shadow:0 14px 35px rgba(0,0,0,.35);backdrop-filter:blur(18px);justify-content:center}
+ .reader-tools.reader-tools-open .btn{flex:1 1 calc(50% - 8px);min-height:42px}
+ .reading-controls.reader-tools-open{justify-content:center;margin-bottom:14px}
+ .reading-controls.reader-tools-open .btn{min-width:52px;min-height:40px}
+}
+@media(prefers-reduced-motion:reduce){.reader-command .reading-tools-trigger,.reader-tools.reader-tools-open,.reading-controls.reader-tools-open{animation:none;transition:none}}
+</style>
+
+<style id="micro-polish-v1">
+/* Micro-polish: quiet editorial reading details — no feature changes */
+#readerOverlay .reader{position:relative;overflow:hidden;border:1px solid rgba(217,185,121,.16);background:linear-gradient(145deg,rgba(22,19,16,.98),rgba(10,10,10,.99));}
+#readerOverlay .reader:before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(217,185,121,.7),transparent);opacity:.75;pointer-events:none;}
+#readerOverlay .reader .close{width:42px;height:42px;border-radius:50%;border:1px solid rgba(217,185,121,.2);background:rgba(0,0,0,.28);transition:transform .25s ease,background .25s ease,border-color .25s ease;}
+#readerOverlay .reader .close:hover{transform:rotate(90deg);background:rgba(217,185,121,.1);border-color:rgba(217,185,121,.5);}
+#readerOverlay .rnum{letter-spacing:.24em;font-size:10px;color:rgba(217,185,121,.72);}
+#readerOverlay #rtitle{max-width:760px;margin-left:auto;margin-right:auto;text-wrap:balance;}
+#readerOverlay #rmeta{justify-content:center;}
+#readerOverlay .reader-command{max-width:760px;margin:18px auto 0;padding:10px 0;border-top:1px solid rgba(217,185,121,.09);border-bottom:1px solid rgba(217,185,121,.09);}
+#readerOverlay .reader-progress-label{letter-spacing:.2em;font-size:9px;opacity:.55;}
+#readerOverlay #readerToolsPanel{max-width:760px;margin:0 auto;}
+#readerOverlay .poem{max-width:760px;margin:28px auto 0;border:1px solid rgba(217,185,121,.08);box-shadow:0 20px 60px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.025);}
+#readerOverlay .poem::first-letter{font-size:1.55em;color:var(--gold);}
+#readerOverlay .reader-end{max-width:760px;margin-left:auto;margin-right:auto;}
+#readerOverlay .reader-end:before{content:"END OF POEM";display:block;text-align:center;letter-spacing:.28em;font-size:9px;color:rgba(217,185,121,.42);margin-bottom:14px;}
+#readerOverlay .reader-nav .btn{transition:transform .25s ease,border-color .25s ease,background .25s ease;}
+#readerOverlay .reader-nav .btn:hover{transform:translateY(-2px);border-color:rgba(217,185,121,.42);}
+@media(max-width:760px){
+ #readerOverlay .reader{border-radius:22px 22px 0 0;}
+ #readerOverlay .reader .close{width:38px;height:38px;}
+ #readerOverlay .reader-command{margin-top:14px;padding:8px 0;}
+ #readerOverlay .poem{margin-top:20px;border-left:0;border-right:0;border-radius:16px;}
+ #readerOverlay .reader-end:before{margin-bottom:10px;}
+}
+@media(prefers-reduced-motion:reduce){#readerOverlay .reader .close,#readerOverlay .reader-nav .btn{transition:none!important}}
+</style>
 </head>
 <body style="">
 <div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
@@ -588,6 +642,8 @@ body.ka-menu-lock{overflow:hidden}
   <div class="scroll">SCROLL TO READ</div>
 </header>
 
+
+
 <section class="section discover" id="discover">
 <div class="discover-grid">
 <article class="feature-spot"><div class="spot-label">Tonight's reading</div><h2 id="spotTitle">আজ একটি লেখা বেছে নাও</h2><p id="spotExcerpt">কবিতার আঙিনায় ধীরে পড়ো—পছন্দের লেখা রেখে দাও, আর নতুন শব্দের সন্ধান করো।</p><button class="btn gold" onclick="openFeatured()">এখনই পড়ুন →</button></article>
@@ -609,7 +665,8 @@ body.ka-menu-lock{overflow:hidden}
   <div class="pf-main"><div class="eyebrow">Editor's pick</div><h3 id="pfTitle">আজকের নির্বাচিত লেখা</h3><p id="pfExcerpt">কবিতার আঙিনা থেকে একটি লেখা—ধীরে পড়ার জন্য।</p><button class="btn gold" id="pfOpen" onclick="openFeatured()">পড়তে শুরু করুন →</button></div>
   <div class="pf-side"><div class="eyebrow">Archive pulse</div><div class="pf-number" id="pfCount">0</div><p>প্রকাশিত কবিতা। প্রতিটি লেখার সঙ্গে থাকবে আলাদা reading experience.</p></div>
 </div>
-<div class="archive-toolbar" id="premiumFilters"><span class="filter-label">Filter</span><button class="premium-filter active" data-filter="all" onclick="setPremiumFilter('all',this)">সব</button><button class="premium-filter" data-filter="favorite" onclick="setPremiumFilter('favorite',this)">♥ পছন্দ</button><button class="premium-filter" data-filter="recent" onclick="setPremiumFilter('recent',this)">সাম্প্রতিক</button></div>
+<div class="continue-reading" id="continueReading"><div><small>আপনি যেখানে থেমেছিলেন…</small><strong id="continueTitle">একটি লেখা</strong></div><button class="continue-open" onclick="kaContinueReading()">আবার পড়ুন →</button></div>
+  <div class="archive-toolbar" id="premiumFilters"><span class="filter-label">Filter</span><button class="premium-filter active" data-filter="all" onclick="setPremiumFilter('all',this)">সব</button><button class="premium-filter" data-filter="favorite" onclick="setPremiumFilter('favorite',this)">♥ পছন্দ</button><button class="premium-filter" data-filter="recent" onclick="setPremiumFilter('recent',this)">সাম্প্রতিক</button></div>
   <div class="tools">
     <input id="search" class="search" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
     <button class="btn gold" onclick="openEditor()">নতুন কবিতা</button>
@@ -816,7 +873,7 @@ body.ka-menu-lock{overflow:hidden}
     <div class="rnum" id="rnum">POEM 01</div>
     <div id="rcoverWrap"></div>
     <h2 id="rtitle">তুমি পূর্ণ, আমি শূন্য</h2>
-    <div class="card-meta" id="rmeta"></div><div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button><button class="btn" onclick="togglePoemBookmark()">🔖 Save</button></div><div class="reading-controls"><button class="btn" onclick="changeReaderFont(-1)">A−</button><button class="btn" onclick="resetReaderFont()">A</button><button class="btn" onclick="changeReaderFont(1)">A+</button></div><div class="reader-progress"><i id="readerProgress"></i></div><div class="reader-nav"><button class="btn" onclick="openAdjacentPoem(-1)">← আগের</button><button class="btn" onclick="openAdjacentPoem(1)">পরের →</button></div><div class="share-note" id="shareNote"></div>
+    <div class="card-meta" id="rmeta"></div><div class="reader-command"><span class="reader-progress-label">A QUIET PLACE TO READ</span><button class="reading-tools-trigger" type="button" onclick="toggleReaderTools()" aria-expanded="false" aria-controls="readerToolsPanel">☰ Reading Tools</button></div><div id="readerToolsPanel"> <div class="reader-tools"><button class="btn" onclick="toggleReadingMode()">📖 Reading Mode</button><button class="btn" onclick="shareCurrentPoem()">↗ Share</button><button class="btn" onclick="copyCurrentPoem()">⧉ Copy</button><button class="btn" onclick="togglePoemBookmark()">🔖 Save</button></div><div class="reading-controls"><button class="btn" onclick="changeReaderFont(-1)">A−</button><button class="btn" onclick="resetReaderFont()">A</button><button class="btn" onclick="changeReaderFont(1)">A+</button></div><div class="reader-progress"><i id="readerProgress"></i></div></div>
     <div class="poem" id="rpoem">তুমি পূর্ণ এক আকাশ—
 তারাভরা নীরবতায় যার রাত কেটে যায়,
 আর আমি—
@@ -894,6 +951,11 @@ body.ka-menu-lock{overflow:hidden}
 কোনোদিন শেষ হবে না।</div><div class="reader-actions">
       <button class="btn" onclick="closeReader()">ফিরে যান</button>
       
+    </div>
+    <div class="reader-end" id="readerEnd">
+      <div id="readerEngagement"></div>
+<div class="share-note" id="shareNote"></div>
+      <div class="reader-nav"><button class="btn" onclick="openAdjacentPoem(-1)">← আগের</button><button class="btn" onclick="openAdjacentPoem(1)">পরের →</button></div>
     </div>
   </article>
 </div>
@@ -2030,6 +2092,14 @@ function openProfileByName(name){const works=poems.filter(p=>(p.author||'অজ�
 function closeProfile(){document.getElementById('profileOverlay').classList.remove('show');document.body.style.overflow=''}
 </script>
 
+<style id="reading-end-polish">
+.reader-end{margin-top:34px;padding-top:26px;border-top:1px solid rgba(217,185,121,.12)}
+.reader-end .share-note{min-height:0;margin:10px 0 0;text-align:center}
+.reader-end .reader-nav{margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.06)}
+.reader-end .reader-reaction{margin-top:0}
+.reader-end .reader-community{margin-top:22px}
+@media(max-width:760px){.reader-end{margin-top:28px;padding-top:20px}.reader-end .reader-nav{position:static;margin-top:20px}.reader-end .reader-reaction{padding:14px}.reader-end .reader-community{padding-top:18px}}
+</style>
 <style id="phase-1-to-5">
 /* ===== PHASE 1 → 5 : FINAL PRODUCT POLISH ===== */
 .author-link,.author-link:hover,.author-link:focus{text-decoration:none!important;text-decoration-line:none!important}
@@ -2087,11 +2157,9 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
     if(c&&currentId)c.textContent=poemLikeCount(currentId)+' জনের মতো';
   }
   function injectReaderEngagement(){
-    const host=document.getElementById('shareNote');
-    if(!host||document.getElementById('readerEngagement'))return;
-    const wrap=document.createElement('div');wrap.id='readerEngagement';wrap.className='reader-reaction';
-    wrap.innerHTML='<div><strong>এই লেখাটি কেমন লাগল?</strong><small id="readerLikeCount" style="display:block;margin-top:4px">0 জনের মতো</small></div><button id="readerLikeBtn" class="btn like-poem" onclick="togglePoemLike()">♡ ভালো লেগেছে</button>';
-    host.parentNode.insertBefore(wrap,host.nextSibling);
+    const host=document.getElementById('readerEngagement');
+    if(!host)return;
+    host.innerHTML='<div class="reader-reaction"><div><strong>এই লেখাটি কেমন লাগল?</strong><small id="readerLikeCount" style="display:block;margin-top:4px">0 জনের মতো</small></div><button id="readerLikeBtn" class="btn like-poem" onclick="togglePoemLike()">♡ ভালো লেগেছে</button></div>';
   }
   const baseOpenForEngagement=window.openReader;
   window.openReader=function(id){baseOpenForEngagement(id);injectReaderEngagement();updateReaderEngagement()};
@@ -2186,11 +2254,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   window.phase6Open=function(id){bumpView(id);window.openReader(id);setTimeout(renderHub,80)};
   window.phase6Surprise=function(){const a=window.poems||[];if(!a.length)return;const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'আজকের কবিতা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+(String(p.body||'').length>180?'…':'');phase6Open(p.id)};
   window.phase6Mood=function(m){window.setMood?.(m,document.querySelector('.mood-btn'));const a=(window.poems||[]).filter(p=>window.moodMatch?window.moodMatch(p):true);if(a.length){const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'তোমার জন্য একটি লেখা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+'…';phase6Open(p.id)}else phase6Surprise()};
-  window.phase6Trending=function(){$('p6Trending')?.scrollIntoView({behavior:'smooth',block:'center'})};
-  window.addPhase6Comment=function(){if(!window.currentId)return;const input=$('p6CommentInput');const text=input?.value.trim();if(!text)return;const k=key('comments-'+currentId),arr=JSON.parse(localStorage.getItem(k)||'[]');arr.unshift({text,at:new Date().toLocaleString('bn-BD')});localStorage.setItem(k,JSON.stringify(arr.slice(0,20)));input.value='';renderPhase6Comments()};
-  function renderPhase6Comments(){const host=$('p6Comments');if(!host||!window.currentId)return;const arr=JSON.parse(localStorage.getItem(key('comments-'+currentId))||'[]');host.innerHTML=arr.length?arr.map(x=>`<div class="p6-comment">${escapeHTML(x.text)}<small>${escapeHTML(x.at)}</small></div>`).join(''):'<small class="muted-note">এখনও কোনো মন্তব্য নেই। প্রথম কথাটি তুমি লিখতে পারো।</small>'}
-  function injectCommunity(){const host=$('shareNote');if(!host||$('phase6Community'))return;const w=document.createElement('div');w.id='phase6Community';w.className='reader-community';w.innerHTML='<h3>💬 পাঠকের কথা</h3><div class="p6-comment-form"><input id="p6CommentInput" maxlength="240" placeholder="এই কবিতাটি নিয়ে কিছু বলো…"><button class="btn gold" onclick="addPhase6Comment()">পাঠাও</button></div><div class="p6-comments" id="p6Comments"></div>';host.parentNode.insertBefore(w,host.nextSibling);renderPhase6Comments()}
-  const oldOpen=window.openReader; window.openReader=function(id){oldOpen(id);bumpView(id);injectCommunity();renderPhase6Comments();setTimeout(renderHub,60)};
+  window.phase6Trending=function(){$('p6Trending')?.scrollIntoView({behavior:'smooth',block:'center'})};<small>${escapeHTML(x.at)}</small></div>`).join(''):'<small class="muted-note">এখনও কোনো মন্তব্য নেই। প্রথম কথাটি তুমি লিখতে পারো।</small>'}
   const oldLike=window.togglePoemLike; window.togglePoemLike=function(){oldLike?.();setTimeout(renderHub,40)};
   window.addEventListener('load',()=>setTimeout(ensureHub,350));
   setTimeout(ensureHub,900);
@@ -2230,5 +2294,32 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('show'))closeMenu()});
   window.addEventListener('scroll',()=>{if(menu.classList.contains('show'))return;toggle.style.opacity=window.scrollY>80?'1':'.92'}, {passive:true});
 })();
+</script>
+
+<script id="ka-calm-ux-v1-js">
+(function(){
+  const KEY='ka-last-reading';
+  function list(){return window.poems||poems||[]}
+  function save(id){try{localStorage.setItem(KEY,id)}catch(e){}}
+  function last(){try{return localStorage.getItem(KEY)||''}catch(e){return ''}}
+  window.kaContinueReading=function(){const id=last();if(id&&window.openReader)window.openReader(id)};return (map[m]||[m]).some(x=>text.includes(x))});if(!pool.length)pool=a;const p=pool[Math.floor(Math.random()*pool.length)];document.getElementById('kaMoodPrompt')?.classList.remove('show');window.openReader?.(p?.id)};
+  function showContinue(){const id=last(),p=list().find(x=>x.id===id),box=document.getElementById('continueReading');if(box&&p){document.getElementById('continueTitle').textContent=p.title||'একটি লেখা';box.classList.add('show')}}
+  const baseOpen=window.openReader;
+  if(baseOpen){window.openReader=function(id){save(id);baseOpen(id);}}
+  window.addEventListener('load',()=>setTimeout(showContinue,500));
+  document.addEventListener('click',e=>{if(e.target.closest('.ka-mood-close'))document.getElementById('kaMoodPrompt')?.classList.remove('show')});
+})();
+</script></div>
+
+<script id="reading-experience-2-0-js">
+function toggleReaderTools(){
+ const panel=document.getElementById("readerToolsPanel");
+ const trigger=document.querySelector(".reading-tools-trigger");
+ if(!panel||!trigger)return;
+ const open=panel.classList.toggle("reader-tools-visible");
+ panel.querySelectorAll(".reader-tools,.reading-controls").forEach(el=>el.classList.toggle("reader-tools-open",open));
+ trigger.setAttribute("aria-expanded",String(open));
+ trigger.innerHTML=open?"× Close Tools":"☰ Reading Tools";
+}
 </script>
 </body></html>
