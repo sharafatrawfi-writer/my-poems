@@ -307,7 +307,6 @@ footer strong{color:#b9b0a3}
 
 
 </style>
-</style>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -1168,6 +1167,7 @@ const initialPoems = [
 
 const STORAGE_KEY="sharafatPoems_v2";
 let poems = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || initialPoems;
+window.poems=poems;
 let currentId = null;
 let pendingImage = "";
 let adminEditingId = null;
@@ -1920,6 +1920,7 @@ async function loadPublishedFromFirebase(){
     const remoteOriginalIds=new Set(remote.filter(x=>originalIds.has(x.docId)).map(x=>x.docId));
     const fallbackInitial=initialPoems.filter(x=>!remoteOriginalIds.has(x.id));
     poems=[...remote,...fallbackInitial];
+window.poems=poems;
     render();
   }catch(e){
     console.warn("Published poems could not load:",e.message);
@@ -2254,7 +2255,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   window.phase6Open=function(id){bumpView(id);window.openReader(id);setTimeout(renderHub,80)};
   window.phase6Surprise=function(){const a=window.poems||[];if(!a.length)return;const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'আজকের কবিতা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+(String(p.body||'').length>180?'…':'');phase6Open(p.id)};
   window.phase6Mood=function(m){window.setMood?.(m,document.querySelector('.mood-btn'));const a=(window.poems||[]).filter(p=>window.moodMatch?window.moodMatch(p):true);if(a.length){const p=a[Math.floor(Math.random()*a.length)];$('p6RandomTitle').textContent=p.title||'তোমার জন্য একটি লেখা';$('p6RandomExcerpt').textContent=String(p.body||'').replace(/\s+/g,' ').slice(0,180)+'…';phase6Open(p.id)}else phase6Surprise()};
-  window.phase6Trending=function(){$('p6Trending')?.scrollIntoView({behavior:'smooth',block:'center'})};<small>${escapeHTML(x.at)}</small></div>`).join(''):'<small class="muted-note">এখনও কোনো মন্তব্য নেই। প্রথম কথাটি তুমি লিখতে পারো।</small>'}
+  window.phase6Trending=function(){$('p6Trending')?.scrollIntoView({behavior:'smooth',block:'center'})};
   const oldLike=window.togglePoemLike; window.togglePoemLike=function(){oldLike?.();setTimeout(renderHub,40)};
   window.addEventListener('load',()=>setTimeout(ensureHub,350));
   setTimeout(ensureHub,900);
@@ -2302,14 +2303,14 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   function list(){return window.poems||poems||[]}
   function save(id){try{localStorage.setItem(KEY,id)}catch(e){}}
   function last(){try{return localStorage.getItem(KEY)||''}catch(e){return ''}}
-  window.kaContinueReading=function(){const id=last();if(id&&window.openReader)window.openReader(id)};return (map[m]||[m]).some(x=>text.includes(x))});if(!pool.length)pool=a;const p=pool[Math.floor(Math.random()*pool.length)];document.getElementById('kaMoodPrompt')?.classList.remove('show');window.openReader?.(p?.id)};
+  window.kaContinueReading=function(){const id=last();if(id&&window.openReader)window.openReader(id)};
   function showContinue(){const id=last(),p=list().find(x=>x.id===id),box=document.getElementById('continueReading');if(box&&p){document.getElementById('continueTitle').textContent=p.title||'একটি লেখা';box.classList.add('show')}}
   const baseOpen=window.openReader;
   if(baseOpen){window.openReader=function(id){save(id);baseOpen(id);}}
   window.addEventListener('load',()=>setTimeout(showContinue,500));
   document.addEventListener('click',e=>{if(e.target.closest('.ka-mood-close'))document.getElementById('kaMoodPrompt')?.classList.remove('show')});
 })();
-</script></div>
+</script>
 
 <script id="reading-experience-2-0-js">
 function toggleReaderTools(){
