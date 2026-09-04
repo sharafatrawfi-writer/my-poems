@@ -1178,13 +1178,26 @@ const initialPoems = [
 ];
 
 const STORAGE_KEY="sharafatPoems_v2";
-let poems = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || initialPoems;
+let poems = initialPoems;
+try{
+  const savedPoems=localStorage.getItem(STORAGE_KEY);
+  const parsedPoems=savedPoems ? JSON.parse(savedPoems) : null;
+  if(Array.isArray(parsedPoems)) poems=parsedPoems;
+}catch(e){ console.warn("Saved poem data could not be read; using initial poems:",e.message); }
 window.poems=poems;
 let currentId = null;
 let pendingImage = "";
 let adminEditingId = null;
 
 function escapeHTML(s){return String(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+function safeImageSrc(value){
+  const raw=String(value||"").trim();
+  if(!raw)return "";
+  if(/^data:image\/(?:jpeg|jpg|png|webp|gif);base64,[A-Za-z0-9+/=\s]+$/i.test(raw))return escapeHTML(raw);
+  if(/^https?:\/\//i.test(raw))return escapeHTML(raw);
+  return "";
+}
 
 function banglishNormalize(text){
  return String(text||"").toLowerCase().trim()
@@ -1217,7 +1230,7 @@ function searchReady(text){
 
 let selectedAuthorType="লেখক";
 function normalizeAuthorType(value){
-  const v=String(value||"").replace(/\\s+/g,"").trim();
+  const v=String(value||"").replace(/\s+/g,"").trim();
   return v==="লেখিকা" ? "লেখিকা" : "লেখক";
 }
 function setAuthorType(type){
@@ -1256,7 +1269,7 @@ function render(){
  grid.innerHTML=list.map(p=>{
    const fav=localStorage.getItem("fav-"+p.id)==="1";
    const media=p.image
-     ? `<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`
+     ? `<div class="card-media"><img src="${safeImageSrc(p.image)}" alt="${escapeHTML(p.title)}"></div>`
      : `<div class="card-media"><div class="no-image">✦</div></div>`;
    return `<article class="card" onclick="openReader('${p.id}')">
     ${media}
@@ -1279,7 +1292,7 @@ function openReader(id){
  const rmeta=document.getElementById("rmeta");
  if(rmeta){rmeta.innerHTML=renderAuthorHTML(p,"reader-author");}
  document.getElementById("rpoem").textContent=p.body;
- document.getElementById("rcoverWrap").innerHTML=p.image ? `<img class="reader-cover" src="${p.image}" alt="${escapeHTML(p.title)}">` : "";
+ document.getElementById("rcoverWrap").innerHTML=p.image ? `<img class="reader-cover" src="${safeImageSrc(p.image)}" alt="${escapeHTML(p.title)}">` : "";
  document.getElementById("readerOverlay").classList.add("show");
  document.body.style.overflow="hidden";
 }
@@ -1583,17 +1596,26 @@ async function adminLogin(){
 async function ensureInitialPoemsPublished(){
   const p=window.firebasePoem;
   if(!p || !window.firebasePoemUser || window.firebasePoemUser.email!==p.ADMIN_EMAIL) return;
-  for(const poem of initialPoems){
-    try{
-      const ref=p.doc(p.db,"publishedPoems",poem.id);
-      const snap=await p.getDocs(p.query(p.collection(p.db,"publishedPoems")));
-      const existing=snap.docs.find(d=>d.id===poem.id);
-      if(!existing){
-        await p.setDoc(ref,{author:poem.author||"",authorType:poem.authorType||"লেখক",title:poem.title||"",body:poem.body||"",image:poem.image||"",date:poem.date||"",publishedAt:p.serverTimestamp(),source:"admin-original",deleted:false});
+  try{
+    // Read the collection once instead of once per initial poem.
+    // This keeps the migration idempotent while avoiding an N+1 read pattern.
+    const snap=await p.getDocs(p.collection(p.db,"publishedPoems"));
+    const existingIds=new Set(snap.docs.map(d=>d.id));
+    for(const poem of initialPoems){
+      if(existingIds.has(poem.id)) continue;
+      try{
+        await p.setDoc(p.doc(p.db,"publishedPoems",poem.id),{
+          author:poem.author||"",authorType:poem.authorType||"লেখক",title:poem.title||"",
+          body:poem.body||"",image:poem.image||"",date:poem.date||"",
+          publishedAt:p.serverTimestamp(),source:"admin-original",deleted:false
+        });
+        existingIds.add(poem.id);
+      }catch(e){
+        console.warn("Initial poem migration error:",poem.id,e.message);
       }
-    }catch(e){
-      console.warn("Initial poem migration error:",poem.id,e.message);
     }
+  }catch(e){
+    console.warn("Initial poem migration read failed:",e.message);
   }
 }
 
@@ -1660,16 +1682,24 @@ async function approvePoem(id){
     const x=target.data();
     if(x.status!=="pending") return alert("এই কবিতাটি আর pending নেই।");
 
-    await p.addDoc(p.collection(p.db,"publishedPoems"),{
-      author:x.author||"",
-      authorType:x.authorType||"লেখক",
-      title:x.title||"",
-      body:x.body||"",
-      image:x.image||"",
-      date:x.date||new Date().toISOString().slice(0,10),
-      publishedAt:p.serverTimestamp(),
-      sourceSubmissionId:id
-    });
+    // Idempotent publication: use a deterministic document ID derived from the
+    // submission ID. If an older publish record already exists, reuse it instead
+    // of creating another random document on retry.
+    const publishedSnap=await p.getDocs(p.collection(p.db,"publishedPoems"));
+    const alreadyPublished=publishedSnap.docs.find(d=>String(d.data()?.sourceSubmissionId||"")===String(id));
+    if(!alreadyPublished){
+      await p.setDoc(p.doc(p.db,"publishedPoems","submission-"+id),{
+        author:x.author||"",
+        authorType:x.authorType||"লেখক",
+        title:x.title||"",
+        body:x.body||"",
+        image:x.image||"",
+        date:x.date||new Date().toISOString().slice(0,10),
+        publishedAt:p.serverTimestamp(),
+        sourceSubmissionId:id,
+        deleted:false
+      });
+    }
 
     await p.updateDoc(p.doc(p.db,"submissions",id),{
       status:"approved", approvedAt:p.serverTimestamp()
@@ -1723,9 +1753,9 @@ async function loadPublishedAdmin(){
       sections.push(`<section class="published-admin-section"><div class="published-admin-section-head"><h3>${title}</h3><span>${items.length}টি</span></div>${items.length?items.map(x=>{
         const body=x.body||x.starter||"", titleText=x.title||x.to||"Untitled", cover=x.cover||x.image||"";
         if(isPoem){
-          return `<div class="pending-card published-poem-card"><div class="published-poem-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeAuthorType(x.authorType))}: ${escapeHTML(x.author||"অজানা")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedPoem('${x.id}')">🗑️ Delete</button></div></div>${cover?`<img class="admin-poem-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}</div>`;
+          return `<div class="pending-card published-poem-card"><div class="published-poem-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeAuthorType(x.authorType))}: ${escapeHTML(x.author||"অজানা")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="editPublishedPoem('${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedPoem('${x.id}')">🗑️ Delete</button></div></div>${cover?`<img class="admin-poem-cover" src="${safeImageSrc(cover)}" alt="ছবি" loading="lazy">`:''}</div>`;
         }
-        return `<div class="pending-card published-special-card">${cover?`<img class="special-cover-thumb published-admin-cover" src="${escapeHTML(cover)}" alt="ছবি" loading="lazy">`:''}<div class="published-special-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||"অচেনা একজন")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body special-admin-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="openPublishedSpecialEdit('${type}','${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedSpecial('${type}','${x.id}')">🗑️ Delete</button></div></div>`;
+        return `<div class="pending-card published-special-card">${cover?`<img class="special-cover-thumb published-admin-cover" src="${safeImageSrc(cover)}" alt="ছবি" loading="lazy">`:''}<div class="published-special-copy"><h3>${escapeHTML(titleText)}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||"অচেনা একজন")}</div><div class="meta">লেখার তারিখ: ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body special-admin-body">${escapeHTML(body)}</div><div class="pending-actions"><button class="btn gold" onclick="openPublishedSpecialEdit('${type}','${x.id}')">✏️ Edit</button><button class="btn danger" onclick="deletePublishedSpecial('${type}','${x.id}')">🗑️ Delete</button></div></div>`;
       }).join(''):'<p class="muted-note">এই বিভাগে কোনো প্রকাশিত লেখা নেই।</p>'}</section>`);
     };
     addSection("✦ কবিতা",poemSnap,"poem");
@@ -1758,7 +1788,7 @@ async function openPublishedSpecialEdit(type,id){
     const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return alert("প্রকাশিত লেখাটি পাওয়া যায়নি।");
     const x=d.data();specialEditState={type,id,col:cfg[0],published:true};
     document.getElementById("specialEditHeading").textContent=cfg[1];document.getElementById("specialEditCategoryWrap").style.display=type==="story"?"block":"none";document.getElementById("specialEditCoverWrap").style.display="block";document.getElementById("specialEditCategory").value=x.category||"জীবন";
-    specialEditCoverData=x.cover||x.image||"";document.getElementById("specialEditCover").value=specialEditCoverData;document.getElementById("specialEditCoverPreview").innerHTML=specialEditCoverData?`<img src="${escapeHTML(specialEditCoverData)}" alt="কভার ছবির preview">`:"";document.getElementById("specialEditCoverFile").value="";
+    specialEditCoverData=x.cover||x.image||"";document.getElementById("specialEditCover").value=specialEditCoverData;document.getElementById("specialEditCoverPreview").innerHTML=specialEditCoverData?`<img src="${safeImageSrc(specialEditCoverData)}" alt="কভার ছবির preview">`:"";document.getElementById("specialEditCoverFile").value="";
     document.getElementById("specialEditAuthor").value=x.author||"";document.querySelectorAll('input[name="specialEditAuthorType"]').forEach(r=>r.checked=r.value===normalizeWriterType(x.authorType));document.getElementById("specialEditTitle").value=x.title||x.to||"";document.getElementById("specialEditBody").value=x.body||x.starter||"";document.getElementById("specialEditDate").value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||"")?x.date:"";
     document.getElementById("specialEditOverlay").classList.add("show");document.body.style.overflow="hidden";
   }catch(e){alert("Edit খুলতে সমস্যা হয়েছে: "+e.message)}
@@ -1909,27 +1939,20 @@ async function loadPublishedFromFirebase(){
   try{
     const snap=await p.getDocs(p.collection(p.db,"publishedPoems"));
     const originalIds=new Set(initialPoems.map(x=>x.id));
+    // Keep ALL original Firestore IDs, including soft-deleted ones.
+    // Otherwise a deleted built-in poem can reappear from the static fallback.
+    const remoteOriginalIds=new Set();
     const rows=[];
     snap.forEach(d=>{
       const x=d.data();
+      if(originalIds.has(d.id)) remoteOriginalIds.add(d.id);
       if(x.deleted) return;
       rows.push({docId:d.id,id:originalIds.has(d.id)?d.id:"fb-"+d.id,...x,authorType:normalizeAuthorType(x.authorType)});
     });
 
-    // If duplicate records exist, keep the most recently edited/published one.
-    const byKey=new Map();
-    rows.forEach(x=>{
-      const key=String(x.title||"").trim().toLowerCase()+"|"+String(x.author||"").trim().toLowerCase();
-      const prev=byKey.get(key);
-      const score=v=>{
-        const a=v.editedAt?.seconds||0, b=v.publishedAt?.seconds||0;
-        return Math.max(a,b);
-      };
-      if(!prev || score(x)>=score(prev)) byKey.set(key,x);
-    });
-
-    const remote=Array.from(byKey.values());
-    const remoteOriginalIds=new Set(remote.filter(x=>originalIds.has(x.docId)).map(x=>x.docId));
+    // Keep distinct works even when the same author uses the same title more than once.
+    // Approved submissions already have a stable sourceSubmissionId for deduplication.
+    const remote=rows;
     const fallbackInitial=initialPoems.filter(x=>!remoteOriginalIds.has(x.id));
     poems=[...remote,...fallbackInitial];
 window.poems=poems;
@@ -1942,6 +1965,20 @@ window.poems=poems;
 }
 // Firebase may finish initializing after the normal page load event, so run
 // once on load and once shortly afterward.
+let kaPublishedLoadInFlight=null;
+let kaPublishedLastLoadAt=0;
+const kaPublishedLoadBase=loadPublishedFromFirebase;
+loadPublishedFromFirebase=async function(){
+  const now=Date.now();
+  if(kaPublishedLoadInFlight)return kaPublishedLoadInFlight;
+  // The page already has local/static content, so avoid duplicate startup reads
+  // that happen within a short window. Admin actions still call the base loader
+  // after writes, but ordinary startup stays quiet.
+  if(now-kaPublishedLastLoadAt<1500)return;
+  kaPublishedLastLoadAt=now;
+  kaPublishedLoadInFlight=Promise.resolve(kaPublishedLoadBase()).finally(()=>{kaPublishedLoadInFlight=null});
+  return kaPublishedLoadInFlight;
+};
 window.addEventListener("load",()=>{
   loadPublishedFromFirebase();
   setTimeout(loadPublishedFromFirebase,1200);
@@ -1972,7 +2009,7 @@ function openSpecialCropper(src,type){specialCropTarget=type;const img=new Image
 function drawSpecialCrop(){const c=document.getElementById('specialCropCanvas');if(!c)return;c.width=SPECIAL_CROP_W;c.height=SPECIAL_CROP_H;const ctx=c.getContext('2d');ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle='#111';ctx.fillRect(0,0,c.width,c.height);if(specialCropImg)ctx.drawImage(specialCropImg,specialCropOffsetX,specialCropOffsetY,specialCropImg.width*specialCropScale,specialCropImg.height*specialCropScale);ctx.save();ctx.strokeStyle='rgba(255,255,255,.95)';ctx.lineWidth=5;ctx.strokeRect(3,3,c.width-6,c.height-6);ctx.strokeStyle='rgba(255,255,255,.28)';ctx.lineWidth=2;for(let i=1;i<3;i++){let x=c.width*i/3,y=c.height*i/3;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,c.height);ctx.stroke();ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(c.width,y);ctx.stroke()}ctx.restore()}
 function zoomSpecialCrop(f){if(!specialCropImg)return;const old=specialCropScale,min=Math.max(SPECIAL_CROP_W/specialCropImg.width,SPECIAL_CROP_H/specialCropImg.height);specialCropScale=Math.max(min,Math.min(old*f,6));const cx=SPECIAL_CROP_W/2,cy=SPECIAL_CROP_H/2;specialCropOffsetX=cx-(cx-specialCropOffsetX)*(specialCropScale/old);specialCropOffsetY=cy-(cy-specialCropOffsetY)*(specialCropScale/old);drawSpecialCrop()}
 function resetSpecialCrop(){if(!specialCropImg)return;specialCropScale=Math.max(SPECIAL_CROP_W/specialCropImg.width,SPECIAL_CROP_H/specialCropImg.height);specialCropOffsetX=(SPECIAL_CROP_W-specialCropImg.width*specialCropScale)/2;specialCropOffsetY=(SPECIAL_CROP_H-specialCropImg.height*specialCropScale)/2;drawSpecialCrop()}
-function applySpecialCrop(){if(!specialCropImg)return;const c=document.createElement('canvas');c.width=720;c.height=960;const ctx=c.getContext('2d');const fx=720/SPECIAL_CROP_W,fy=960/SPECIAL_CROP_H;ctx.drawImage(specialCropImg,specialCropOffsetX*fx,specialCropOffsetY*fy,specialCropImg.width*specialCropScale*fx,specialCropImg.height*specialCropScale*fy);let q=.80,out=c.toDataURL('image/jpeg',q);while(out.length>300000&&q>.40){q-=.07;out=c.toDataURL('image/jpeg',q)}if(out.length>320000){alert('ছবিটি এখনও বড়। আরও ছোট ছবি ব্যবহার করুন।');return}if(specialCropTarget==='specialEdit'){specialEditCoverData=out;const h=document.getElementById('specialEditCover');if(h)h.value=out;const box=document.getElementById('specialEditCoverPreview');if(box)box.innerHTML=`<img src="${out}" alt="কভার ছবির preview">`;const f=document.getElementById('specialEditCoverFile');if(f)f.value='';}else{specialImageData[specialCropTarget]=out;if(specialCropTarget==='story')storyCoverData=out;const previewId=specialCropTarget==='story'?'storyCoverPreview':specialCropTarget+'ImagePreview';const hiddenId=specialCropTarget==='story'?'storyCover':null;const box=document.getElementById(previewId);if(box)box.innerHTML=`<img src="${out}" alt="ছবির preview">`;if(hiddenId){const h=document.getElementById(hiddenId);if(h)h.value=out}}closeSpecialCropper()}
+function applySpecialCrop(){if(!specialCropImg)return;const c=document.createElement('canvas');c.width=720;c.height=960;const ctx=c.getContext('2d');const fx=720/SPECIAL_CROP_W,fy=960/SPECIAL_CROP_H;ctx.drawImage(specialCropImg,specialCropOffsetX*fx,specialCropOffsetY*fy,specialCropImg.width*specialCropScale*fx,specialCropImg.height*specialCropScale*fy);let q=.80,out=c.toDataURL('image/jpeg',q);while(out.length>300000&&q>.40){q-=.07;out=c.toDataURL('image/jpeg',q)}if(out.length>320000){alert('ছবিটি এখনও বড়। আরও ছোট ছবি ব্যবহার করুন।');return}if(specialCropTarget==='specialEdit'){specialEditCoverData=out;const h=document.getElementById('specialEditCover');if(h)h.value=out;const box=document.getElementById('specialEditCoverPreview');if(box)box.innerHTML=`<img src="${safeImageSrc(out)}" alt="কভার ছবির preview">`;const f=document.getElementById('specialEditCoverFile');if(f)f.value='';}else{specialImageData[specialCropTarget]=out;if(specialCropTarget==='story')storyCoverData=out;const previewId=specialCropTarget==='story'?'storyCoverPreview':specialCropTarget+'ImagePreview';const hiddenId=specialCropTarget==='story'?'storyCover':null;const box=document.getElementById(previewId);if(box)box.innerHTML=`<img src="${safeImageSrc(out)}" alt="ছবির preview">`;if(hiddenId){const h=document.getElementById(hiddenId);if(h)h.value=out}}closeSpecialCropper()}
 function closeSpecialCropper(){document.getElementById('specialCropOverlay').classList.remove('show');document.body.style.overflow='';specialCropDragging=false}
 const specialCropCanvas=document.getElementById('specialCropCanvas');
 function specialCropPointerStart(e){if(!specialCropImg)return;specialCropDragging=true;const p=e.touches?e.touches[0]:e;specialCropLastX=p.clientX;specialCropLastY=p.clientY;specialCropCanvas.style.cursor='grabbing';e.preventDefault()}
@@ -2008,19 +2045,19 @@ async function saveStory(){
   }
 }
 async function loadStoryRoom(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('storyList');box.innerHTML='<p>গল্পগুলো সাজানো হচ্ছে…</p>';try{const snap=await p.getDocs(p.collection(p.db,'stories'));storyItems=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)storyItems.push({id:d.id,...x})});storyItems.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));renderStoryCards()}catch(e){box.innerHTML='<div class="story-empty">গল্পগুলো এখন লোড করা যাচ্ছে না। একটু পরে আবার চেষ্টা করুন।</div>'}}
-function renderStoryCards(){const box=document.getElementById('storyList');if(!box)return;const q=(document.getElementById('storySearch')?.value||'').trim().toLowerCase(),cat=document.getElementById('storyCategory')?.value||'সব';const list=storyItems.filter(x=>(cat==='সব'||(x.category||'জীবন')===cat)&&(!q||(String(x.title||'')+' '+String(x.author||'')).toLowerCase().includes(q)));if(!list.length){box.innerHTML='<div class="story-empty">'+(storyItems.length?'এই খোঁজে কোনো গল্প পাওয়া যায়নি।':'এখনো কোনো গল্প প্রকাশিত হয়নি। প্রথম গল্পটি তোমার হতে পারে।')+'</div>';return}box.innerHTML=list.slice(0,SPECIAL_LIMIT).map(x=>{const excerpt=String(x.body||'').replace(/\s+/g,' ').slice(0,190)+(String(x.body||'').length>190?'…':'');const cover=x.cover?`<img class="story-cover" src="${escapeHTML(x.cover)}" alt="${escapeHTML(x.title||'গল্প')}" loading="lazy" onerror="this.outerHTML='<div class=\"story-cover-fallback\">▣</div>'>`:'<div class="story-cover-fallback">▣</div>';return `<article class="story-card">${cover}<div class="story-content"><span class="story-badge">${escapeHTML(x.category||'গল্প')}</span><h3>${escapeHTML(x.title||'অজানা গল্প')}</h3><p class="story-excerpt">${escapeHTML(excerpt)}</p><div class="story-info"><span>✍ ${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')}</span><span>◷ ${escapeHTML(x.readingTime||storyReadingTime(x.body))}</span><span>◌ ${escapeHTML(formatPoemDate(x.date))}</span></div><div class="story-read"><button class="btn gold" onclick="openStoryReader('${x.id}')">গল্পটি পড়ুন →</button></div></div></article>`}).join('')}
+function renderStoryCards(){const box=document.getElementById('storyList');if(!box)return;const q=(document.getElementById('storySearch')?.value||'').trim().toLowerCase(),cat=document.getElementById('storyCategory')?.value||'সব';const list=storyItems.filter(x=>(cat==='সব'||(x.category||'জীবন')===cat)&&(!q||(String(x.title||'')+' '+String(x.author||'')).toLowerCase().includes(q)));if(!list.length){box.innerHTML='<div class="story-empty">'+(storyItems.length?'এই খোঁজে কোনো গল্প পাওয়া যায়নি।':'এখনো কোনো গল্প প্রকাশিত হয়নি। প্রথম গল্পটি তোমার হতে পারে।')+'</div>';return}box.innerHTML=list.slice(0,SPECIAL_LIMIT).map(x=>{const excerpt=String(x.body||'').replace(/\s+/g,' ').slice(0,190)+(String(x.body||'').length>190?'…':'');const cover=x.cover?`<img class="story-cover" src="${safeImageSrc(x.cover)}" alt="${escapeHTML(x.title||'গল্প')}" loading="lazy" onerror="this.outerHTML='<div class=\"story-cover-fallback\">▣</div>'>`:'<div class="story-cover-fallback">▣</div>';return `<article class="story-card">${cover}<div class="story-content"><span class="story-badge">${escapeHTML(x.category||'গল্প')}</span><h3>${escapeHTML(x.title||'অজানা গল্প')}</h3><p class="story-excerpt">${escapeHTML(excerpt)}</p><div class="story-info"><span>✍ ${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')}</span><span>◷ ${escapeHTML(x.readingTime||storyReadingTime(x.body))}</span><span>◌ ${escapeHTML(formatPoemDate(x.date))}</span></div><div class="story-read"><button class="btn gold" onclick="openStoryReader('${x.id}')">গল্পটি পড়ুন →</button></div></div></article>`}).join('')}
 function openStoryReader(id){const x=storyItems.find(a=>a.id===id);if(!x)return;document.getElementById('storyReaderHead').innerHTML=`<span class="story-badge">${escapeHTML(x.category||'গল্প')}</span><h2 class="story-reader-title">${escapeHTML(x.title||'অজানা গল্প')}</h2><div class="story-info"><span>✍ ${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')}</span><span>◷ ${escapeHTML(x.readingTime||storyReadingTime(x.body))}</span><span>◌ ${escapeHTML(formatPoemDate(x.date))}</span></div>`;document.getElementById('storyReaderBody').textContent=x.body||'';openSpecial('storyReaderOverlay')}
 async function openGhostSpace(){openSpecial('ghostOverlay');await loadGhostStories()}
 function openGhostEditor(){resetSpecialImage('ghost');document.getElementById('ghostDate').value=new Date().toISOString().slice(0,10);openSpecial('ghostEditorOverlay')}
 async function saveGhostStory(){const p=window.firebasePoem;if(!p)return alert('Firebase configure করা হয়নি।');await window.ensurePublicAuth?.();const author=document.getElementById('ghostAuthor').value.trim(),authorType=getWriterType('ghostAuthorType'),title=ghostTitle.value.trim(),body=ghostBody.value.trim(),date=ghostDate.value||new Date().toISOString().slice(0,10);if(!author||!title||!body)return alert('নাম, গল্পের নাম ও গল্প লিখুন।');try{await p.addDoc(p.collection(p.db,'ghostStorySubmissions'),{author,authorType,title,body,date,image:specialImageData.ghost||'',status:'pending',createdAt:p.serverTimestamp()});closeSpecial('ghostEditorOverlay');resetSpecialImage('ghost');alert('গল্প জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
-async function loadGhostStories(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('ghostList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'ghostStories'));const items=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)items.push({id:d.id,...x})});items.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));box.innerHTML=items.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${escapeHTML(x.image)}" alt="${escapeHTML(x.title||'ভৌতিক গল্প')}" loading="lazy">`:''}<h3>☾ ${escapeHTML(x.title||'অজানা গল্প')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো ভৌতিক গল্প প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">গল্পগুলো লোড করা যায়নি।</p>'}}
+async function loadGhostStories(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('ghostList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'ghostStories'));const items=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)items.push({id:d.id,...x})});items.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));box.innerHTML=items.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${safeImageSrc(x.image)}" alt="${escapeHTML(x.title||'ভৌতিক গল্প')}" loading="lazy">`:''}<h3>☾ ${escapeHTML(x.title||'অজানা গল্প')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো ভৌতিক গল্প প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">গল্পগুলো লোড করা যায়নি।</p>'}}
 function openCollabSpace(){openSpecial('collabOverlay');loadCollab()}function openCollabEditor(){resetSpecialImage('collab');document.getElementById('collabDate').value=new Date().toISOString().slice(0,10);openSpecial('collabEditorOverlay')}
 async function saveCollabStart(){const p=window.firebasePoem;if(!p)return;await window.ensurePublicAuth?.();const author=document.getElementById('collabAuthor').value.trim(),authorType=getWriterType('collabAuthorType'),starter=collabLines.value.trim(),date=(document.getElementById('collabDate').value||new Date().toISOString().slice(0,10));if(!author||!starter)return alert('নাম ও দুই লাইন লিখুন।');if(starter.split(/\n/).filter(Boolean).length>2)return alert('শুধু দুই লাইন দিয়ে শুরু করুন।');try{await p.addDoc(p.collection(p.db,'collabThreads'),{author,authorType,starter,date,image:specialImageData.collab||'',active:true,createdAt:p.serverTimestamp()});closeSpecial('collabEditorOverlay');resetSpecialImage('collab');alert('যৌথ কবিতা শুরু হয়েছে। এখন অন্যরা এতে লাইন যোগ করতে পারবে।')}catch(e){alert('শুরু করা যায়নি: '+e.message)}}
-async function loadCollab(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('collabList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'collabThreads'));const threads=[];snap.forEach(d=>{const x=d.data();if(x.active!==false)threads.push({id:d.id,...x})});threads.sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));const adds=await p.getDocs(p.collection(p.db,'collabAdds'));const by={};adds.forEach(d=>{const x=d.data();(by[x.threadId]??=[]).push(x)});box.innerHTML=threads.slice(0,SPECIAL_LIMIT).map(x=>{const arr=(by[x.id]||[]).sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||'')));return `<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${escapeHTML(x.image)}" alt="যৌথ কবিতা" loading="lazy">`:''}<h3>✒ ${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} শুরু করেছে</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-lines">${escapeHTML(x.starter||'')}</div>${arr.map(a=>`<div class="special-lines"><b>${escapeHTML(a.authorType||'লেখক')}: ${escapeHTML(a.author||'অজানা')}:</b> ${escapeHTML(a.lines||'')}</div>`).join('')}<div class="add-line"><input id="add-${x.id}" placeholder="তোমার ১–২ লাইন যোগ করো"><button class="btn" onclick="addCollabLine('${x.id}')">যোগ করুন</button></div></article>`}).join('')||'<p class="muted-note">এখনো কেউ দুই লাইন দিয়ে শুরু করেনি।</p>'}catch(e){box.innerHTML='<p class="muted-note">এই বিভাগটি লোড করা যায়নি।</p>'}}
+async function loadCollab(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('collabList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'collabThreads'));const threads=[];snap.forEach(d=>{const x=d.data();if(x.active!==false)threads.push({id:d.id,...x})});threads.sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||'')));const adds=await p.getDocs(p.collection(p.db,'collabAdds'));const by={};adds.forEach(d=>{const x=d.data();(by[x.threadId]??=[]).push(x)});box.innerHTML=threads.slice(0,SPECIAL_LIMIT).map(x=>{const arr=(by[x.id]||[]).sort((a,b)=>String(a.createdAt||'').localeCompare(String(b.createdAt||'')));return `<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${safeImageSrc(x.image)}" alt="যৌথ কবিতা" loading="lazy">`:''}<h3>✒ ${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} শুরু করেছে</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-lines">${escapeHTML(x.starter||'')}</div>${arr.map(a=>`<div class="special-lines"><b>${escapeHTML(a.authorType||'লেখক')}: ${escapeHTML(a.author||'অজানা')}:</b> ${escapeHTML(a.lines||'')}</div>`).join('')}<div class="add-line"><input id="add-${x.id}" placeholder="তোমার ১–২ লাইন যোগ করো"><button class="btn" onclick="addCollabLine('${x.id}')">যোগ করুন</button></div></article>`}).join('')||'<p class="muted-note">এখনো কেউ দুই লাইন দিয়ে শুরু করেনি।</p>'}catch(e){box.innerHTML='<p class="muted-note">এই বিভাগটি লোড করা যায়নি।</p>'}}
 async function addCollabLine(id){const p=window.firebasePoem;if(!p)return;await window.ensurePublicAuth?.();const input=document.getElementById('add-'+id);const lines=input.value.trim();if(!lines)return;if(lines.split(/\n/).filter(Boolean).length>2)return alert('সর্বোচ্চ দুই লাইন যোগ করুন।');const author=prompt('তোমার নাম লিখুন:');if(!author||!author.trim())return;const authorType=normalizeWriterType(prompt('লেখক নাকি লেখিকা? লিখুন:', 'লেখক'));try{await p.addDoc(p.collection(p.db,'collabAdds'),{threadId:id,author:author.trim(),authorType,lines,date:new Date().toISOString().slice(0,10),createdAt:p.serverTimestamp()});input.value='';loadCollab()}catch(e){alert('লাইন যোগ করা যায়নি: '+e.message)}}
 function openUnsaidSpace(){openSpecial('unsaidOverlay');loadUnsaid()}function openUnsaidEditor(){resetSpecialImage('unsaid');document.getElementById('unsaidDate').value=new Date().toISOString().slice(0,10);openSpecial('unsaidEditorOverlay')}
 async function saveUnsaid(){const p=window.firebasePoem;if(!p)return;await window.ensurePublicAuth?.();const author=document.getElementById('unsaidAuthor').value.trim()||'অচেনা একজন',authorType=getWriterType('unsaidAuthorType'),to=unsaidTo.value.trim()||'প্রিয় মানুষ',body=unsaidBody.value.trim(),date=(document.getElementById('unsaidDate').value||new Date().toISOString().slice(0,10));if(!body)return alert('তোমার না-বলা কথাটি লিখুন।');try{await p.addDoc(p.collection(p.db,'unsaidSubmissions'),{author,authorType,to,body,date,image:specialImageData.unsaid||'',status:'pending',createdAt:p.serverTimestamp()});closeSpecial('unsaidEditorOverlay');resetSpecialImage('unsaid');alert('না-বলা কথাটি জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
-async function loadUnsaid(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('unsaidList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'unsaidLetters'));const items=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)items.push({id:d.id,...x})});box.innerHTML=items.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${escapeHTML(x.image)}" alt="ছবি" loading="lazy">`:''}<h3>♡ ${escapeHTML(x.to||'প্রিয় মানুষ')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো না-বলা কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">বার্তাগুলো লোড করা যায়নি।</p>'}}
+async function loadUnsaid(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('unsaidList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'unsaidLetters'));const items=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)items.push({id:d.id,...x})});box.innerHTML=items.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${safeImageSrc(x.image)}" alt="ছবি" loading="lazy">`:''}<h3>♡ ${escapeHTML(x.to||'প্রিয় মানুষ')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো না-বলা কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">বার্তাগুলো লোড করা যায়নি।</p>'}}
 </script>
 <script>
 async function loadSpecialAdmin(){
@@ -2029,22 +2066,22 @@ async function loadSpecialAdmin(){
   const read=async col=>{try{return await p.getDocs(p.collection(p.db,col))}catch(e){console.warn('Special admin read skipped:',col,e.message);return null}};
   const [g,st,u,f,n]=await Promise.all([read('ghostStorySubmissions'),read('storySubmissions'),read('unsaidSubmissions'),read('feelingSubmissions'),read('novelSubmissions')]);
   const section=(title,docs,makeCard)=>{const pending=[];if(docs)docs.forEach(d=>{const x=d.data();if(x.status==='pending')pending.push(makeCard(d,x))});return `<h4>${title}</h4>`+(pending.join('')||'<p class="muted-note">কোনো pending লেখা নেই।</p>')};
-  const card=(d,x,type,approve,reject)=>`<div class="pending-card">${x.image||x.cover?`<img class="special-cover-thumb" src="${escapeHTML(x.image||x.cover)}" alt="ছবি" loading="lazy">`:''}<h3>${escapeHTML(x.title||x.to||'')}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||x.starter||'')}</div><div class="pending-actions"><button class="btn gold" onclick="${approve}('${d.id}')">Approve</button><button class="btn" onclick="${reject}('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('${type}','${d.id}')">✏️ Edit</button></div></div>`;
+  const card=(d,x,type,approve,reject)=>`<div class="pending-card">${x.image||x.cover?`<img class="special-cover-thumb" src="${safeImageSrc(x.image||x.cover)}" alt="ছবি" loading="lazy">`:''}<h3>${escapeHTML(x.title||x.to||'')}</h3><div class="meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="pending-body">${escapeHTML(x.body||x.starter||'')}</div><div class="pending-actions"><button class="btn gold" onclick="${approve}('${d.id}')">Approve</button><button class="btn" onclick="${reject}('${d.id}')">Reject</button><button class="btn" onclick="openSpecialEdit('${type}','${d.id}')">✏️ Edit</button></div></div>`;
   box.innerHTML=section('Pending গল্প ঘর',st,(d,x)=>card(d,x,'story','approveStory','rejectStory'))+section('Pending ভৌতিক গল্প',g,(d,x)=>card(d,x,'ghost','approveGhost','rejectGhost'))+section('Pending না-বলা কথা',u,(d,x)=>card(d,x,'unsaid','approveUnsaid','rejectUnsaid'))+section('Pending অনুভূতির কথা',f,(d,x)=>card(d,x,'feeling','approveFeeling','rejectFeeling'))+section('Pending ছোট উপন্যাস',n,(d,x)=>card(d,x,'novel','approveNovel','rejectNovel'));
 }
 async function approveGhost(id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;try{const s=await p.getDocs(p.collection(p.db,'ghostStorySubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.setDoc(p.doc(p.db,'ghostStories',id),{author:x.author,authorType:normalizeWriterType(x.authorType),title:x.title,body:x.body,image:x.image||'',date:x.date,publishedAt:x.publishedAt||p.serverTimestamp(),deleted:false},{merge:true});await p.updateDoc(p.doc(p.db,'ghostStorySubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});await loadSpecialAdmin();alert('ভৌতিক গল্প প্রকাশিত হয়েছে।')}catch(e){alert('গল্প প্রকাশ করতে সমস্যা হয়েছে: '+e.message)}}async function rejectGhost(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'ghostStorySubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 async function approveUnsaid(id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;try{const s=await p.getDocs(p.collection(p.db,'unsaidSubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.setDoc(p.doc(p.db,'unsaidLetters',id),{author:x.author,authorType:normalizeWriterType(x.authorType),to:x.to,body:x.body,image:x.image||'',date:x.date,publishedAt:x.publishedAt||p.serverTimestamp(),deleted:false},{merge:true});await p.updateDoc(p.doc(p.db,'unsaidSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});await loadSpecialAdmin();alert('না-বলা কথাটি প্রকাশিত হয়েছে।')}catch(e){alert('প্রকাশ করতে সমস্যা হয়েছে: '+e.message)}}async function rejectUnsaid(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'unsaidSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 function openFeelingSpace(){openSpecial('feelingOverlay');loadFeeling()}function openFeelingEditor(){resetSpecialImage('feeling');document.getElementById('feelingDate').value=new Date().toISOString().slice(0,10);openSpecial('feelingEditorOverlay')}
 async function saveFeeling(){const p=window.firebasePoem;if(!p)return;await window.ensurePublicAuth?.();const author=document.getElementById('feelingAuthor').value.trim()||'অচেনা একজন',authorType=getWriterType('feelingAuthorType'),title=document.getElementById('feelingTitle').value.trim()||'অনুভূতির কথা',body=document.getElementById('feelingBody').value.trim(),date=document.getElementById('feelingDate').value||new Date().toISOString().slice(0,10);if(!body)return alert('তোমার অনুভূতিটি লিখুন।');try{await p.addDoc(p.collection(p.db,'feelingSubmissions'),{author,authorType,title,body,date,image:specialImageData.feeling||'',status:'pending',createdAt:p.serverTimestamp()});closeSpecial('feelingEditorOverlay');resetSpecialImage('feeling');alert('অনুভূতির কথাটি জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
-async function loadFeeling(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('feelingList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'feelingLetters'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${escapeHTML(x.image)}" alt="${escapeHTML(x.title||'অনুভূতি')}" loading="lazy">`:''}<h3>✦ ${escapeHTML(x.title||'অনুভূতির কথা')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো অনুভূতির কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">লেখাগুলো লোড করা যায়নি।</p>'}}
+async function loadFeeling(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('feelingList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'feelingLetters'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${safeImageSrc(x.image)}" alt="${escapeHTML(x.title||'অনুভূতি')}" loading="lazy">`:''}<h3>✦ ${escapeHTML(x.title||'অনুভূতির কথা')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অচেনা একজন')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো অনুভূতির কথা প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">লেখাগুলো লোড করা যায়নি।</p>'}}
 function openNovelSpace(){openSpecial('novelOverlay');loadNovels()}function openNovelEditor(){resetSpecialImage('novel');document.getElementById('novelDate').value=new Date().toISOString().slice(0,10);openSpecial('novelEditorOverlay')}
 async function saveNovel(){const p=window.firebasePoem;if(!p)return alert('Submission system configure করা হয়নি।');await window.ensurePublicAuth?.();const author=document.getElementById('novelAuthor').value.trim(),authorType=getWriterType('novelAuthorType'),title=document.getElementById('novelTitle').value.trim(),body=document.getElementById('novelBody').value.trim(),date=document.getElementById('novelDate').value||new Date().toISOString().slice(0,10);if(!author||!title||!body)return alert('লেখকের নাম, উপন্যাসের নাম ও লেখা দিন।');try{await p.addDoc(p.collection(p.db,'novelSubmissions'),{author,authorType,title,body,date,image:specialImageData.novel||'',status:'pending',createdAt:p.serverTimestamp()});closeSpecial('novelEditorOverlay');resetSpecialImage('novel');alert('ছোট উপন্যাস জমা হয়েছে। Admin approve করলে প্রকাশ পাবে।')}catch(e){alert('জমা দেওয়া যায়নি: '+e.message)}}
-async function loadNovels(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('novelList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'shortNovels'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${escapeHTML(x.image)}" alt="${escapeHTML(x.title||'ছোট উপন্যাস')}" loading="lazy">`:''}<h3>▣ ${escapeHTML(x.title||'ছোট উপন্যাস')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো ছোট উপন্যাস প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">উপন্যাসগুলো লোড করা যায়নি।</p>'}}
+async function loadNovels(){const p=window.firebasePoem;if(!p)return;const box=document.getElementById('novelList');box.innerHTML='<p>Loading…</p>';try{const snap=await p.getDocs(p.collection(p.db,'shortNovels'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});a.sort((x,y)=>String(y.date||'').localeCompare(String(x.date||'')));box.innerHTML=a.slice(0,SPECIAL_LIMIT).map(x=>`<article class="special-card">${x.image?`<img class="special-cover-thumb" src="${safeImageSrc(x.image)}" alt="${escapeHTML(x.title||'ছোট উপন্যাস')}" loading="lazy">`:''}<h3>▣ ${escapeHTML(x.title||'ছোট উপন্যাস')}</h3><div class="special-meta">${escapeHTML(normalizeWriterType(x.authorType))}: ${escapeHTML(x.author||'অজানা')} · ${escapeHTML(formatPoemDate(x.date))}</div><div class="special-body">${escapeHTML(x.body||'')}</div></article>`).join('')||'<p class="muted-note">এখনো কোনো ছোট উপন্যাস প্রকাশিত হয়নি।</p>'}catch(e){box.innerHTML='<p class="muted-note">উপন্যাসগুলো লোড করা যায়নি।</p>'}}
 async function approveStory(id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;try{const d=await p.getDocs(p.collection(p.db,'storySubmissions'));const snap=d.docs.find(x=>x.id===id);if(!snap)return;const x=snap.data();await p.setDoc(p.doc(p.db,'stories',id),{author:x.author,authorType:normalizeWriterType(x.authorType),title:x.title,category:x.category||'জীবন',cover:x.cover||'',body:x.body,date:x.date,readingTime:x.readingTime||storyReadingTime(x.body),publishedAt:x.publishedAt||p.serverTimestamp(),deleted:false},{merge:true});await p.updateDoc(p.doc(p.db,'storySubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});await loadSpecialAdmin();alert('গল্পটি প্রকাশিত হয়েছে।')}catch(e){alert('গল্প প্রকাশ করতে সমস্যা হয়েছে: '+e.message)}}async function rejectStory(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'storySubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 async function approveFeeling(id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;try{const s=await p.getDocs(p.collection(p.db,'feelingSubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.setDoc(p.doc(p.db,'feelingLetters',id),{author:x.author,authorType:normalizeWriterType(x.authorType),title:x.title,body:x.body,image:x.image||'',date:x.date,publishedAt:x.publishedAt||p.serverTimestamp(),deleted:false},{merge:true});await p.updateDoc(p.doc(p.db,'feelingSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});await loadSpecialAdmin();alert('অনুভূতির কথাটি প্রকাশিত হয়েছে।')}catch(e){alert('প্রকাশ করতে সমস্যা হয়েছে: '+e.message)}}async function rejectFeeling(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'feelingSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 async function approveNovel(id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;try{const s=await p.getDocs(p.collection(p.db,'novelSubmissions'));const d=s.docs.find(x=>x.id===id);if(!d)return;const x=d.data();await p.setDoc(p.doc(p.db,'shortNovels',id),{author:x.author,authorType:normalizeWriterType(x.authorType),title:x.title,body:x.body,image:x.image||'',date:x.date,publishedAt:x.publishedAt||p.serverTimestamp(),deleted:false},{merge:true});await p.updateDoc(p.doc(p.db,'novelSubmissions',id),{status:'approved',approvedAt:p.serverTimestamp()});await loadSpecialAdmin();alert('ছোট উপন্যাসটি প্রকাশিত হয়েছে।')}catch(e){alert('প্রকাশ করতে সমস্যা হয়েছে: '+e.message)}}async function rejectNovel(id){const p=window.firebasePoem;if(confirm('Reject করবেন?')){await p.updateDoc(p.doc(p.db,'novelSubmissions',id),{status:'rejected',rejectedAt:p.serverTimestamp()});loadSpecialAdmin()}}
 let specialEditState=null;
-async function openSpecialEdit(type,id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const map={ghost:['ghostStories','ভৌতিক গল্প Edit'],unsaid:['unsaidLetters','না-বলা কথা Edit'],thread:['collabThreads','যৌথ কবিতা Edit'],story:['storySubmissions','গল্প ঘর Edit'],feeling:['feelingSubmissions','অনুভূতির কথা Edit'],novel:['novelSubmissions','ছোট উপন্যাস Edit']};const cfg=map[type];if(!cfg)return;const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();specialEditState={type,id,col:cfg[0]};document.getElementById('specialEditHeading').textContent=cfg[1];document.getElementById('specialEditCategoryWrap').style.display=type==='story'?'block':'none';document.getElementById('specialEditCoverWrap').style.display=['story','ghost','collab','unsaid','feeling','novel'].includes(type)?'block':'none';document.getElementById('specialEditCategory').value=x.category||'জীবন';specialEditCoverData=x.cover||x.image||'';document.getElementById('specialEditCover').value=specialEditCoverData;document.getElementById('specialEditCoverPreview').innerHTML=specialEditCoverData?`<img src="${specialEditCoverData}" alt="কভার ছবির preview">`:'';document.getElementById('specialEditCoverFile').value='';document.getElementById('specialEditAuthor').value=x.author||'';document.querySelectorAll('input[name="specialEditAuthorType"]').forEach(r=>r.checked=r.value===normalizeWriterType(x.authorType));document.getElementById('specialEditTitle').value=x.title||x.to||'';document.getElementById('specialEditBody').value=x.body||x.starter||'';document.getElementById('specialEditDate').value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')?x.date:'';document.getElementById('specialEditOverlay').classList.add('show');document.body.style.overflow='hidden'}
+async function openSpecialEdit(type,id){const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return;const map={ghost:['ghostStories','ভৌতিক গল্প Edit'],unsaid:['unsaidLetters','না-বলা কথা Edit'],thread:['collabThreads','যৌথ কবিতা Edit'],story:['storySubmissions','গল্প ঘর Edit'],feeling:['feelingSubmissions','অনুভূতির কথা Edit'],novel:['novelSubmissions','ছোট উপন্যাস Edit']};const cfg=map[type];if(!cfg)return;const snap=await p.getDocs(p.collection(p.db,cfg[0]));const d=snap.docs.find(x=>x.id===id);if(!d)return;const x=d.data();specialEditState={type,id,col:cfg[0]};document.getElementById('specialEditHeading').textContent=cfg[1];document.getElementById('specialEditCategoryWrap').style.display=type==='story'?'block':'none';document.getElementById('specialEditCoverWrap').style.display=['story','ghost','collab','unsaid','feeling','novel'].includes(type)?'block':'none';document.getElementById('specialEditCategory').value=x.category||'জীবন';specialEditCoverData=x.cover||x.image||'';document.getElementById('specialEditCover').value=specialEditCoverData;document.getElementById('specialEditCoverPreview').innerHTML=specialEditCoverData?`<img src="${safeImageSrc(specialEditCoverData)}" alt="কভার ছবির preview">`:'';document.getElementById('specialEditCoverFile').value='';document.getElementById('specialEditAuthor').value=x.author||'';document.querySelectorAll('input[name="specialEditAuthorType"]').forEach(r=>r.checked=r.value===normalizeWriterType(x.authorType));document.getElementById('specialEditTitle').value=x.title||x.to||'';document.getElementById('specialEditBody').value=x.body||x.starter||'';document.getElementById('specialEditDate').value=/^\d{4}-\d{2}-\d{2}$/.test(x.date||'')?x.date:'';document.getElementById('specialEditOverlay').classList.add('show');document.body.style.overflow='hidden'}
 function closeSpecialEdit(){document.getElementById('specialEditOverlay').classList.remove('show');document.body.style.overflow=''}
 let specialEditCoverData="";
 function handleSpecialEditCover(input){
@@ -2086,7 +2123,7 @@ let activeTag='সব';
 function poemTags(p){const t=(p.title+' '+p.body).toLowerCase(),a=[];if(/ভালোবাসা|প্রেম|তুমি|হৃদয়|হৃদয়|ভালবাস/.test(t))a.push('প্রেম');if(/বিষাদ|শূন্য|হার|চলে|বিদায়|বিরহ|কষ্ট/.test(t))a.push('বিরহ');if(/জীবন|মানুষ|সময়|সময়/.test(t))a.push('জীবন');if(/নীরব|নিঃসঙ্গ|নির্জন|শহর|অন্ধকার|রাত/.test(t))a.push('নির্জনতা');return a.length?a:['জীবন']}
 function setTag(tag,el){activeTag=tag;document.querySelectorAll('.tag').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
 function premiumMatch(p,q){if(!q)return true;const x=q.toLowerCase().trim();const hay=(p.title+' '+(p.author||'')+' '+p.body+' '+poemTags(p).join(' ')).toLowerCase();const trans=searchReady(p.title+' '+(p.author||'')+' '+p.body);const qtr=searchReady(x);const author=String(p.author||'').toLowerCase();return hay.includes(x)||(qtr&&trans.includes(qtr))||(author.includes(x))}
-render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${renderAuthorHTML(p)}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
+render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${safeImageSrc(p.image)}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${renderAuthorHTML(p)}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
 function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');const favs=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;if(sp)sp.textContent=poems.length;if(sf)sf.textContent=favs;const aqp=document.getElementById('aqPublished'),aqf=document.getElementById('aqFavorites'),aqa=document.getElementById('aqAuthors'),aqi=document.getElementById('aqImages');if(aqp)aqp.textContent=poems.length;if(aqf)aqf.textContent=favs;if(aqa)aqa.textContent=new Set(poems.map(p=>String(p.author||'').trim()).filter(Boolean)).size;if(aqi)aqi.textContent=(poems.length?Math.round(poems.filter(p=>p.image).length/poems.length*100):0)+'%';const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
 function openFeatured(){if(window.featuredId)openReader(window.featuredId)}
 const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ ${escapeHTML(normalizeAuthorType(p.authorType))}: ${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
@@ -2176,12 +2213,12 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   function updateReaderEngagement(){
     const b=document.getElementById('readerLikeBtn'),c=document.getElementById('readerLikeCount');
     if(b){const on=currentId&&localStorage.getItem('liked-'+currentId)==='1';b.classList.toggle('active',on);b.textContent=on?'♥ ভালো লেগেছে':'♡ ভালো লেগেছে'}
-    if(c&&currentId)c.textContent=poemLikeCount(currentId)+' জনের মতো';
+    if(c&&currentId)c.textContent=poemLikeCount(currentId)+' এই ডিভাইসে';
   }
   function injectReaderEngagement(){
     const host=document.getElementById('readerEngagement');
     if(!host)return;
-    host.innerHTML='<div class="reader-reaction"><div><strong>এই লেখাটি কেমন লাগল?</strong><small id="readerLikeCount" style="display:block;margin-top:4px">0 জনের মতো</small></div><button id="readerLikeBtn" class="btn like-poem" onclick="togglePoemLike()">♡ ভালো লেগেছে</button></div>';
+    host.innerHTML='<div class="reader-reaction"><div><strong>এই লেখাটি কেমন লাগল?</strong><small id="readerLikeCount" style="display:block;margin-top:4px">0 এই ডিভাইসে</small></div><button id="readerLikeBtn" class="btn like-poem" onclick="togglePoemLike()">♡ ভালো লেগেছে</button></div>';
   }
   const baseOpenForEngagement=window.openReader;
   window.openReader=function(id){baseOpenForEngagement(id);injectReaderEngagement();updateReaderEngagement()};
@@ -2270,7 +2307,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
         <div class="p6-highlight" id="p6Highlights"></div>
       </div>
       <div class="p6-panel p6-random"><div><div class="eyebrow">A little surprise</div><div class="p6-random-title" id="p6RandomTitle">আজ একটি কবিতা বেছে নাও</div><p class="p6-random-excerpt" id="p6RandomExcerpt">হঠাৎ কোনো একটি কবিতা—হয়তো আজ ঠিক তোমার জন্যই।</p></div><div class="p6-actions"><button class="btn gold" onclick="phase6Surprise()">🎲 আমাকে একটি কবিতা দাও</button><button class="p6-action" onclick="phase6Trending()">🔥 আলোচিত লেখা</button></div></div>
-      <div class="p6-panel p6-trending" style="grid-column:1/-1"><div class="eyebrow">এই ডিভাইসের পাঠ-আলোচনা</div><h3>🔥 তোমার আলোচিত লেখা</h3><div class="p6-trend-list" id="p6Trending"></div></div>`;
+      <div class="p6-panel p6-trending" style="grid-column:1/-1"><div class="eyebrow">এই ডিভাইসের পাঠ-ছন্দ</div><h3>🔥 আলোচিত লেখা</h3><div class="p6-trend-list" id="p6Trending"></div></div>`;
     $('archive').insertAdjacentElement('afterend',sec); renderHub();
   }
   function renderHub(){
@@ -2361,19 +2398,85 @@ function toggleReaderTools(){
 }
 </script>
 
-<!-- PHASE 8 — SAFE UX/DATA-TRUTH PATCH -->
-<script id="ka-phase8-safe-ux-patch">
+<!-- Phase 10: safe shareable poem links.
+     No Firestore schema/rules changes. A poem opened in the reader gets a stable
+     ?poem=... URL so readers can share a direct link and recipients can reopen it.
+     Invalid/missing poem IDs are ignored safely. -->
+<script id="ka-phase10-shareable-links-js">
 (function(){
-  const HISTORY_KEY='ka-read-history-v1', MAX_HISTORY=40;
-  function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x&&x.id)}catch(e){return []}}
-  function saveHistory(id){if(!id)return;try{const next=getHistory().filter(x=>x.id!==id);next.unshift({id,at:Date.now()});localStorage.setItem(HISTORY_KEY,JSON.stringify(next.slice(0,MAX_HISTORY)))}catch(e){}}
-  window.kaReadHistory=getHistory;
-  const oldSet=window.setPremiumFilter;
-  window.setPremiumFilter=function(type,el){if(typeof oldSet==='function')oldSet(type,el);window.__premiumFilter=type;if(type==='recent')window.render()};
-  const oldRender=window.render;
-  window.render=function(){if(typeof oldRender==='function')oldRender();if((window.__premiumFilter||'all')!=='recent')return;const ids=new Set(getHistory().slice(0,6).map(x=>x.id));const cards=[...document.querySelectorAll('#grid .card')];cards.forEach(card=>{const id=card.dataset.poemId||card.getAttribute('onclick')?.match(/'([^']+)'/)?.[1]||'';card.style.display=ids.has(id)?'':'none'});const visible=cards.filter(c=>c.style.display!=='none').length;const count=document.getElementById('count');if(count)count.textContent=visible+'টি কবিতা';if(!visible){const grid=document.getElementById('grid');if(grid)grid.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">◷</div>এখনো কোনো সাম্প্রতিক পাঠ নেই।<br><small>একটি কবিতা খুলে পড়া শুরু করো—তারপর এখানে তোমার সাম্প্রতিক লেখা দেখা যাবে।</small></div>'}};
-  const oldOpen=window.openReader; if(oldOpen)window.openReader=function(id){saveHistory(id);oldOpen(id)};
-  window.phase6Mood=function(m){document.querySelectorAll('.p6-mood').forEach(btn=>btn.classList.toggle('active',btn.textContent.includes(m)));const list=(window.poems||[]).filter(p=>{const t=(String(p.title||'')+' '+String(p.body||'')).toLowerCase();if(m==='প্রেম')return /প্রেম|ভালোবাসা|ভালবাসা|তুমি|হৃদয়|হৃদয়/.test(t);if(m==='বিষণ্ণ')return /বিষাদ|শূন্য|বিরহ|কষ্ট|হারানো|অশ্রু|দুঃখ/.test(t);if(m==='শান্ত')return /শান্ত|প্রকৃতি|বৃষ্টি|আকাশ|ভোর|সবুজ/.test(t);if(m==='রাত')return /রাত|নিশি|নীরব|অন্ধকার|চাঁদ|জোছনা/.test(t);return true});if(list.length){const p=list[Math.floor(Math.random()*list.length)];document.getElementById('p6RandomTitle')?.replaceChildren(document.createTextNode(p.title||'তোমার জন্য একটি লেখা'));document.getElementById('p6RandomExcerpt')?.replaceChildren(document.createTextNode(String(p.body||'').replace(/\s+/g,' ').slice(0,180)+(String(p.body||'').length>180?'…':'')));window.phase6Open?.(p.id)}else window.phase6Surprise?.()};
+  const SHARE_PARAM='poem';
+  function poemUrl(id){
+    const u=new URL(window.location.href);
+    u.searchParams.set(SHARE_PARAM,String(id));
+    u.hash='';
+    return u.toString();
+  }
+  function cleanPoemUrl(){
+    try{
+      const u=new URL(window.location.href);
+      if(!u.searchParams.has(SHARE_PARAM))return;
+      u.searchParams.delete(SHARE_PARAM);
+      window.history.replaceState({},document.title,u.pathname+(u.search?u.search:'')+(u.hash||''));
+    }catch(e){}
+  }
+  function setOgUrl(url){
+    let m=document.querySelector('meta[property="og:url"]');
+    if(m)m.setAttribute('content',url);
+  }
+  const baseOpen=window.openReader;
+  if(typeof baseOpen==='function'){
+    window.openReader=function(id){
+      baseOpen(id);
+      const p=(window.poems||[]).find(x=>x.id===id);
+      if(!p)return;
+      try{
+        const url=poemUrl(id);
+        window.history.replaceState({poemId:id},document.title,url);
+        setOgUrl(url);
+      }catch(e){}
+    };
+  }
+  const baseClose=window.closeReader;
+  if(typeof baseClose==='function'){
+    window.closeReader=function(){
+      baseClose();
+      cleanPoemUrl();
+      const base=document.querySelector('link[rel="canonical"]')?.href||window.location.origin+window.location.pathname;
+      setOgUrl(base);
+    };
+  }
+  function openFromUrl(){
+    try{
+      const id=new URL(window.location.href).searchParams.get(SHARE_PARAM);
+      if(!id)return false;
+      const p=(window.poems||[]).find(x=>x.id===id);
+      if(!p)return false;
+      if(typeof window.openReader==='function')window.openReader(id);
+      return true;
+    }catch(e){return false}
+  }
+  // Firebase can arrive after the first render, so retry briefly without
+  // creating repeated reads or changing any Firestore data.
+  let tries=0;
+  function tryOpen(){
+    if(openFromUrl())return;
+    if(tries++<12)setTimeout(tryOpen,500);
+  }
+  window.addEventListener('load',()=>setTimeout(tryOpen,350));
+})();
+</script>
+
+<script id="ka-phase12-safety-guards">
+(function(){
+  const isAdmin=()=>{const p=window.firebasePoem;return !!(p&&window.firebasePoemUser&&window.firebasePoemUser.email===p.ADMIN_EMAIL)};
+  ['rejectGhost','rejectUnsaid','rejectStory','rejectFeeling','rejectNovel'].forEach(name=>{
+    const base=window[name];
+    if(typeof base==='function') window[name]=async function(id){if(!isAdmin())return;return base(id);};
+  });
+  const baseDeleteSpecial=window.deleteSpecial;
+  if(typeof baseDeleteSpecial==='function') window.deleteSpecial=async function(type,id,col){if(!isAdmin())return;return baseDeleteSpecial(type,id,col);};
 })();
 </script>
 </body></html>
+
+<!-- Phase 9 Safe Data Integrity Update: deleted original fallback + idempotent poem approval. No Firebase Rules changes. -->
