@@ -641,7 +641,19 @@ body.ka-menu-lock{overflow:hidden}
   <div class="scroll">SCROLL TO READ</div>
 </header>
 
-
+<section class="ka-daily-ritual" id="dailyRitual" aria-label="আজকের পাঠ">
+  <div class="ka-ritual-inner">
+    <div>
+      <div class="eyebrow">Daily reading ritual</div>
+      <h2>আজকের পাঠ — একটু ধীরে</h2>
+      <p id="kaRitualText">আজ অন্তত একটি কবিতা পুরোটা পড়ে দেখো। শব্দগুলোকে তাড়াহুড়ো করে যেতে দিও না।</p>
+    </div>
+    <div class="ka-ritual-actions">
+      <button class="btn gold" id="kaRitualOpen">আজকের কবিতা পড়ুন →</button>
+      <button class="ka-ritual-done" id="kaRitualDone" type="button">○ আজকের পাঠ সম্পন্ন</button>
+    </div>
+  </div>
+</section>
 
 <section class="section discover" id="discover">
 <div class="discover-grid">
@@ -2221,6 +2233,11 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 })();
 </script>
 
+
+<style id="ka-phase7-ritual-style">
+.ka-daily-ritual{margin:0 auto 18px;max-width:1100px;padding:0 22px}.ka-ritual-inner{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:24px 26px;border:1px solid rgba(217,185,121,.16);border-radius:22px;background:linear-gradient(135deg,rgba(255,255,255,.035),rgba(217,185,121,.045));box-shadow:0 14px 40px rgba(0,0,0,.12)}.ka-ritual-inner h2{margin:5px 0 8px;font-size:clamp(1.35rem,2.5vw,2rem)}.ka-ritual-inner p{margin:0;max-width:680px;color:rgba(245,240,230,.62);line-height:1.8}.ka-ritual-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.ka-ritual-done{border:1px solid rgba(217,185,121,.25);background:transparent;color:rgba(245,240,230,.68);padding:11px 14px;border-radius:999px;cursor:pointer}.ka-ritual-done.done{background:rgba(217,185,121,.12);color:#d9b979;border-color:rgba(217,185,121,.4)}@media(max-width:700px){.ka-ritual-inner{align-items:flex-start;flex-direction:column}.ka-ritual-actions{justify-content:flex-start}}
+</style>
+
 <script id="phase6-wow-js">
 (function(){
   const $=id=>document.getElementById(id);
@@ -2262,6 +2279,17 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 })();
 </script>
 
+<script id="ka-phase7-ritual-js">
+(function(){
+  const $=id=>document.getElementById(id);
+  const dayKey=()=>{const d=new Date();return 'ka-reading-'+d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  function getList(){return Array.isArray(window.poems)?window.poems:[];}
+  function todayPoem(){const list=getList();if(!list.length)return null;const d=new Date();const seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();return list[Math.abs(seed)%list.length];}
+  function render(){const p=todayPoem();const btn=$('kaRitualOpen'),done=$('kaRitualDone');if(!btn||!done)return;if(p){btn.onclick=()=>window.openReader?.(p.id);$('kaRitualText').textContent='আজকের নির্বাচিত লেখা: “'+String(p.title||'একটি কবিতা')+'” — কয়েক মিনিট শুধু এটুকুই পড়ো।';}else{btn.disabled=true;btn.textContent='কবিতা আসছে…';}if(localStorage.getItem(dayKey())==='1'){done.textContent='✓ আজকের পাঠ সম্পন্ন';done.classList.add('done');}}
+  function mark(){localStorage.setItem(dayKey(),'1');const b=$('kaRitualDone');if(b){b.textContent='✓ আজকের পাঠ সম্পন্ন';b.classList.add('done');}}
+  document.addEventListener('DOMContentLoaded',()=>{render();$('kaRitualDone')?.addEventListener('click',mark);setTimeout(render,1200);});
+})();
+</script>
 
 <section class="external-discovery-copy" aria-label="কবিতার আঙিনা শেয়ার করার তথ্য">
   <div class="container">
