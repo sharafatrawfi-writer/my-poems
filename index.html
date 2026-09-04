@@ -1660,24 +1660,16 @@ async function approvePoem(id){
     const x=target.data();
     if(x.status!=="pending") return alert("এই কবিতাটি আর pending নেই।");
 
-    // Idempotent publication: use a deterministic document ID derived from the
-    // submission ID. If an older publish record already exists, reuse it instead
-    // of creating another random document on retry.
-    const publishedSnap=await p.getDocs(p.collection(p.db,"publishedPoems"));
-    const alreadyPublished=publishedSnap.docs.find(d=>String(d.data()?.sourceSubmissionId||"")===String(id));
-    if(!alreadyPublished){
-      await p.setDoc(p.doc(p.db,"publishedPoems","submission-"+id),{
-        author:x.author||"",
-        authorType:x.authorType||"লেখক",
-        title:x.title||"",
-        body:x.body||"",
-        image:x.image||"",
-        date:x.date||new Date().toISOString().slice(0,10),
-        publishedAt:p.serverTimestamp(),
-        sourceSubmissionId:id,
-        deleted:false
-      });
-    }
+    await p.addDoc(p.collection(p.db,"publishedPoems"),{
+      author:x.author||"",
+      authorType:x.authorType||"লেখক",
+      title:x.title||"",
+      body:x.body||"",
+      image:x.image||"",
+      date:x.date||new Date().toISOString().slice(0,10),
+      publishedAt:p.serverTimestamp(),
+      sourceSubmissionId:id
+    });
 
     await p.updateDoc(p.doc(p.db,"submissions",id),{
       status:"approved", approvedAt:p.serverTimestamp()
@@ -1917,13 +1909,9 @@ async function loadPublishedFromFirebase(){
   try{
     const snap=await p.getDocs(p.collection(p.db,"publishedPoems"));
     const originalIds=new Set(initialPoems.map(x=>x.id));
-    // Keep ALL original Firestore IDs, including soft-deleted ones.
-    // Otherwise a deleted built-in poem can reappear from the static fallback.
-    const remoteOriginalIds=new Set();
     const rows=[];
     snap.forEach(d=>{
       const x=d.data();
-      if(originalIds.has(d.id)) remoteOriginalIds.add(d.id);
       if(x.deleted) return;
       rows.push({docId:d.id,id:originalIds.has(d.id)?d.id:"fb-"+d.id,...x,authorType:normalizeAuthorType(x.authorType)});
     });
@@ -1941,6 +1929,7 @@ async function loadPublishedFromFirebase(){
     });
 
     const remote=Array.from(byKey.values());
+    const remoteOriginalIds=new Set(remote.filter(x=>originalIds.has(x.docId)).map(x=>x.docId));
     const fallbackInitial=initialPoems.filter(x=>!remoteOriginalIds.has(x.id));
     poems=[...remote,...fallbackInitial];
 window.poems=poems;
@@ -2216,7 +2205,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
   function ensureArchiveSort(){
     const tools=document.querySelector('#archive .archive-toolbar');if(!tools||document.getElementById('poetrySort'))return;
     const select=document.createElement('select');select.id='poetrySort';select.className='premium-filter archive-sort';select.setAttribute('aria-label','কবিতা সাজানোর ধরন');
-    select.innerHTML='<option value="default">সাজানো: ডিফল্ট</option><option value="popular">সাজানো: জনপ্রিয়</option>';
+    select.innerHTML='<option value="default">সাজানো: ডিফল্ট</option><option value="popular">সাজানো: আমার পছন্দ</option>';
     select.onchange=()=>setPoetrySort(select.value);tools.appendChild(select);
   }
   window.addEventListener('load',ensureArchiveSort);
@@ -2281,7 +2270,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
         <div class="p6-highlight" id="p6Highlights"></div>
       </div>
       <div class="p6-panel p6-random"><div><div class="eyebrow">A little surprise</div><div class="p6-random-title" id="p6RandomTitle">আজ একটি কবিতা বেছে নাও</div><p class="p6-random-excerpt" id="p6RandomExcerpt">হঠাৎ কোনো একটি কবিতা—হয়তো আজ ঠিক তোমার জন্যই।</p></div><div class="p6-actions"><button class="btn gold" onclick="phase6Surprise()">🎲 আমাকে একটি কবিতা দাও</button><button class="p6-action" onclick="phase6Trending()">🔥 আলোচিত লেখা</button></div></div>
-      <div class="p6-panel p6-trending" style="grid-column:1/-1"><div class="eyebrow">This week's pulse</div><h3>🔥 আলোচিত লেখা</h3><div class="p6-trend-list" id="p6Trending"></div></div>`;
+      <div class="p6-panel p6-trending" style="grid-column:1/-1"><div class="eyebrow">এই ডিভাইসের পাঠ-আলোচনা</div><h3>🔥 তোমার আলোচিত লেখা</h3><div class="p6-trend-list" id="p6Trending"></div></div>`;
     $('archive').insertAdjacentElement('afterend',sec); renderHub();
   }
   function renderHub(){
@@ -2337,7 +2326,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
     else if(a==='unsaid'&&window.openUnsaidSpace)window.openUnsaidSpace();
     else if(a==='feeling'&&window.openFeelingSpace)window.openFeelingSpace();
     else if(a==='novel'&&window.openNovelSpace)window.openNovelSpace();
-    else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorites"]')?.click(),300)}
+    else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorite"]')?.click(),300)}
     else if(a==='submit'&&window.openEditor)window.openEditor();
   },100)}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('show'))closeMenu()});
@@ -2371,6 +2360,20 @@ function toggleReaderTools(){
  trigger.innerHTML=open?"× Close Tools":"☰ Reading Tools";
 }
 </script>
-</body></html>
 
-<!-- Phase 9 Safe Data Integrity Update: deleted original fallback + idempotent poem approval. No Firebase Rules changes. -->
+<!-- PHASE 8 — SAFE UX/DATA-TRUTH PATCH -->
+<script id="ka-phase8-safe-ux-patch">
+(function(){
+  const HISTORY_KEY='ka-read-history-v1', MAX_HISTORY=40;
+  function getHistory(){try{return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]').filter(x=>x&&x.id)}catch(e){return []}}
+  function saveHistory(id){if(!id)return;try{const next=getHistory().filter(x=>x.id!==id);next.unshift({id,at:Date.now()});localStorage.setItem(HISTORY_KEY,JSON.stringify(next.slice(0,MAX_HISTORY)))}catch(e){}}
+  window.kaReadHistory=getHistory;
+  const oldSet=window.setPremiumFilter;
+  window.setPremiumFilter=function(type,el){if(typeof oldSet==='function')oldSet(type,el);window.__premiumFilter=type;if(type==='recent')window.render()};
+  const oldRender=window.render;
+  window.render=function(){if(typeof oldRender==='function')oldRender();if((window.__premiumFilter||'all')!=='recent')return;const ids=new Set(getHistory().slice(0,6).map(x=>x.id));const cards=[...document.querySelectorAll('#grid .card')];cards.forEach(card=>{const id=card.dataset.poemId||card.getAttribute('onclick')?.match(/'([^']+)'/)?.[1]||'';card.style.display=ids.has(id)?'':'none'});const visible=cards.filter(c=>c.style.display!=='none').length;const count=document.getElementById('count');if(count)count.textContent=visible+'টি কবিতা';if(!visible){const grid=document.getElementById('grid');if(grid)grid.innerHTML='<div class="empty"><div style="font-size:28px;margin-bottom:8px">◷</div>এখনো কোনো সাম্প্রতিক পাঠ নেই।<br><small>একটি কবিতা খুলে পড়া শুরু করো—তারপর এখানে তোমার সাম্প্রতিক লেখা দেখা যাবে।</small></div>'}};
+  const oldOpen=window.openReader; if(oldOpen)window.openReader=function(id){saveHistory(id);oldOpen(id)};
+  window.phase6Mood=function(m){document.querySelectorAll('.p6-mood').forEach(btn=>btn.classList.toggle('active',btn.textContent.includes(m)));const list=(window.poems||[]).filter(p=>{const t=(String(p.title||'')+' '+String(p.body||'')).toLowerCase();if(m==='প্রেম')return /প্রেম|ভালোবাসা|ভালবাসা|তুমি|হৃদয়|হৃদয়/.test(t);if(m==='বিষণ্ণ')return /বিষাদ|শূন্য|বিরহ|কষ্ট|হারানো|অশ্রু|দুঃখ/.test(t);if(m==='শান্ত')return /শান্ত|প্রকৃতি|বৃষ্টি|আকাশ|ভোর|সবুজ/.test(t);if(m==='রাত')return /রাত|নিশি|নীরব|অন্ধকার|চাঁদ|জোছনা/.test(t);return true});if(list.length){const p=list[Math.floor(Math.random()*list.length)];document.getElementById('p6RandomTitle')?.replaceChildren(document.createTextNode(p.title||'তোমার জন্য একটি লেখা'));document.getElementById('p6RandomExcerpt')?.replaceChildren(document.createTextNode(String(p.body||'').replace(/\s+/g,' ').slice(0,180)+(String(p.body||'').length>180?'…':'')));window.phase6Open?.(p.id)}else window.phase6Surprise?.()};
+})();
+</script>
+</body></html>
