@@ -609,6 +609,14 @@ img{max-width:100%;height:auto}
 @media(max-width:700px){body{font-size:15px}.hero{padding-left:16px!important;padding-right:16px!important}.search{min-height:48px!important;font-size:16px!important}.ka-menu-item{min-height:46px}.ka-menu-panel{max-width:calc(100vw - 24px)!important}.reader,.modal,.admin-panel{max-width:calc(100vw - 20px)!important}.card,.poem-card{overflow-wrap:anywhere}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
 </style>
+
+<style id="ka-final-polish-v1">
+html{overflow-x:hidden;scroll-behavior:smooth}
+body{overflow-x:hidden;-webkit-tap-highlight-color:transparent;text-rendering:optimizeLegibility}
+img{max-width:100%;height:auto}
+button,a,[role="button"]{touch-action:manipulation}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body style="">
 <div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
@@ -1271,6 +1279,7 @@ const initialPoems = [
 
 const STORAGE_KEY="sharafatPoems_v2";
 let poems = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null") || initialPoems;
+window.poems = poems;
 let currentId = null;
 let pendingImage = "";
 let adminEditingId = null;
@@ -2001,6 +2010,7 @@ async function deletePublishedPoem(id){
       await p.deleteDoc(p.doc(p.db,"publishedPoems",id));
     }
     poems=poems.filter(x=>x.id!==id && x.id!=="fb-"+id);
+    window.poems=poems;
     render();
     await loadPublishedAdmin();
     await loadAdminDashboard();
@@ -2037,6 +2047,7 @@ async function loadPublishedFromFirebase(){
     const remoteOriginalIds=new Set(remote.filter(x=>originalIds.has(x.docId)).map(x=>x.docId));
     const fallbackInitial=initialPoems.filter(x=>!remoteOriginalIds.has(x.id));
     poems=[...remote,...fallbackInitial];
+    window.poems=poems;
     render();
   }catch(e){
     console.warn("Published poems could not load:",e.message);
@@ -3027,60 +3038,7 @@ function toggleReaderTools(){
 </script>
 
 
-<script id="phase16-adaptive-discovery">
-(function(){
-  'use strict';
-  const H='ka-reading-history', E='ka-data-events-v1', E_LEGACY='ka-data-intel-events-v1';
-  const $=id=>document.getElementById(id);
-  const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
-  const esc=v=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-  const poems=()=>Array.isArray(window.poems)?window.poems.filter(p=>p&&p.id):[];
-  const events=()=>{const a=read(E,[]),b=read(E_LEGACY,[]);return [...(Array.isArray(a)?a:[]),...(Array.isArray(b)?b:[])].filter((x,i,self)=>x&&self.findIndex(y=>y.at===x.at&&y.type===x.type&&String(y.id)===String(x.id))===i).slice(-2000)};
-  const history=()=>{const x=read(H,[]);return Array.isArray(x)?x:[]};
-  const metric=p=>({likes:Number(localStorage.getItem('like-'+p.id)||0),views:Number(localStorage.getItem('p6-views-'+p.id)||0),fav:localStorage.getItem('fav-'+p.id)==='1'||localStorage.getItem('bookmark-'+p.id)==='1'});
-  const tags=p=>{try{const x=window.poemTags?.(p);if(Array.isArray(x)&&x.length)return x.map(String)}catch(e){} return [...new Set([p.tag,p.tags].flatMap(x=>Array.isArray(x)?x:String(x||'').split(/[,|]/).map(v=>v.trim()).filter(Boolean)))];};
-  const mood=p=>String(p.mood||'').trim();
-  function cleanText(p){return !/draft|pending|rejected/i.test(JSON.stringify(p))}
-  function pulse(){
-    const cut=Date.now()-7*86400000, old=Date.now()-30*86400000;
-    const e=events(), recent=e.filter(x=>Number(x.at||0)>=cut), base=e.filter(x=>Number(x.at||0)>=old);
-    const tag={}, moodMap={}, author={}, oldTag={}, oldAuthor={};
-    recent.filter(x=>x.type==='open'&&x.id).forEach(x=>{const p=poems().find(q=>String(q.id)===String(x.id));if(!p)return;(tags(p)).forEach(t=>tag[t]=(tag[t]||0)+1);if(mood(p))moodMap[mood(p)]=(moodMap[mood(p)]||0)+1;if(p.author)author[p.author]=(author[p.author]||0)+1});
-    base.filter(x=>x.type==='open'&&x.id&&Number(x.at||0)<cut).forEach(x=>{const p=poems().find(q=>String(q.id)===String(x.id));if(!p)return;(tags(p)).forEach(t=>oldTag[t]=(oldTag[t]||0)+1);if(p.author)oldAuthor[p.author]=(oldAuthor[p.author]||0)+1});
-    const ratio=(n,o)=>n/(o/3+1);
-    return {tags:Object.entries(tag).map(([name,n])=>({name,n,trend:ratio(n,oldTag[name]||0)})).sort((a,b)=>b.trend-a.trend||b.n-a.n).slice(0,8),moods:Object.entries(moodMap).sort((a,b)=>b[1]-a[1]).slice(0,6),authors:Object.entries(author).map(([name,n])=>({name,n,trend:ratio(n,oldAuthor[name]||0)})).sort((a,b)=>b.trend-a.trend||b.n-a.n).slice(0,8),recentEvents:recent.length};
-  }
-  function adaptiveScore(p){
-    if(!cleanText(p))return -9999;
-    const m=metric(p), h=history(), pu=pulse(), a=pu.authors.find(x=>x.name===p.author), ts=tags(p), tagBoost=ts.reduce((v,t)=>v+(pu.tags.find(x=>x.name===t)?.trend||0),0), moodBoost=mood(p)?(pu.moods.find(x=>x[0]===mood(p))?.[1]||0):0, read=h.find(x=>String(x.id)===String(p.id));
-    const freshness=read?Math.max(0,1-(Date.now()-Number(read.at||Date.now()))/(14*86400000)):1;
-    return Math.log1p(m.views)*1.5+m.likes*2+(m.fav?4:0)+(a?.trend||0)*1.8+tagBoost*0.9+moodBoost*0.35-freshness*5;
-  }
-  function renderAdaptive(){
-    const host=$('phase16AdaptiveDiscovery');if(!host)return;
-    const pu=pulse(), ranked=poems().map(p=>({p,s:adaptiveScore(p)})).sort((a,b)=>b.s-a.s).slice(0,4);
-    const signals=[...pu.tags.slice(0,3).map(x=>`#${x.name}`),...pu.moods.slice(0,2).map(x=>`মুড: ${x[0]}`)];
-    host.innerHTML=`<div class="p16-head"><div><div class="eyebrow">Adaptive discovery</div><h3>এখন যেগুলো উঠছে</h3><p>সাম্প্রতিক পাঠ-সিগন্যাল দেখে সাজানো। ডেটা এই ডিভাইসেই থাকে।</p></div><button type="button" class="p13-refresh" id="p16Refresh">↻ আপডেট</button></div><div class="p16-signals">${signals.map(x=>`<span>${esc(x)}</span>`).join('')||'<span>নতুন সিগন্যাল জমা হচ্ছে</span>'}</div><div class="p16-grid">${ranked.map((x,i)=>`<article class="p16-card" data-id="${esc(x.p.id)}"><small>${i===0?'↗ Rising now':'✦ Adaptive pick'}</small><h4>${esc(x.p.title||'নামহীন লেখা')}</h4><p>${esc(String(x.p.body||'').replace(/\s+/g,' ').slice(0,100))}${String(x.p.body||'').length>100?'…':''}</p><span>${esc(x.p.author||'অজ্ঞাত লেখক')}</span></article>`).join('')||'<div class="ka-di-note">আরও পাঠ-সিগন্যাল দরকার।</div>'}</div>`;
-    $('p16Refresh')?.addEventListener('click',renderAdaptive);
-    host.querySelectorAll('.p16-card').forEach(c=>c.addEventListener('click',()=>window.openReader?.(c.dataset.id)));
-  }
-  function mount(){
-    if(!$('archive')||$('phase16AdaptiveDiscovery'))return;
-    const sec=document.createElement('section');sec.id='phase16AdaptiveDiscoverySection';sec.className='phase16-adaptive';
-    const anchor=$('phase13Recommendation');
-    sec.innerHTML='<div class="p16-shell"></div>';
-    (anchor?anchor.parentNode.insertBefore(sec,anchor.nextSibling):$('archive').insertAdjacentElement('afterend',sec));
-    const shell=sec.querySelector('.p16-shell');shell.innerHTML='<div id="phase16AdaptiveDiscoveryInner"></div>'; 
-    const inner=$('phase16AdaptiveDiscoveryInner');inner.id='phase16AdaptiveDiscovery';
-    renderAdaptive();
-  }
-  const style=document.createElement('style');style.textContent=`.phase16-adaptive{margin:22px 0}.p16-shell{border:1px solid rgba(120,100,70,.16);border-radius:24px;padding:22px;background:rgba(255,255,255,.52)}.p16-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.p16-head h3{margin:4px 0 6px}.p16-head p{margin:0;opacity:.72}.p16-signals{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.p16-signals span{padding:7px 11px;border-radius:999px;background:rgba(120,100,70,.08);font-size:12px}.p16-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.p16-card{padding:16px;border:1px solid rgba(120,100,70,.13);border-radius:18px;cursor:pointer;background:rgba(255,255,255,.6)}.p16-card small{opacity:.62}.p16-card h4{margin:7px 0}.p16-card p{font-size:13px;line-height:1.55;opacity:.78;min-height:40px}.p16-card span{font-size:12px;opacity:.62}@media(max-width:850px){.p16-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.p16-head{display:block}.p16-head button{margin-top:12px}.p16-grid{grid-template-columns:1fr}}`;
-  document.head.appendChild(style);
-  window.KAAdaptiveDiscovery={pulse,score:adaptiveScore,render:renderAdaptive};
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,250));else setTimeout(mount,250);
-  window.addEventListener('storage',()=>setTimeout(renderAdaptive,120));
-})();
-</script>
+<!-- Adaptive Discovery removed in Phase 46 for stability. -->
 
 
 <script id="phase17-growth-intelligence">
