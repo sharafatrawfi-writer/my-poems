@@ -665,7 +665,7 @@ body.ka-menu-lock{overflow:hidden}
 </div>
 <div class="archive-toolbar" id="premiumFilters"><span class="filter-label">Filter</span><button class="premium-filter active" data-filter="all" onclick="setPremiumFilter('all',this)">সব</button><button class="premium-filter" data-filter="favorite" onclick="setPremiumFilter('favorite',this)">♥ পছন্দ</button><button class="premium-filter" data-filter="recent" onclick="setPremiumFilter('recent',this)">সাম্প্রতিক</button></div>
   <div class="tools">
-    <input id="search" class="search" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
+    <input id="search" class="search" type="search" autocomplete="off" enterkeyhint="search" aria-label="কবিতা, লেখক বা বিষয় খুঁজুন" placeholder="কবিতা খুঁজুন... (বাংলা / English / Banglish)" oninput="render()">
     <button class="btn gold" onclick="openEditor()">নতুন কবিতা</button>
   </div>
   <div class="grid" id="grid"><article class="card" onclick="openReader(&#39;p-1788281580204&#39;)">
@@ -1241,7 +1241,7 @@ function render(){
  grid.innerHTML=list.map(p=>{
    const fav=localStorage.getItem("fav-"+p.id)==="1";
    const media=p.image
-     ? `<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`
+     ? `<div class="card-media"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" loading="lazy" decoding="async"></div>`
      : `<div class="card-media"><div class="no-image">✦</div></div>`;
    return `<article class="card" onclick="openReader('${p.id}')">
     ${media}
@@ -1491,6 +1491,8 @@ render();
           <button class="active" id="adminNavDashboard" onclick="showAdminPanel('dashboard')">⌂ Dashboard</button>
           <button id="adminNavRequests" onclick="showAdminPanel('requests')">↗ Requests <span class="req-count" id="requestCount">0</span></button>
           <button id="adminNavPublished" onclick="showAdminPanel('published')">◈ Published</button>
+          <button id="adminNavAnalytics" onclick="showAdminPanel('analytics')">◉ Analytics</button>
+          <button id="adminNavEditorial" onclick="showAdminPanel('editorial')">✦ Editorial</button>
         </nav>
       </aside>
       <main class="admin-panel">
@@ -1508,6 +1510,16 @@ render();
           <div class="admin-panel-title"><h3>Published — কবিতা ও সব বিভাগ</h3><button class="btn" onclick="loadPublishedAdmin()">↻ Refresh</button></div>
           <div id="publishedList"></div>
         </section>
+        <section id="adminPanelEditorial" style="display:none">
+          <div class="admin-panel-title"><h3>Editorial Intelligence</h3><button class="btn" onclick="window.KAEditorialIntel?.render()">↻ Refresh</button></div>
+          <p class="admin-small">এটি সিদ্ধান্ত-সহায়ক review queue। কোনো লেখা নিজে থেকে Approve বা Reject করা হবে না।</p>
+          <div id="kaEditorialDashboard" class="ka-editorial-dashboard"></div>
+        </section>
+        <section id="adminPanelAnalytics" style="display:none">
+          <div class="admin-panel-title"><h3>Data Intelligence</h3><button class="btn" onclick="window.KADataIntel?.renderAdmin()">↻ Refresh</button></div>
+          <p class="admin-small">এই ড্যাশবোর্ডের reader analytics এই ডিভাইসের local data থেকে তৈরি। Firebase schema বা published content বদলায় না। Production-এ server-side analytics যুক্ত হলে এখানেই platform-wide metrics বসানো যাবে।</p>
+          <div id="kaDataIntelDashboard" class="ka-di-dashboard"></div>
+        </section>
       </main>
     </div>
     <div id="adminLogin" style="display:none">
@@ -1521,7 +1533,7 @@ render();
 
 <script>
 function showAdminPanel(panel){
-  ['dashboard','requests','published'].forEach(x=>{
+  ['dashboard','requests','published','analytics','editorial'].forEach(x=>{
     const sec=document.getElementById('adminPanel'+x.charAt(0).toUpperCase()+x.slice(1));
     const nav=document.getElementById('adminNav'+x.charAt(0).toUpperCase()+x.slice(1));
     if(sec)sec.style.display=x===panel?'':'none';
@@ -1529,6 +1541,8 @@ function showAdminPanel(panel){
   });
   if(panel==='requests'){loadPendingPoems();loadSpecialAdmin();}
   if(panel==='published'){loadPublishedAdmin();}
+  if(panel==='analytics'){window.KADataIntel?.renderAdmin();}
+  if(panel==='editorial'){window.KAEditorialIntel?.render();}
 }
 async function loadAllRequests(){await loadPendingPoems();await loadSpecialAdmin();await loadAdminDashboard();}
 function openAdmin(){
@@ -2070,7 +2084,7 @@ let activeTag='সব';
 function poemTags(p){const t=(p.title+' '+p.body).toLowerCase(),a=[];if(/ভালোবাসা|প্রেম|তুমি|হৃদয়|হৃদয়|ভালবাস/.test(t))a.push('প্রেম');if(/বিষাদ|শূন্য|হার|চলে|বিদায়|বিরহ|কষ্ট/.test(t))a.push('বিরহ');if(/জীবন|মানুষ|সময়|সময়/.test(t))a.push('জীবন');if(/নীরব|নিঃসঙ্গ|নির্জন|শহর|অন্ধকার|রাত/.test(t))a.push('নির্জনতা');return a.length?a:['জীবন']}
 function setTag(tag,el){activeTag=tag;document.querySelectorAll('.tag').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
 function premiumMatch(p,q){if(!q)return true;const x=q.toLowerCase().trim();const hay=(p.title+' '+(p.author||'')+' '+p.body+' '+poemTags(p).join(' ')).toLowerCase();const trans=searchReady(p.title+' '+(p.author||'')+' '+p.body);const qtr=searchReady(x);const author=String(p.author||'').toLowerCase();return hay.includes(x)||(qtr&&trans.includes(qtr))||(author.includes(x))}
-render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${p.image}" alt="${escapeHTML(p.title)}"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${renderAuthorHTML(p)}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
+render=(function(base){return function(){let q=(document.getElementById('search')?.value||'').trim(),list=poems.filter(p=>premiumMatch(p,q)&&(activeTag==='সব'||poemTags(p).includes(activeTag))&&moodMatch(p)),grid=document.getElementById('grid');document.getElementById('count').textContent=list.length+'টি কবিতা';if(!list.length){grid.innerHTML='<div class="empty">এই ফিল্টারে কোনো কবিতা পাওয়া যায়নি।</div>';updatePremiumStats();return}grid.innerHTML=list.map(p=>{const fav=localStorage.getItem('fav-'+p.id)==='1',media=p.image?`<div class="card-media"><img src="${escapeHTML(p.image)}" alt="${escapeHTML(p.title)}" loading="lazy" decoding="async"></div>`:`<div class="card-media"><div class="no-image">✦</div></div>`;return `<article class="card" onclick="openReader('${p.id}')">${media}<button class="favorite ${fav?'active':''}" type="button" aria-label="${fav?'প্রিয় লেখা থেকে সরান':'প্রিয় লেখায় রাখুন'}" title="${fav?'প্রিয় লেখা থেকে সরান':'প্রিয় লেখায় রাখুন'}" onclick="toggleFavorite(event,'${p.id}')">${fav?'♥':'♡'}</button><div class="num">POEM ${String(poems.indexOf(p)+1).padStart(2,'0')}</div><h3>${escapeHTML(p.title)}</h3>${renderAuthorHTML(p)}<div class="card-meta"><span>${escapeHTML(p.date||'')}</span>${poemTags(p).slice(0,2).map(t=>`<span class="badge">${t}</span>`).join('')}</div><div class="excerpt">${escapeHTML(p.body)}</div></article>`}).join('');updatePremiumStats();renderWriterChips()}})(render);
 function updatePremiumStats(){const sp=document.getElementById('statPoems'),sf=document.getElementById('statFav');const favs=poems.filter(p=>localStorage.getItem('fav-'+p.id)==='1').length;if(sp)sp.textContent=poems.length;if(sf)sf.textContent=favs;const aqp=document.getElementById('aqPublished'),aqf=document.getElementById('aqFavorites'),aqa=document.getElementById('aqAuthors'),aqi=document.getElementById('aqImages');if(aqp)aqp.textContent=poems.length;if(aqf)aqf.textContent=favs;if(aqa)aqa.textContent=new Set(poems.map(p=>String(p.author||'').trim()).filter(Boolean)).size;if(aqi)aqi.textContent=(poems.length?Math.round(poems.filter(p=>p.image).length/poems.length*100):0)+'%';const p=poems[0];if(p){document.getElementById('spotTitle').textContent=p.title;document.getElementById('spotExcerpt').textContent=p.body.replace(/\s+/g,' ').slice(0,170)+'…';window.featuredId=p.id}}
 function openFeatured(){if(window.featuredId)openReader(window.featuredId)}
 const _openReader=openReader;openReader=function(id){_openReader(id);const p=poems.find(x=>x.id===id);if(!p)return;document.getElementById('rmeta').innerHTML=`${p.author?`<span class="author">✍ ${escapeHTML(normalizeAuthorType(p.authorType))}: ${escapeHTML(p.author)}</span>`:''}<span>${escapeHTML(p.date||'')}</span>${poemTags(p).map(t=>`<span class="badge">${t}</span>`).join('')}`;document.getElementById('shareNote').textContent=''}
@@ -2200,7 +2214,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 <script id="phase5-brand-js">
 (function(){
   const $=id=>document.getElementById(id);
-  function hideLoader(){setTimeout(()=>$("pageLoader")?.classList.add("hide"),1850)}
+  function hideLoader(){setTimeout(()=>$("pageLoader")?.classList.add("hide"),1350)}
   if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",hideLoader,{once:true});else hideLoader();
   window.addEventListener("load",hideLoader,{once:true});
   let toastTimer; window.phase5Toast=function(msg){const t=$("phase5Toast");if(!t)return;t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2200)};
@@ -2260,15 +2274,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
 </script>
 
 
-<section class="external-discovery-copy" aria-label="কবিতার আঙিনা শেয়ার করার তথ্য">
-  <div class="container">
-    <p><strong>কবিতার আঙিনা</strong> — বাংলা কবিতা ও সাহিত্যের একটি অনলাইন ঘর। এই পেজটি বন্ধু, পাঠক ও লেখকদের সঙ্গে শেয়ার করে বাংলা কবিতা, গল্প ও অনুভূতির লেখা আরও মানুষের কাছে পৌঁছে দিতে পারেন।</p>
-  </div>
-</section>
-<style id="step5-social-discovery-style">
-.external-discovery-copy{max-width:1100px;margin:10px auto 24px;padding:0 22px;color:rgba(245,240,230,.48);font-size:.78rem;line-height:1.8;text-align:center}
-.external-discovery-copy strong{color:rgba(217,185,121,.82)}
-</style>
+
 
 <script id="ka-luxury-menu-js">
 (function(){
@@ -2286,7 +2292,7 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
     else if(a==='unsaid'&&window.openUnsaidSpace)window.openUnsaidSpace();
     else if(a==='feeling'&&window.openFeelingSpace)window.openFeelingSpace();
     else if(a==='novel'&&window.openNovelSpace)window.openNovelSpace();
-    else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorites"]')?.click(),300)}
+    else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorite"]')?.click(),300)}
     else if(a==='submit'&&window.openEditor)window.openEditor();
   },100)}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('show'))closeMenu()});
@@ -2695,4 +2701,337 @@ function toggleReaderTools(){
   setTimeout(render,120);
 })();
 </script>
+
+<script id="phase14-reader-intelligence">
+(function(){
+  'use strict';
+  const H='ka-reading-history', MAX=100;
+  const get=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+  const set=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const poems=()=>window.poems||[];
+  const byId=id=>poems().find(p=>String(p.id)===String(id));
+  const tags=p=>{if(!p)return[]; if(typeof window.poemTags==='function')return window.poemTags(p).map(String).map(x=>x.trim()).filter(Boolean); return [p.tag,p.tags].flatMap(x=>Array.isArray(x)?x:String(x||'').split(/[|,]/)).map(x=>String(x).trim()).filter(Boolean)};
+  const hist=()=>get(H,[]).filter(x=>x&&x.id&&Number(x.at)).slice(0,MAX);
+  const fav=id=>localStorage.getItem('fav-'+id)==='1'||localStorage.getItem('bookmark-'+id)==='1';
+  const liked=id=>localStorage.getItem('liked-'+id)==='1';
+  function profile(){
+    const h=hist(), p={a:{},t:{},m:{},ids:new Set(),favAuthors:{},favTags:{}};
+    h.slice(0,60).forEach((x,i)=>{const q=byId(x.id);if(!q)return;const w=Math.max(.2,1-i/70);p.ids.add(String(x.id));const a=String(q.author||'').trim();if(a)p.a[a]=(p.a[a]||0)+w;tags(q).forEach(t=>p.t[t]=(p.t[t]||0)+w);const m=String(q.mood||'').trim();if(m)p.m[m]=(p.m[m]||0)+w});
+    poems().forEach(q=>{if(!fav(q.id))return;const a=String(q.author||'').trim();if(a)p.favAuthors[a]=(p.favAuthors[a]||0)+1;tags(q).forEach(t=>p.favTags[t]=(p.favTags[t]||0)+1)});
+    return p;
+  }
+  function score(q,p){
+    const id=String(q.id), a=String(q.author||'').trim(), now=Date.now();
+    let s=0;
+    const likes=Number(localStorage.getItem('like-'+id)||0), views=Number(localStorage.getItem('p6-views-'+id)||0);
+    s += Math.log1p(likes)*2.1 + Math.log1p(views)*.75;
+    if(p.a[a])s+=5.5*p.a[a]; if(p.favAuthors[a])s+=6*p.favAuthors[a];
+    tags(q).forEach(t=>{if(p.t[t])s+=2.6*p.t[t];if(p.favTags[t])s+=3.2*p.favTags[t]});
+    const m=String(q.mood||'').trim();if(m&&p.m[m])s+=2.2*p.m[m];
+    if(fav(id))s+=4; if(liked(id))s+=2;
+    const old=hist().find(x=>String(x.id)===id);
+    if(old){const age=(now-Number(old.at))/86400000;s-=18*Math.exp(-age/14)-Math.min(age/90,1)*2;}
+    if(/draft|pending|rejected/i.test(JSON.stringify(q)))return -9999;
+    return s;
+  }
+  function render(){
+    const host=document.getElementById('phase13Recommendations');if(!host||!poems().length)return;
+    const p=profile(), ranked=poems().filter(q=>q&&q.id).map(q=>({q,s:score(q,p)})).sort((x,y)=>y.s-x.s);
+    const picked=[], usedA=new Set(), usedT=new Set();
+    for(const x of ranked){const q=x.q,a=String(q.author||'').trim(),ts=tags(q); if(usedA.has(a)&&picked.length<3)continue; if(ts.some(t=>usedT.has(t))&&picked.length>=2&&x.s<ranked[0]?.s*.65)continue; picked.push(q);usedA.add(a);ts.slice(0,2).forEach(t=>usedT.add(t));if(picked.length===3)break;}
+    for(const x of ranked)if(picked.length<3&&!picked.includes(x.q)){picked.push(x.q);}
+    host.innerHTML=picked.map((q,i)=>{const a=String(q.author||'').trim(),ts=tags(q);let why='জনপ্রিয়তা ও পাঠ-সিগন্যাল মিলেছে';if(fav(q.id))why='তোমার সংরক্ষিত পছন্দের কাছাকাছি';else if(p.a[a]||p.favAuthors[a])why='তোমার পছন্দের লেখকের ধাঁচ';else if(ts.some(t=>p.t[t]||p.favTags[t]))why='তোমার পছন্দের বিষয়ের কাছাকাছি';else if(q.mood&&p.m[String(q.mood).trim()])why='তোমার পড়ার অনুভূতির সঙ্গে মেলে';return `<article class="p13-card" data-id="${String(q.id).replace(/"/g,'&quot;')}"><small>${i===0?'✦ তোমার জন্য':'✧ সাজেস্টেড'}</small><h4>${String(q.title||'নামহীন লেখা').replace(/[<>]/g,'')}</h4><p>${String(q.body||'').replace(/[<>]/g,'').replace(/\s+/g,' ').slice(0,110)}${String(q.body||'').length>110?'…':''}</p><span class="p13-reason">${why}</span></article>`}).join('');
+    host.querySelectorAll('.p13-card').forEach(c=>c.addEventListener('click',()=>window.openReader?.(c.dataset.id)));
+  }
+  window.phase14ReaderIntelligence={render,profile,history:hist,score};
+  ['storage','visibilitychange'].forEach(ev=>window.addEventListener(ev,()=>setTimeout(render,60)));
+  setTimeout(render,180);
+})();
+</script>
+
+<style id="phase15-data-intelligence-css">
+.ka-di-dashboard{display:grid;gap:16px;margin-top:14px}.ka-di-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.ka-di-card{padding:16px;border:1px solid var(--line);border-radius:16px;background:rgba(255,255,255,.025)}.ka-di-card b{display:block;font-size:24px;color:var(--gold2)}.ka-di-card span{display:block;margin-top:4px;font-size:12px;color:var(--muted)}.ka-di-panels{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ka-di-panel{border:1px solid var(--line);border-radius:16px;padding:16px;background:rgba(255,255,255,.02)}.ka-di-panel h4{margin:0 0 12px}.ka-di-list{display:grid;gap:8px}.ka-di-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 10px;border-radius:12px;background:rgba(255,255,255,.025)}.ka-di-row small{color:#8f8980}.ka-di-bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:5px}.ka-di-bar i{display:block;height:100%;background:var(--gold);width:0}.ka-di-note{font-size:11px;color:#777;line-height:1.7}.ka-di-funnel{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.ka-di-funnel div{padding:12px;border:1px solid var(--line);border-radius:14px;text-align:center}.ka-di-funnel b{display:block;font-size:20px}.ka-di-funnel span{font-size:11px;color:#888}@media(max-width:760px){.ka-di-grid{grid-template-columns:repeat(2,1fr)}.ka-di-panels{grid-template-columns:1fr}.ka-di-funnel{grid-template-columns:repeat(2,1fr)}}
+</style>
+
+<script id="phase15-data-intelligence">
+(function(){
+  'use strict';
+  const EVENT_KEY='ka-data-events-v1', MAX=2000, HIST='ka-reading-history', POS='ka-reading-pos-v1-';
+  const now=()=>Date.now();
+  const load=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  const events=()=>load(EVENT_KEY,[]).filter(x=>x&&x.at).slice(-MAX);
+  function track(type,id,meta){const a=events();a.push({type,id:id==null?null:String(id),at:now(),meta:meta||{}});save(EVENT_KEY,a.slice(-MAX));}
+  function poems(){return (window.poems||[]).filter(p=>p&&p.id);}
+  function idOf(p){return String(p.id)}
+  function n(k){return Number(localStorage.getItem(k)||0)}
+  function poemMetrics(p){
+    const id=idOf(p), ev=events().filter(e=>e.id===id);
+    const opens=ev.filter(e=>e.type==='open').length;
+    const views=n('p6-views-'+id), likes=n('like-'+id), saved=(localStorage.getItem('fav-'+id)==='1'||localStorage.getItem('bookmark-'+id)==='1')?1:0;
+    return {opens,views,likes,saved};
+  }
+  function authorMetrics(){
+    const m={}; poems().forEach(p=>{const a=String(p.author||'অজ্ঞাত').trim()||'অজ্ঞাত';const x=m[a]||(m[a]={works:0,likes:0,views:0,opens:0});x.works++;const z=poemMetrics(p);x.likes+=z.likes;x.views+=z.views;x.opens+=z.opens}); return Object.entries(m).map(([author,v])=>({author,...v,engagement:v.likes*5+v.views+v.opens*2})).sort((a,b)=>b.engagement-a.engagement);
+  }
+  function featureMetrics(){
+    const e=events(), types={};e.forEach(x=>types[x.type]=(types[x.type]||0)+1);
+    return types;
+  }
+  function funnel(){
+    const h=load(HIST,[]).filter(x=>x&&x.id);
+    const e=events(), opened=new Set([...h.map(x=>String(x.id)),...e.filter(x=>x.type==='open'&&x.id).map(x=>String(x.id))]);
+    const reached=x=>new Set(e.filter(v=>v.type==='progress-'+x&&v.id).map(v=>String(v.id))).size;
+    const last=load('ka-last-reading-v1',null);
+    if(last&&last.id){const id=String(last.id), pct=Number(last.pct||0);opened.add(id);}
+    return {opened:opened.size,p25:reached(25),p50:reached(50),p75:reached(75),p90:reached(90),note:'Thresholds are unique-poem signals collected locally from this device; older sessions without event history are not retroactively reconstructed.'};
+  }
+  function trend7d(p){const cut=now()-7*86400000;return events().filter(e=>e.type==='open'&&e.id===idOf(p)&&e.at>=cut).length}
+  function whyPopular(p){const z=poemMetrics(p), t=trend7d(p);return {score:z.likes*5+z.views+z.opens*2+t*3,likes:z.likes,views:z.views,opens:z.opens,trend7d:t,saved:z.saved}}
+  function snapshot(){
+    const ps=poems(), pm=ps.map(p=>({id:idOf(p),title:p.title||'নামহীন লেখা',author:p.author||'অজ্ঞাত',...poemMetrics(p),trend7d:trend7d(p)})).sort((a,b)=>(b.likes*5+b.views+b.opens*2+b.trend7d*3)-(a.likes*5+a.views+a.opens*2+a.trend7d*3));
+    return {generatedAt:now(),poems:pm,authors:authorMetrics(),features:featureMetrics(),funnel:funnel(),eventCount:events().length};
+  }
+  function renderAdmin(){
+    const host=document.getElementById('kaDataIntelDashboard');if(!host)return;const s=snapshot(), top=s.poems.slice(0,5), authors=s.authors.slice(0,5), f=s.features;
+    const card=(v,l)=>`<div class="ka-di-card"><b>${v}</b><span>${l}</span></div>`;
+    host.innerHTML=`<div class="ka-di-grid">${card(s.poems.length,'Published poems')}${card(s.eventCount,'Tracked local events')}${card(Object.keys(f).length,'Feature signals')}${card(s.authors.length,'Authors detected')}</div>
+      <div class="ka-di-panels"><div class="ka-di-panel"><h4>🔥 আলোচিত লেখার নতুন signal</h4><div class="ka-di-list">${top.map((p,i)=>`<div class="ka-di-row"><div><b>${i+1}. ${String(p.title).replace(/[<>]/g,'')}</b><div class="ka-di-bar"><i style="width:${Math.min(100,(p.likes*5+p.views+p.opens*2+p.trend7d*3)/Math.max(1,top[0].likes*5+top[0].views+top[0].opens*2+top[0].trend7d*3)*100)}%"></i></div></div><small>♥ ${p.likes} · 👁 ${p.views} · 7d ${p.trend7d}</small></div>`).join('')||'<div class="ka-di-note">এখনো পর্যাপ্ত signal নেই।</div>'}</div>
+      <div class="ka-di-panel"><h4>✍ লেখক engagement</h4><div class="ka-di-list">${authors.map((a,i)=>`<div class="ka-di-row"><div><b>${i+1}. ${String(a.author).replace(/[<>]/g,'')}</b><small>${a.works} works · ${a.opens} opens</small></div><small>Score ${a.engagement}</small></div>`).join('')||'<div class="ka-di-note">লেখক ডেটা পাওয়া যায়নি।</div>'}</div></div></div>
+      <div class="ka-di-panel"><h4>📈 Reading funnel</h4><div class="ka-di-funnel"><div><b>${f.opened}</b><span>Opened / history</span></div><div><b>${f.p25}</b><span>25%+</span></div><div><b>${f.p50}</b><span>50%+</span></div><div><b>${f.p75}</b><span>75%+</span></div></div><p class="ka-di-note">${f.note}</p></div>
+      <div class="ka-di-panel"><h4>🧭 Feature signals</h4><div class="ka-di-list">${Object.entries(f).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([k,v])=>`<div class="ka-di-row"><b>${k}</b><small>${v}</small></div>`).join('')||'<div class="ka-di-note">কোনো event নেই।</div>'}</div></div>`;
+  }
+  function patch(){
+    const old=window.openReader;
+    if(typeof old==='function'&&!old.__p15){const w=function(id){track('open',id);const r=old.apply(this,arguments);setTimeout(()=>{const rd=document.querySelector('#readerOverlay .reader');if(rd&&!rd.__p15scroll){rd.__p15scroll=true;rd.addEventListener('scroll',()=>{const max=Math.max(1,rd.scrollHeight-rd.clientHeight),pct=rd.scrollTop/max*100;[25,50,75,90].forEach(x=>{if(pct>=x)track('progress-'+x,id)})},{passive:true})}},120);return r};w.__p15=true;window.openReader=w}
+    const oldPhase6=window.phase6Open;
+    if(typeof oldPhase6==='function'&&!oldPhase6.__p15){const w=function(id){track('trending-open',id);const r=oldPhase6.apply(this,arguments);setTimeout(()=>{const hub=document.getElementById('p6Trending');if(hub){const arr=poems().map(p=>({p,s:whyPopular(p).score})).sort((a,b)=>b.s-a.s).slice(0,5);hub.innerHTML=arr.map((x,i)=>`<div class="p6-trend" onclick="phase6Open('${String(x.p.id).replace(/'/g,"\'")}')"><div><b>${i+1}. ${String(x.p.title||'নামহীন লেখা').replace(/[<>]/g,'')}</b><small>${String(window.cleanAuthorName?.(x.p.author)||x.p.author||'অজ্ঞাত লেখক').replace(/[<>]/g,'')}</small></div><small>♥ ${n('like-'+x.p.id)} · 👁 ${n('p6-views-'+x.p.id)} · 7d ${whyPopular(x.p).trend7d}</small></div>`).join('');}},90);return r};w.__p15=true;window.phase6Open=w}
+  }
+  window.KADataIntel={track,poem:poemMetrics,authors:authorMetrics,features:featureMetrics,funnel,snapshot,whyPopular,renderAdmin};
+  patch();
+  window.addEventListener('load',()=>setTimeout(()=>{patch();renderAdmin()},300));
+  window.addEventListener('storage',()=>setTimeout(renderAdmin,80));
+})();
+</script>
+
+
+<script id="phase16-adaptive-discovery">
+(function(){
+  'use strict';
+  const H='ka-reading-history', E='ka-data-events-v1', E_LEGACY='ka-data-intel-events-v1';
+  const $=id=>document.getElementById(id);
+  const read=(k,d)=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(d))}catch(e){return d}};
+  const esc=v=>String(v??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+  const poems=()=>Array.isArray(window.poems)?window.poems.filter(p=>p&&p.id):[];
+  const events=()=>{const a=read(E,[]),b=read(E_LEGACY,[]);return [...(Array.isArray(a)?a:[]),...(Array.isArray(b)?b:[])].filter((x,i,self)=>x&&self.findIndex(y=>y.at===x.at&&y.type===x.type&&String(y.id)===String(x.id))===i).slice(-2000)};
+  const history=()=>{const x=read(H,[]);return Array.isArray(x)?x:[]};
+  const metric=p=>({likes:Number(localStorage.getItem('like-'+p.id)||0),views:Number(localStorage.getItem('p6-views-'+p.id)||0),fav:localStorage.getItem('fav-'+p.id)==='1'||localStorage.getItem('bookmark-'+p.id)==='1'});
+  const tags=p=>{try{const x=window.poemTags?.(p);if(Array.isArray(x)&&x.length)return x.map(String)}catch(e){} return [...new Set([p.tag,p.tags].flatMap(x=>Array.isArray(x)?x:String(x||'').split(/[,|]/).map(v=>v.trim()).filter(Boolean)))];};
+  const mood=p=>String(p.mood||'').trim();
+  function cleanText(p){return !/draft|pending|rejected/i.test(JSON.stringify(p))}
+  function pulse(){
+    const cut=Date.now()-7*86400000, old=Date.now()-30*86400000;
+    const e=events(), recent=e.filter(x=>Number(x.at||0)>=cut), base=e.filter(x=>Number(x.at||0)>=old);
+    const tag={}, moodMap={}, author={}, oldTag={}, oldAuthor={};
+    recent.filter(x=>x.type==='open'&&x.id).forEach(x=>{const p=poems().find(q=>String(q.id)===String(x.id));if(!p)return;(tags(p)).forEach(t=>tag[t]=(tag[t]||0)+1);if(mood(p))moodMap[mood(p)]=(moodMap[mood(p)]||0)+1;if(p.author)author[p.author]=(author[p.author]||0)+1});
+    base.filter(x=>x.type==='open'&&x.id&&Number(x.at||0)<cut).forEach(x=>{const p=poems().find(q=>String(q.id)===String(x.id));if(!p)return;(tags(p)).forEach(t=>oldTag[t]=(oldTag[t]||0)+1);if(p.author)oldAuthor[p.author]=(oldAuthor[p.author]||0)+1});
+    const ratio=(n,o)=>n/(o/3+1);
+    return {tags:Object.entries(tag).map(([name,n])=>({name,n,trend:ratio(n,oldTag[name]||0)})).sort((a,b)=>b.trend-a.trend||b.n-a.n).slice(0,8),moods:Object.entries(moodMap).sort((a,b)=>b[1]-a[1]).slice(0,6),authors:Object.entries(author).map(([name,n])=>({name,n,trend:ratio(n,oldAuthor[name]||0)})).sort((a,b)=>b.trend-a.trend||b.n-a.n).slice(0,8),recentEvents:recent.length};
+  }
+  function adaptiveScore(p){
+    if(!cleanText(p))return -9999;
+    const m=metric(p), h=history(), pu=pulse(), a=pu.authors.find(x=>x.name===p.author), ts=tags(p), tagBoost=ts.reduce((v,t)=>v+(pu.tags.find(x=>x.name===t)?.trend||0),0), moodBoost=mood(p)?(pu.moods.find(x=>x[0]===mood(p))?.[1]||0):0, read=h.find(x=>String(x.id)===String(p.id));
+    const freshness=read?Math.max(0,1-(Date.now()-Number(read.at||Date.now()))/(14*86400000)):1;
+    return Math.log1p(m.views)*1.5+m.likes*2+(m.fav?4:0)+(a?.trend||0)*1.8+tagBoost*0.9+moodBoost*0.35-freshness*5;
+  }
+  function renderAdaptive(){
+    const host=$('phase16AdaptiveDiscovery');if(!host)return;
+    const pu=pulse(), ranked=poems().map(p=>({p,s:adaptiveScore(p)})).sort((a,b)=>b.s-a.s).slice(0,4);
+    const signals=[...pu.tags.slice(0,3).map(x=>`#${x.name}`),...pu.moods.slice(0,2).map(x=>`মুড: ${x[0]}`)];
+    host.innerHTML=`<div class="p16-head"><div><div class="eyebrow">Adaptive discovery</div><h3>এখন যেগুলো উঠছে</h3><p>সাম্প্রতিক পাঠ-সিগন্যাল দেখে সাজানো। ডেটা এই ডিভাইসেই থাকে।</p></div><button type="button" class="p13-refresh" id="p16Refresh">↻ আপডেট</button></div><div class="p16-signals">${signals.map(x=>`<span>${esc(x)}</span>`).join('')||'<span>নতুন সিগন্যাল জমা হচ্ছে</span>'}</div><div class="p16-grid">${ranked.map((x,i)=>`<article class="p16-card" data-id="${esc(x.p.id)}"><small>${i===0?'↗ Rising now':'✦ Adaptive pick'}</small><h4>${esc(x.p.title||'নামহীন লেখা')}</h4><p>${esc(String(x.p.body||'').replace(/\s+/g,' ').slice(0,100))}${String(x.p.body||'').length>100?'…':''}</p><span>${esc(x.p.author||'অজ্ঞাত লেখক')}</span></article>`).join('')||'<div class="ka-di-note">আরও পাঠ-সিগন্যাল দরকার।</div>'}</div>`;
+    $('p16Refresh')?.addEventListener('click',renderAdaptive);
+    host.querySelectorAll('.p16-card').forEach(c=>c.addEventListener('click',()=>window.openReader?.(c.dataset.id)));
+  }
+  function mount(){
+    if(!$('archive')||$('phase16AdaptiveDiscovery'))return;
+    const sec=document.createElement('section');sec.id='phase16AdaptiveDiscovery';sec.className='phase16-adaptive';
+    const anchor=$('phase13Recommendation');
+    sec.innerHTML='<div class="p16-shell"></div>';
+    (anchor?anchor.parentNode.insertBefore(sec,anchor.nextSibling):$('archive').insertAdjacentElement('afterend',sec));
+    const shell=sec.querySelector('.p16-shell');shell.innerHTML='<div id="phase16AdaptiveDiscoveryInner"></div>'; 
+    const inner=$('phase16AdaptiveDiscoveryInner');inner.id='phase16AdaptiveDiscovery';
+    renderAdaptive();
+  }
+  const style=document.createElement('style');style.textContent=`.phase16-adaptive{margin:22px 0}.p16-shell{border:1px solid rgba(120,100,70,.16);border-radius:24px;padding:22px;background:rgba(255,255,255,.52)}.p16-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.p16-head h3{margin:4px 0 6px}.p16-head p{margin:0;opacity:.72}.p16-signals{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}.p16-signals span{padding:7px 11px;border-radius:999px;background:rgba(120,100,70,.08);font-size:12px}.p16-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.p16-card{padding:16px;border:1px solid rgba(120,100,70,.13);border-radius:18px;cursor:pointer;background:rgba(255,255,255,.6)}.p16-card small{opacity:.62}.p16-card h4{margin:7px 0}.p16-card p{font-size:13px;line-height:1.55;opacity:.78;min-height:40px}.p16-card span{font-size:12px;opacity:.62}@media(max-width:850px){.p16-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.p16-head{display:block}.p16-head button{margin-top:12px}.p16-grid{grid-template-columns:1fr}}`;
+  document.head.appendChild(style);
+  window.KAAdaptiveDiscovery={pulse,score:adaptiveScore,render:renderAdaptive};
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(mount,250));else setTimeout(mount,250);
+  window.addEventListener('storage',()=>setTimeout(renderAdaptive,120));
+})();
+</script>
+
+
+<script id="phase17-growth-intelligence">
+(function(){
+  const HIST='ka-reading-history', MAX=200;
+  const now=()=>Date.now();
+  const readHist=()=>{try{return JSON.parse(localStorage.getItem(HIST)||'[]')}catch(e){return[]}};
+  const poems=()=>Array.isArray(window.poems)?window.poems:[];
+  const n=(v)=>Number(v||0)||0;
+  const likes=id=>n(localStorage.getItem('like-'+id));
+  const views=id=>n(localStorage.getItem('p6-views-'+id)||localStorage.getItem('views-'+id));
+  const saved=id=>localStorage.getItem('fav-'+id)==='1'||localStorage.getItem('bookmark-'+id)==='1';
+  const recent=(id,days=30)=>readHist().filter(x=>String(x.id)===String(id)&&now()-n(x.at ?? x.ts)<days*864e5).length;
+  const signal=p=>{
+    const r7=recent(p.id,7), r30=recent(p.id,30);
+    return likes(p.id)*5+views(p.id)+r7*8+r30*2+(saved(p.id)?12:0);
+  };
+  function growthScore(p){
+    const r=recent(p.id,7), old=Math.max(0,recent(p.id,30)-r);
+    const velocity=r*10 + (r>0?18:0);
+    const momentum=Math.min(40,Math.max(-20,(r*2)-(old*.35)));
+    return signal(p)+velocity+momentum;
+  }
+  function authorGrowth(){
+    const m={}; poems().forEach(p=>{const a=(p.author||'অজানা').trim();m[a]??={author:a,works:0,engagement:0,recent:0};m[a].works++;m[a].engagement+=signal(p);m[a].recent+=recent(p.id,7)});
+    return Object.values(m).map(x=>({...x,score:x.engagement+x.recent*12})).sort((a,b)=>b.score-a.score);
+  }
+  function contentGaps(){
+    const m={}; poems().forEach(p=>{const tags=(window.poemTags?.(p)||[]).length?window.poemTags(p): (Array.isArray(p.tags)?p.tags:[p.tag,p.mood].filter(Boolean));tags.forEach(t=>{t=String(t).trim();if(!t)return;m[t]??={name:t,works:0,engagement:0,recent:0};m[t].works++;m[t].engagement+=signal(p);m[t].recent+=recent(p.id,7)})});
+    return Object.values(m).map(x=>({...x,demand:x.recent*10+x.engagement,opportunity:(x.recent*12+x.engagement)/(Math.max(1,x.works))})).sort((a,b)=>b.opportunity-a.opportunity);
+  }
+  function forecast(nr=5){return poems().filter(p=>p&&p.id).map(p=>({poem:p,score:growthScore(p)})).sort((a,b)=>b.score-a.score).slice(0,nr)}
+  function snapshot(){return {generatedAt:new Date().toISOString(),poems:poems().length,forecast:forecast(10),risingAuthors:authorGrowth().slice(0,10),contentOpportunities:contentGaps().slice(0,15),historyEvents:readHist().length};}
+  window.KAGrowthIntel={snapshot,forecast,authorGrowth,contentGaps,growthScore};
+  window.addEventListener('storage',()=>{try{window.KAGrowthIntel.render?.()}catch(e){}});
+})();
+</script>
+<script id="phase20-trust-reputation-quality">
+(function(){
+  const KEY='ka-trust-reputation-v1';
+  const now=()=>Date.now();
+  const safe=fn=>{try{return fn()}catch(e){return null}};
+  const poems=()=>Array.isArray(window.poems)?window.poems:[];
+  const num=(v)=>Number.isFinite(Number(v))?Number(v):0;
+  function engagement(p){
+    const id=p&&p.id; if(id==null)return 0;
+    return num(localStorage.getItem('like-'+id))*3 + num(localStorage.getItem('p6-views-'+id)) + (localStorage.getItem('fav-'+id)==='1'?2:0) + (localStorage.getItem('bookmark-'+id)==='1'?2:0);
+  }
+  function text(p){return String((p&&p.title)||'')+' '+String((p&&p.author)||'')+' '+String((p&&(p.body??p.text))||'');}
+  function quality(p){
+    const t=text(p), title=String(p&&p.title||'').trim(), author=String(p&&p.author||'').trim(), body=String((p&&(p.body??p.text))||'').trim();
+    let score=100, flags=[];
+    if(!title){score-=30;flags.push('শিরোনাম নেই')}
+    if(!author){score-=25;flags.push('লেখকের নাম নেই')}
+    if(body.length<80){score-=20;flags.push('লেখা খুব ছোট')}
+    if(/https?:\/\/|www\./i.test(t)){score-=10;flags.push('বাহ্যিক লিংক')}
+    if(/(.)\1{7,}/u.test(body)){score-=10;flags.push('অস্বাভাবিক পুনরাবৃত্তি')}
+    if(/(spam|viagra|casino)/i.test(t)){score-=25;flags.push('সম্ভাব্য spam signal')}
+    return {score:Math.max(0,score),flags};
+  }
+  function author(name){
+    const arr=poems().filter(p=>String(p&&p.author||'').trim()===String(name||'').trim());
+    if(!arr.length)return null;
+    const qs=arr.map(quality), avg=qs.reduce((a,x)=>a+x.score,0)/qs.length;
+    const good=qs.filter(x=>x.score>=80).length/arr.length;
+    const eng=arr.reduce((a,p)=>a+engagement(p),0);
+    const consistency=Math.min(100,good*100);
+    const reputation=Math.round(avg*.55+consistency*.25+Math.min(100,eng/Math.max(1,arr.length)*4)*.20);
+    return {name,works:arr.length,quality:Math.round(avg),engagement:Math.round(eng),consistency:Math.round(consistency),reputation};
+  }
+  function snapshot(){
+    const seen=new Map(); poems().forEach(p=>{const n=String(p&&p.author||'').trim();if(n)seen.set(n,author(n));});
+    const authors=[...seen.values()].filter(Boolean).sort((a,b)=>b.reputation-a.reputation);
+    const poemQuality=poems().map(p=>({id:p.id,title:p.title,author:p.author,...quality(p)})).sort((a,b)=>b.score-a.score);
+    const low=poemQuality.filter(x=>x.score<70);
+    const result={version:1,updatedAt:now(),authors,poems:poemQuality,qualityAlerts:low.length,summary:{poems:poemQuality.length,authors:authors.length,highQuality:poemQuality.filter(x=>x.score>=80).length,needsReview:low.length}};
+    safe(()=>localStorage.setItem(KEY,JSON.stringify(result))); return result;
+  }
+  window.KATrustIntel={snapshot,quality,author,load:()=>safe(()=>JSON.parse(localStorage.getItem(KEY)||'null'))};
+  window.addEventListener('storage',()=>{if(window.KATrustIntel) window.KATrustIntel.snapshot()});
+  setTimeout(()=>safe(()=>window.KATrustIntel.snapshot()),500);
+})();
+</script>
+
+<style id="phase21-editorial-style">
+.ka-editorial-dashboard{display:grid;gap:14px}.ka-ed-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.ka-ed-stat{padding:14px;border:1px solid rgba(212,175,55,.18);border-radius:14px;background:rgba(255,255,255,.035)}.ka-ed-stat b{display:block;font-size:22px;margin-top:4px}.ka-ed-queue{display:grid;gap:10px}.ka-ed-card{padding:15px;border:1px solid rgba(212,175,55,.14);border-radius:15px;background:rgba(255,255,255,.025)}.ka-ed-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.ka-ed-badge{display:inline-flex;padding:5px 9px;border-radius:999px;font-size:12px;background:rgba(212,175,55,.10);border:1px solid rgba(212,175,55,.18)}.ka-ed-reasons{margin:9px 0 0;padding-left:18px}.ka-ed-meta{opacity:.72;font-size:13px}.ka-ed-high{border-color:rgba(212,175,55,.28)}@media(max-width:760px){.ka-ed-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.ka-ed-head{flex-direction:column}}
+</style>
+<script id="phase21-editorial-intelligence">
+(function(){
+  const KEY='ka-editorial-intelligence-v1';
+  const COLS=['submissions','ghostStorySubmissions','storySubmissions','unsaidSubmissions','feelingSubmissions','novelSubmissions'];
+  const now=()=>Date.now();
+  const safe=fn=>{try{return fn()}catch(e){return null}};
+  const esc=s=>typeof escapeHTML==='function'?escapeHTML(String(s??'')):String(s??'').replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m]));
+  const norm=v=>String(v??'').trim().toLowerCase();
+  function body(x){return String(x?.body??x?.text??x?.starter??'').trim()}
+  function content(x){return [x?.title,x?.author,body(x),x?.to].filter(Boolean).join(' ')}
+  function baseQuality(x){
+    if(window.KATrustIntel?.quality){
+      const q=window.KATrustIntel.quality({...x,body:body(x)});
+      return {score:Number(q?.score??0),flags:Array.isArray(q?.flags)?q.flags:[]};
+    }
+    let score=100,flags=[]; if(!norm(x?.title)){score-=30;flags.push('শিরোনাম নেই')} if(!norm(x?.author)){score-=25;flags.push('লেখকের নাম নেই')} if(body(x).length<80){score-=20;flags.push('লেখা খুব ছোট')} return {score:Math.max(0,score),flags};
+  }
+  function duplicateSignal(x,published,all){
+    const title=norm(x?.title), author=norm(x?.author); if(!title)return {hit:false,reason:''};
+    const exact=[...published,...all].some(y=>y!==x && norm(y?.title)===title && (!author || norm(y?.author)===author));
+    return {hit:exact,reason:exact?'সম্ভাব্য duplicate title/author':''};
+  }
+  function riskSignals(x,published,all){
+    const q=baseQuality(x), flags=[...q.flags], t=content(x); let score=0;
+    score += Math.max(0,70-q.score);
+    if(/https?:\/\/|www\./i.test(t)){score+=12;flags.push('বাহ্যিক লিংক — যাচাই করুন')}
+    if(/(.)\1{7,}/u.test(body(x))){score+=10;flags.push('অস্বাভাবিক পুনরাবৃত্তি')}
+    if(/(viagra|casino|crypto giveaway|free money|click here)/i.test(t)){score+=25;flags.push('সম্ভাব্য spam signal')}
+    const dup=duplicateSignal(x,published,all); if(dup.hit){score+=30;flags.push(dup.reason)}
+    return {score:Math.min(100,Math.round(score)),quality:q.score,flags:[...new Set(flags)]};
+  }
+  async function readPending(){
+    const p=window.firebasePoem;if(!p||!window.firebasePoemUser||window.firebasePoemUser.email!==p.ADMIN_EMAIL)return [];
+    const out=[];
+    await Promise.all(COLS.map(async col=>{try{const snap=await p.getDocs(p.collection(p.db,col));snap.forEach(d=>{const x=d.data();if(x.status==='pending')out.push({id:d.id,col,...x})})}catch(e){console.warn('Editorial read skipped:',col,e.message)}}));
+    return out;
+  }
+  async function published(){
+    const p=window.firebasePoem;if(!p)return [];try{const snap=await p.getDocs(p.collection(p.db,'publishedPoems'));const a=[];snap.forEach(d=>{const x=d.data();if(!x.deleted)a.push({id:d.id,...x})});return a}catch(e){return []}
+  }
+  function authorReputation(x){
+    try{return Number(window.KATrustIntel?.author?.(x?.author)?.reputation||0)}catch(e){return 0}
+  }
+  function classify(item){
+    const r=item.signals, rep=authorReputation(item);
+    let priority=r.score + (rep>=80?-6:rep>=60?-3:rep&&rep<40?6:0);
+    priority=Math.max(0,Math.min(100,Math.round(priority)));
+    let label='প্রাথমিকভাবে ভালো';
+    if(priority>=65)label='জরুরি Review'; else if(priority>=35)label='Review দরকার';
+    if(r.quality>=90 && r.flags.length===0 && priority<35)label='High confidence';
+    return {priority,label,reputation:rep};
+  }
+  async function snapshot(){
+    const pending=await readPending(),pub=await published(),all=[...pub,...pending];
+    const items=pending.map(x=>{const signals=riskSignals(x,pub,all);return {...x,signals,...classify({signals,...x})}}).sort((a,b)=>b.priority-a.priority);
+    const result={version:1,updatedAt:now(),summary:{total:items.length,urgent:items.filter(x=>x.priority>=65).length,review:items.filter(x=>x.priority>=35&&x.priority<65).length,good:items.filter(x=>x.priority<35).length},items};
+    safe(()=>localStorage.setItem(KEY,JSON.stringify(result))); return result;
+  }
+  function renderResult(result){
+    const box=document.getElementById('kaEditorialDashboard');if(!box)return;
+    if(!result){box.innerHTML='<p class="editor-note">Editorial data পাওয়া যায়নি। Admin login করে Refresh দিন।</p>';return}
+    const s=result.summary||{};
+    const cards=(result.items||[]).map(x=>`<article class="ka-ed-card ${x.priority>=65?'ka-ed-high':''}"><div class="ka-ed-head"><div><h3>${esc(x.title||'Untitled')}</h3><div class="ka-ed-meta">${esc(x.author||'অজানা')} · ${esc(x.col||'')}</div></div><span class="ka-ed-badge">${esc(x.label)} · ${x.priority}/100</span></div><div class="ka-ed-meta" style="margin-top:8px">Quality ${x.signals.quality}/100${x.reputation?` · Author reputation ${x.reputation}/100`:''}</div>${x.signals.flags.length?`<ul class="ka-ed-reasons">${x.signals.flags.slice(0,5).map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:'<div class="ka-ed-meta" style="margin-top:8px">কোনো বড় review signal পাওয়া যায়নি।</div>'}<div class="pending-actions" style="margin-top:10px"><button class="btn" onclick="showAdminPanel('requests')">Existing Requests থেকে সিদ্ধান্ত নিন →</button></div></article>`).join('');
+    box.innerHTML=`<div class="ka-ed-summary"><div class="ka-ed-stat">মোট pending<b>${s.total||0}</b></div><div class="ka-ed-stat">জরুরি Review<b>${s.urgent||0}</b></div><div class="ka-ed-stat">Review দরকার<b>${s.review||0}</b></div><div class="ka-ed-stat">প্রাথমিকভাবে ভালো<b>${s.good||0}</b></div></div><div class="ka-ed-queue">${cards||'<p class="editor-note">এই মুহূর্তে কোনো pending লেখা নেই।</p>'}</div>`;
+  }
+  async function render(){const box=document.getElementById('kaEditorialDashboard');if(box)box.innerHTML='<p class="editor-note">Editorial queue বিশ্লেষণ হচ্ছে…</p>';const r=await snapshot();renderResult(r)}
+  window.KAEditorialIntel={snapshot,render,classify,riskSignals};
+})();
+</script>
+<style id="ka-final-polish">
+html{scroll-behavior:smooth;scroll-padding-top:24px}
+:where(button,a,input,textarea,select):focus-visible{outline:2px solid var(--gold2,#d9b979);outline-offset:3px}
+button,.btn,.premium-filter,.mood-btn,.ka-menu-item,.favorite{touch-action:manipulation}
+img{max-width:100%;height:auto}
+::selection{background:rgba(217,185,121,.22);color:inherit}
+@media(max-width:700px){body{overflow-x:hidden}.section{padding-left:16px;padding-right:16px}.archive-toolbar{gap:7px}.search{font-size:16px}.card:hover{transform:none}.ka-menu-item{min-height:46px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+</style>
 </body></html>
