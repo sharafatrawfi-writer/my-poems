@@ -636,6 +636,226 @@ img{max-width:100%;height:auto}
 @media(max-width:700px){#kaArchiveOverlay{padding:0}.ka-archive-modal{max-height:100dvh;border-radius:0;border-left:0;border-right:0}.ka-archive-head{padding-top:max(18px,env(safe-area-inset-top));}.ka-archive-body{padding-bottom:max(24px,env(safe-area-inset-bottom))}.ka-work-card{min-height:124px}.ka-reader-content{max-width:none}.ka-reader-topbar{margin-bottom:16px}}
 @media(prefers-reduced-motion:reduce){#kaArchiveOverlay.open,.ka-archive-modal{animation:none!important}.ka-archive-close,.ka-work-card:after{transition:none}}
 </style>
+
+<style id="wow-2026-upgrade">
+/* =========================================================
+   KOBITAR ANGINA — WOW 2026 VISUAL UPGRADE
+   Pure CSS/JS enhancement — preserves existing functionality.
+   ========================================================= */
+:root{
+  --wow-gold:#e7c76b;
+  --wow-gold-soft:#f5dfaa;
+  --wow-glass:rgba(255,255,255,.055);
+  --wow-border:rgba(231,199,107,.20);
+  --wow-ease:cubic-bezier(.16,1,.3,1);
+}
+body{
+  background:
+    radial-gradient(900px 600px at 8% 8%,rgba(231,199,107,.085),transparent 62%),
+    radial-gradient(850px 650px at 92% 42%,rgba(109,78,150,.075),transparent 62%),
+    radial-gradient(700px 500px at 48% 100%,rgba(255,255,255,.035),transparent 62%),
+    var(--bg);
+}
+body:after{
+  content:"";
+  position:fixed; inset:0; pointer-events:none; z-index:8;
+  background:
+    linear-gradient(115deg,transparent 0 46%,rgba(255,255,255,.018) 50%,transparent 54%),
+    radial-gradient(circle at var(--mx,50%) var(--my,30%),rgba(231,199,107,.055),transparent 18%);
+  mix-blend-mode:screen;
+}
+.nav{
+  padding:14px 5vw;
+  background:rgba(7,7,9,.38);
+  border-bottom:1px solid rgba(255,255,255,.055);
+  backdrop-filter:blur(22px) saturate(135%);
+}
+.nav:after{
+  content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--wow-gold),transparent);
+  opacity:.18;
+}
+.brand-logo{transition:.45s var(--wow-ease)}
+.brand-lockup:hover .brand-logo{
+  transform:rotate(-4deg) scale(1.06);
+  box-shadow:0 0 34px rgba(231,199,107,.18);
+}
+.hero{min-height:100svh;isolation:isolate}
+.hero:before{
+  width:620px!important;height:620px!important;
+  right:-220px!important;top:-80px!important;
+  opacity:.7;
+}
+.hero:after{opacity:.5}
+.hero-inner{filter:drop-shadow(0 25px 55px rgba(0,0,0,.18))}
+.hero h1{
+  font-size:clamp(56px,10.7vw,142px)!important;
+  line-height:.90!important;
+  background:linear-gradient(100deg,#fffaf0 0%,#f4e5c1 36%,#d6ad58 72%,#fff5d7 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none!important;
+  position:relative;
+}
+.hero h1:after{
+  content:"";
+  position:absolute;left:50%;bottom:-16px;width:min(280px,45vw);height:1px;
+  transform:translateX(-50%);
+  background:linear-gradient(90deg,transparent,var(--wow-gold),transparent);
+  opacity:.55;
+}
+.hero p{font-size:17px!important;max-width:720px!important}
+.hero-mark{
+  position:relative;
+  border-color:rgba(231,199,107,.58)!important;
+  background:radial-gradient(circle,rgba(231,199,107,.10),rgba(255,255,255,.015) 65%,transparent);
+}
+.hero-mark:before{
+  content:"";position:absolute;inset:-13px;border-radius:50%;
+  border:1px solid rgba(231,199,107,.10);
+  animation:wowOrbit 7s linear infinite;
+}
+.hero-mark:after{
+  content:"";position:absolute;inset:-27px;border-radius:50%;
+  border:1px dashed rgba(231,199,107,.07);
+  animation:wowOrbit 12s linear infinite reverse;
+}
+.hero-pills span{
+  transition:.4s var(--wow-ease)!important;
+}
+.hero-pills span:hover{
+  transform:translateY(-5px) scale(1.035)!important;
+  box-shadow:0 12px 28px rgba(0,0,0,.18),0 0 25px rgba(231,199,107,.07);
+}
+.section{position:relative}
+.section:before{
+  content:"";position:absolute;left:6vw;right:6vw;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(231,199,107,.12),transparent);
+}
+.discover{padding-top:72px!important}
+.feature-spot{
+  position:relative!important;
+  min-height:270px!important;
+  background:
+    radial-gradient(circle at 92% 10%,rgba(231,199,107,.16),transparent 30%),
+    linear-gradient(135deg,rgba(255,255,255,.075),rgba(255,255,255,.018))!important;
+}
+.feature-spot:after{
+  content:"✦";position:absolute;right:34px;bottom:20px;
+  font-size:90px;color:rgba(231,199,107,.055);
+  transform:rotate(-12deg);
+}
+.mini-stat{
+  transition:.4s var(--wow-ease)!important;
+}
+.mini-stat:hover{
+  transform:translateY(-6px);
+  border-color:rgba(231,199,107,.32);
+  box-shadow:0 18px 45px rgba(0,0,0,.20);
+}
+.card,.feature-card,.hub-panel,.special-card,.story-card,.p6-panel{
+  backdrop-filter:blur(12px);
+}
+.card{
+  transform-style:preserve-3d;
+  transition:transform .55s var(--wow-ease),box-shadow .55s var(--wow-ease),border-color .4s ease!important;
+}
+.card:hover{
+  box-shadow:0 32px 90px rgba(0,0,0,.42),0 0 42px rgba(231,199,107,.055)!important;
+}
+.card h3,.card .excerpt,.card .author,.card .date,.card .num{
+  transform:translateZ(12px);
+}
+.card-media{transform:translateZ(4px)}
+#premiumFeatured{
+  position:relative;
+}
+.premium-featured .pf-main,.premium-featured .pf-side{
+  overflow:hidden;
+  position:relative;
+}
+.premium-featured .pf-main:before,.premium-featured .pf-side:before{
+  content:"";position:absolute;inset:-80px;
+  background:conic-gradient(from 180deg,transparent,rgba(231,199,107,.07),transparent 25%);
+  animation:wowSpin 13s linear infinite;
+  pointer-events:none;
+}
+.premium-featured .pf-main>*,
+.premium-featured .pf-side>*{position:relative;z-index:1}
+.reader{
+  background:
+    radial-gradient(circle at 90% 0%,rgba(231,199,107,.07),transparent 28%),
+    linear-gradient(145deg,rgba(24,21,18,.99),rgba(8,8,9,.99))!important;
+}
+.reader .poem{
+  box-shadow:0 25px 70px rgba(0,0,0,.26),inset 0 1px rgba(255,255,255,.025)!important;
+}
+.reader::after{
+  content:"";position:absolute;left:10%;right:10%;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--wow-gold),transparent);
+  opacity:.22;
+}
+.toast{
+  border-color:rgba(231,199,107,.25)!important;
+}
+.wow-reveal{
+  opacity:0;transform:translateY(24px) scale(.985);
+  transition:opacity .8s var(--wow-ease),transform .8s var(--wow-ease);
+}
+.wow-reveal.wow-visible{opacity:1;transform:none}
+.wow-stagger>*{opacity:0;transform:translateY(16px)}
+.wow-stagger.wow-visible>*{
+  animation:wowChildIn .7s var(--wow-ease) forwards;
+}
+.wow-stagger.wow-visible>*:nth-child(2){animation-delay:.06s}
+.wow-stagger.wow-visible>*:nth-child(3){animation-delay:.12s}
+.wow-stagger.wow-visible>*:nth-child(4){animation-delay:.18s}
+.wow-stagger.wow-visible>*:nth-child(5){animation-delay:.24s}
+.wow-stagger.wow-visible>*:nth-child(6){animation-delay:.30s}
+.wow-stagger.wow-visible>*:nth-child(7){animation-delay:.36s}
+.wow-stagger.wow-visible>*:nth-child(8){animation-delay:.42s}
+#wowAmbient{
+  position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;
+}
+.wow-particle{
+  position:absolute;width:2px;height:2px;border-radius:50%;
+  background:var(--wow-gold-soft);
+  box-shadow:0 0 10px rgba(231,199,107,.45);
+  opacity:0;animation:wowParticle linear infinite;
+}
+#wowProgress{
+  position:fixed;top:0;left:0;height:2px;width:0;z-index:100001;
+  background:linear-gradient(90deg,#9b742d,var(--wow-gold),#fff0bf);
+  box-shadow:0 0 14px rgba(231,199,107,.38);
+}
+#wowCursorGlow{
+  position:fixed;left:0;top:0;width:180px;height:180px;z-index:1;
+  pointer-events:none;border-radius:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(231,199,107,.055),transparent 68%);
+  opacity:0;transition:opacity .25s ease;
+}
+@keyframes wowOrbit{to{transform:rotate(360deg)}}
+@keyframes wowSpin{to{transform:rotate(360deg)}}
+@keyframes wowChildIn{to{opacity:1;transform:none}}
+@keyframes wowParticle{
+  0%{opacity:0;transform:translate3d(0,30px,0) scale(.5)}
+  12%{opacity:.65}
+  80%{opacity:.2}
+  100%{opacity:0;transform:translate3d(var(--dx),-110px,0) scale(1.2)}
+}
+@media(max-width:760px){
+  .hero h1{font-size:clamp(44px,13vw,78px)!important}
+  .hero p{font-size:15px!important}
+  .hero-mark:before{inset:-9px}.hero-mark:after{inset:-18px}
+  .section:before{left:5vw;right:5vw}
+}
+@media(prefers-reduced-motion:reduce){
+  #wowAmbient,#wowCursorGlow{display:none!important}
+  #wowProgress{transition:none!important}
+  .hero-mark:before,.hero-mark:after,.premium-featured .pf-main:before,.premium-featured .pf-side:before{animation:none!important}
+}
+</style>
+
 </head>
 <body style="">
 <div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
@@ -4098,6 +4318,104 @@ function backToPoetList(){reader.style.display='none';list.style.display='block'
 document.addEventListener('click',e=>{const b=e.target.closest?.('#kaArchiveClose');if(b){stopArchiveNav(e);if(reader.style.display==='block'){backToPoetList()}else{close()}return}const rc=e.target.closest?.('#kaReaderClose');if(rc){stopArchiveNav(e);backToPoetList();return}const back=e.target.closest?.('#kaReaderBack');if(back){stopArchiveNav(e);backToPoetList();}},true);
 [closeBtn,backBtn,readerClose].forEach(b=>b?.addEventListener('pointerdown',e=>{e.preventDefault();e.stopImmediatePropagation()},true));
 authorSel.onchange=()=>{const a=currentAuthor();title.textContent=a;sub.textContent=`${authorData[a].note} · ${authorData[a].era}`;fillFilter();search.value='';filter.value='';render()};search.oninput=render;filter.onchange=render;ov.onclick=e=>{if(e.target===ov)close()};document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='k'&&ov.classList.contains('open')){e.preventDefault();search.focus()}if(e.key==='Escape'&&ov.classList.contains('open'))close()});document.querySelectorAll('[data-classic-author]').forEach(card=>card.addEventListener('click',e=>{e.stopImmediatePropagation();openArchive(card.dataset.classicAuthor)}));const oldOpenProfile=window.openProfileByName;window.openProfileByName=function(name){if(authorData[name]){openArchive(name);return}return oldOpenProfile?.apply(this,arguments)};window.KALiteraryArchive={open:openArchive,authors:authorData};
+})();
+</script>
+
+
+<script id="wow-2026-upgrade-js">
+(function(){
+  const $=(s,c=document)=>c.querySelector(s);
+  const $$=(s,c=document)=>[...c.querySelectorAll(s)];
+
+  /* Reading progress */
+  const bar=document.createElement('div');
+  bar.id='wowProgress';
+  document.body.appendChild(bar);
+
+  function updateProgress(){
+    const h=document.documentElement.scrollHeight-window.innerHeight;
+    bar.style.width=(h>0?(window.scrollY/h)*100:0)+'%';
+    document.documentElement.style.setProperty('--mx',(window.innerWidth?((window._wowX||window.innerWidth/2)/window.innerWidth*100):50)+'%');
+    document.documentElement.style.setProperty('--my',(window.innerHeight?((window._wowY||window.innerHeight/3)/window.innerHeight*100):30)+'%');
+  }
+  addEventListener('scroll',updateProgress,{passive:true});
+  addEventListener('resize',updateProgress,{passive:true});
+
+  /* Cursor atmosphere on desktop */
+  const glow=document.createElement('div');
+  glow.id='wowCursorGlow';
+  document.body.appendChild(glow);
+  addEventListener('pointermove',e=>{
+    if(e.pointerType==='touch') return;
+    window._wowX=e.clientX; window._wowY=e.clientY;
+    glow.style.left=e.clientX+'px';
+    glow.style.top=e.clientY+'px';
+    glow.style.opacity='.85';
+    updateProgress();
+  },{passive:true});
+  addEventListener('pointerleave',()=>glow.style.opacity='0');
+
+  /* Ambient literary dust */
+  const ambient=document.createElement('div');
+  ambient.id='wowAmbient';
+  document.body.appendChild(ambient);
+  for(let i=0;i<22;i++){
+    const p=document.createElement('i');
+    p.className='wow-particle';
+    p.style.left=(Math.random()*100)+'%';
+    p.style.top=(20+Math.random()*80)+'%';
+    p.style.setProperty('--dx',((Math.random()-.5)*120)+'px');
+    p.style.animationDuration=(5+Math.random()*8)+'s';
+    p.style.animationDelay=(-Math.random()*10)+'s';
+    ambient.appendChild(p);
+  }
+
+  /* Scroll reveal — never changes existing content */
+  const targets=[
+    '.discover-grid','.ka-literary-rail','#archive .section-head',
+    '#premiumFeatured','#premiumFilters','.tools','#grid',
+    '#specialSpaces .section-head','.feature-grid',
+    '.quick-hub','#about','.author-feature','.story-card',
+    '.p6-panel'
+  ];
+  const reveal=[];
+  targets.forEach(sel=>$$ (sel).forEach(el=>{
+    if(!el.classList.contains('wow-reveal')){el.classList.add('wow-reveal');reveal.push(el)}
+  }));
+  $$('#grid,.feature-grid,.ka-literary-row,.p6-highlight').forEach(el=>el.classList.add('wow-stagger'));
+
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('wow-visible');
+        io.unobserve(e.target);
+      }
+    });
+  },{threshold:.08,rootMargin:'0px 0px -40px'});
+  reveal.forEach(el=>io.observe(el));
+  $$('.wow-stagger').forEach(el=>io.observe(el));
+
+  /* Gentle 3D tilt for poetry cards */
+  if(matchMedia('(hover:hover) and (pointer:fine)').matches){
+    $$('.card,.feature-card,.ka-literary-card,.story-card').forEach(card=>{
+      card.addEventListener('pointermove',e=>{
+        const r=card.getBoundingClientRect();
+        const x=(e.clientX-r.left)/r.width-.5;
+        const y=(e.clientY-r.top)/r.height-.5;
+        card.style.transform=`perspective(900px) rotateX(${(-y*3.5).toFixed(2)}deg) rotateY(${(x*4.5).toFixed(2)}deg) translateY(-6px)`;
+      });
+      card.addEventListener('pointerleave',()=>card.style.transform='');
+    });
+  }
+
+  /* Header changes elegantly while scrolling */
+  const nav=$('.nav');
+  function navState(){ if(nav) nav.classList.toggle('scrolled',scrollY>30); }
+  addEventListener('scroll',navState,{passive:true}); navState();
+
+  /* Small accessibility-safe entrance timing */
+  document.documentElement.classList.add('wow-ready');
+  updateProgress();
 })();
 </script>
 
