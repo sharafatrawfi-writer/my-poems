@@ -509,6 +509,13 @@ h1,h2,h3,.brand,.eyebrow,.num,.count,.btn,.tag,.mood-btn,.premium-filter{font-fa
 body.ka-menu-lock{overflow:hidden}
 @media(max-width:700px){#kaMenuToggle{right:14px;top:78px;width:46px;height:46px;border-radius:14px}.ka-menu-item{padding:12px}.ka-menu-label{margin-top:18px}}
 </style>
+<style id="phase37-movable-menu-polish-css">
+#kaMenuToggle.ka36-movable{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;will-change:left,top,transform;}
+#kaMenuToggle.ka36-movable:focus-visible{outline:2px solid rgba(243,217,138,.9);outline-offset:4px;box-shadow:0 0 0 5px rgba(212,175,55,.14),0 16px 48px rgba(0,0,0,.52),0 0 38px rgba(212,175,55,.22)}
+#kaMenuToggle.ka37-dragging{cursor:grabbing!important;transition:none!important;transform:scale(1.035)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 22px 64px rgba(0,0,0,.66),0 0 48px rgba(212,175,55,.32);outline:2px solid rgba(231,199,107,.55);outline-offset:4px}
+#kaMenuToggle.ka37-dragging:after{opacity:1;box-shadow:0 0 16px rgba(243,217,138,.95)}
+@media(prefers-reduced-motion:reduce){#kaMenuToggle.ka36-movable,#kaMenuToggle.ka37-dragging{transition:none!important;will-change:auto}}
+</style>
 <style id="poetry-card-2-premium">
 /* Poetry Card 2.0 — luxury editorial treatment */
 .card{isolation:isolate;transform:translateZ(0);border:1px solid rgba(217,185,121,.18);border-radius:26px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.018) 58%,rgba(217,185,121,.035));box-shadow:0 18px 50px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.055);padding:28px;min-height:280px;transition:transform .55s cubic-bezier(.2,.8,.2,1),border-color .45s ease,box-shadow .55s ease,background .55s ease}
@@ -615,6 +622,7 @@ img{max-width:100%;height:auto}
     <button class="ka-menu-item" data-target="top"><span class="ico">⌂</span>হোম <span class="arrow">›</span></button>
     <button class="ka-menu-item" data-target="discover"><span class="ico">✦</span>আজকের আবিষ্কার <span class="arrow">›</span></button>
     <button class="ka-menu-item" data-target="archive"><span class="ico">✒</span>কবিতার সংগ্রহ <span class="arrow">›</span></button>
+    <button class="ka-menu-item" data-action="classics"><span class="ico">📚</span>সাহিত্যভাণ্ডার <span class="arrow">›</span></button>
     <button class="ka-menu-item" data-target="specialSpaces"><span class="ico">◈</span>বিশেষ বিভাগ <span class="arrow">›</span></button>
     <button class="ka-menu-item" data-action="story"><span class="ico">▱</span>গল্পের ঘর <span class="arrow">›</span></button>
     <button class="ka-menu-item" data-action="ghost"><span class="ico">☾</span>ভৌতিক গল্প <span class="arrow">›</span></button>
@@ -661,6 +669,91 @@ img{max-width:100%;height:auto}
 <div class="mini-stats"><div class="mini-stat"><b id="statPoems">0</b><span>প্রকাশিত কবিতা</span></div><div class="mini-stat"><b id="statFav">0</b><span>তোমার পছন্দ</span></div><div class="mini-stat"><b>3:4</b><span>প্রিমিয়াম কভার</span></div><div class="mini-stat"><b>∞</b><span>নতুন গল্পের জায়গা</span></div></div>
 </div></section>
 
+<!-- PHASE 29: PREMIUM LITERARY HOUSE -->
+<style id="phase29-literary-house-css">
+.ka-literary-rail{max-width:1180px;margin:8px auto 30px;padding:0 18px}
+.ka-literary-shell{position:relative;overflow:hidden;border:1px solid rgba(217,185,121,.18);border-radius:24px;padding:16px 17px 14px;background:radial-gradient(circle at 88% 0%,rgba(217,185,121,.09),transparent 34%),linear-gradient(110deg,rgba(255,252,245,.065),rgba(217,185,121,.018));box-shadow:0 16px 44px rgba(0,0,0,.10),inset 0 1px rgba(255,255,255,.06);backdrop-filter:blur(14px)}
+.ka-literary-shell:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.025) 48%,transparent 100%);transform:translateX(-100%);animation:kaLiteraryShine 8s ease-in-out infinite}
+@keyframes kaLiteraryShine{0%,72%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.ka-literary-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:13px;position:relative;z-index:1}
+.ka-literary-title-wrap{min-width:0}.ka-literary-kicker{font-size:9px;letter-spacing:.20em;text-transform:uppercase;color:rgba(217,185,121,.76)}
+.ka-literary-title{margin:2px 0 0;font-size:clamp(18px,1.8vw,23px);letter-spacing:-.01em}.ka-literary-sub{margin:4px 0 0;font-size:12px;opacity:.58;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ka-literary-all{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(217,185,121,.26);background:rgba(255,255,255,.025);color:inherit;border-radius:999px;padding:8px 12px;white-space:nowrap;cursor:pointer;font-size:11px;transition:.22s;box-shadow:0 5px 16px rgba(0,0,0,.06)}
+.ka-literary-all:hover{transform:translateY(-1px);border-color:rgba(217,185,121,.48);background:rgba(217,185,121,.07)}
+.ka-literary-row{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none;padding:2px 1px 5px;scroll-snap-type:x proximity;position:relative;z-index:1}
+.ka-literary-row::-webkit-scrollbar{display:none}
+.ka-literary-card{position:relative;flex:1 0 0;min-width:205px;min-height:92px;border:1px solid rgba(217,185,121,.12);border-radius:17px;background:rgba(255,255,255,.038);padding:13px 14px 12px;text-align:left;color:inherit;cursor:pointer;scroll-snap-align:start;transition:transform .22s ease,border-color .22s ease,background .22s ease,box-shadow .22s ease;overflow:hidden}
+.ka-literary-card:after{content:"";position:absolute;width:64px;height:64px;right:-22px;bottom:-28px;border-radius:50%;border:1px solid rgba(217,185,121,.12);box-shadow:0 0 0 8px rgba(217,185,121,.025)}
+.ka-literary-card:hover{transform:translateY(-3px);border-color:rgba(217,185,121,.36);background:rgba(217,185,121,.06);box-shadow:0 12px 25px rgba(0,0,0,.10)}
+.ka-literary-mark{width:28px;height:28px;display:grid;place-items:center;border:1px solid rgba(217,185,121,.23);border-radius:10px;color:rgba(243,217,138,.88);font-size:12px;margin-bottom:8px;background:rgba(217,185,121,.045)}
+.ka-literary-card strong{display:block;font-size:14px;line-height:1.45}.ka-literary-card span{display:block;margin-top:3px;font-size:10px;opacity:.48}.ka-literary-card em{display:block;margin-top:6px;font-size:10px;color:rgba(217,185,121,.78);font-style:normal}
+.ka-literary-footer{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:9px;font-size:9px;opacity:.43;position:relative;z-index:1}.ka-literary-footer span:last-child{opacity:.9}
+.ka-literary-edge{position:absolute;right:0;top:88px;bottom:30px;width:42px;background:linear-gradient(90deg,transparent,rgba(18,17,15,.58));pointer-events:none;z-index:2;opacity:.7}
+.ka-literary-modal{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:rgba(8,7,6,.64);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .2s}.ka-literary-modal.open{opacity:1;pointer-events:auto}
+.ka-literary-dialog{width:min(520px,calc(100vw - 28px));border:1px solid rgba(217,185,121,.22);border-radius:24px;padding:23px;background:linear-gradient(145deg,rgba(31,28,24,.98),rgba(17,16,14,.98));box-shadow:0 28px 90px rgba(0,0,0,.42);transform:translateY(8px) scale(.985);transition:.22s}.ka-literary-modal.open .ka-literary-dialog{transform:none}
+.ka-literary-dialog-top{display:flex;justify-content:space-between;gap:15px}.ka-literary-dialog h3{margin:0;font-size:22px}.ka-literary-dialog .era{margin-top:5px;font-size:11px;opacity:.5}.ka-literary-close{width:36px;height:36px;border-radius:50%;border:1px solid rgba(255,255,255,.10);background:transparent;color:inherit;font-size:20px;cursor:pointer}.ka-literary-dialog p{line-height:1.8;font-size:13px;opacity:.68;margin:18px 0}.ka-literary-dialog .status{padding:12px 14px;border:1px solid rgba(217,185,121,.13);border-radius:14px;background:rgba(217,185,121,.045);font-size:11px;color:rgba(243,217,138,.82)}
+@media(max-width:700px){.ka-literary-rail{padding:0 12px;margin-top:4px}.ka-literary-shell{padding:14px;border-radius:21px}.ka-literary-head{align-items:flex-start}.ka-literary-sub{max-width:245px}.ka-literary-all{padding:7px 10px}.ka-literary-card{min-width:174px;flex-basis:174px;min-height:96px;padding:12px}.ka-literary-edge{top:84px}.ka-literary-footer{font-size:8px}}
+@media(max-width:430px){.ka-literary-kicker{font-size:8px}.ka-literary-sub{white-space:normal;line-height:1.5}.ka-literary-all{font-size:10px}.ka-literary-card{min-width:162px;flex-basis:162px}}
+@media(prefers-reduced-motion:reduce){.ka-literary-shell:before{animation:none}.ka-literary-card,.ka-literary-all,.ka-literary-modal,.ka-literary-dialog{transition:none}}
+</style>
+<section class="ka-literary-rail" id="literaryLibrary" aria-labelledby="literaryLibraryTitle">
+  <div class="ka-literary-shell">
+    <div class="ka-literary-head">
+      <div class="ka-literary-title-wrap"><div class="ka-literary-kicker">THE LITERARY HOUSE</div><h2 class="ka-literary-title" id="literaryLibraryTitle">📚 সাহিত্যভাণ্ডার</h2><p class="ka-literary-sub">বাংলা সাহিত্যের স্মরণীয় কণ্ঠগুলোকে এক নজরে আবিষ্কার করুন</p></div>
+      <button type="button" class="ka-literary-all" id="literaryLibraryAll" aria-label="সাহিত্যভাণ্ডার দেখুন">সব দেখুন <span aria-hidden="true">→</span></button>
+    </div>
+    <div class="ka-literary-row" id="literaryLibraryRow" role="list" aria-label="কিংবদন্তি সাহিত্যিকদের আবিষ্কার">
+      <button type="button" class="ka-literary-card" data-classic-author="রবীন্দ্রনাথ ঠাকুর" data-era="১৮৬১ — ১৯৪১" data-note="কবিতা • গল্প • সাহিত্য" role="listitem"><span class="ka-literary-mark">র</span><strong>রবীন্দ্রনাথ ঠাকুর</strong><span>১৮৬১ — ১৯৪১</span><em>কবিতা • গল্প • সাহিত্য</em></button>
+      <button type="button" class="ka-literary-card" data-classic-author="কাজী নজরুল ইসলাম" data-era="১৮৯৯ — ১৯৭৬" data-note="কবিতা • গান • বিদ্রোহ" role="listitem"><span class="ka-literary-mark">ন</span><strong>কাজী নজরুল ইসলাম</strong><span>১৮৯৯ — ১৯৭৬</span><em>কবিতা • গান • বিদ্রোহ</em></button>
+      <button type="button" class="ka-literary-card" data-classic-author="জীবনানন্দ দাশ" data-era="১৮৯৯ — ১৯৫৪" data-note="আধুনিক বাংলা কবিতা" role="listitem"><span class="ka-literary-mark">জ</span><strong>জীবনানন্দ দাশ</strong><span>১৮৯৯ — ১৯৫৪</span><em>আধুনিক বাংলা কবিতা</em></button>
+      <button type="button" class="ka-literary-card" data-classic-author="মাইকেল মধুসূদন দত্ত" data-era="১৮২৪ — ১৮৭৩" data-note="কবিতা • মহাকাব্য" role="listitem"><span class="ka-literary-mark">ম</span><strong>মাইকেল মধুসূদন দত্ত</strong><span>১৮২৪ — ১৮৭৩</span><em>কবিতা • মহাকাব্য</em></button>
+    </div>
+    <div class="ka-literary-footer"><span>এক নজরে সাহিত্য • ধীরে ধীরে curated</span><span aria-hidden="true">↔ swipe</span></div>
+    <div class="ka-literary-edge" aria-hidden="true"></div>
+  </div>
+</section>
+<div class="ka-literary-modal" id="kaLiteraryModal" aria-hidden="true">
+  <div class="ka-literary-dialog" role="dialog" aria-modal="true" aria-labelledby="kaLiteraryDialogTitle">
+    <div class="ka-literary-dialog-top"><div><h3 id="kaLiteraryDialogTitle">সাহিত্যভাণ্ডার</h3><div class="era" id="kaLiteraryDialogEra"></div></div><button class="ka-literary-close" id="kaLiteraryClose" type="button" aria-label="বন্ধ করুন">×</button></div>
+    <p id="kaLiteraryDialogText"></p><div class="status">এই সংগ্রহটি ধাপে ধাপে যাচাই করা ও অনুমোদিত/লাইসেন্সকৃত রচনা দিয়ে তৈরি করা হবে।</div>
+  </div>
+</div>
+<div class="ka-literary-library-modal" id="kaLiteraryLibraryModal" aria-hidden="true">
+  <div class="ka-literary-library-panel" role="dialog" aria-modal="true" aria-labelledby="kaLiteraryLibraryTitle">
+    <div class="ka-literary-library-top">
+      <div><div class="ka-literary-kicker">THE LITERARY HOUSE</div><h2 id="kaLiteraryLibraryTitle">📚 সাহিত্যভাণ্ডার</h2><p>বাংলা সাহিত্যের স্মরণীয় কণ্ঠগুলো — এক জায়গায়, ধীরে আবিষ্কারের জন্য।</p></div>
+      <button class="ka-literary-close ka-library-close" id="kaLiteraryLibraryClose" type="button" aria-label="সাহিত্যভাণ্ডার বন্ধ করুন">×</button>
+    </div>
+    <div class="ka-literary-library-grid" id="kaLiteraryLibraryGrid"></div>
+    <div class="ka-literary-library-note">সংগ্রহের প্রতিটি রচনা প্রকাশের আগে কপিরাইট/লাইসেন্স ও উৎস যাচাই করা হবে।</div>
+  </div>
+</div>
+<style id="phase30-literary-library-css">
+.ka-literary-library-modal{position:fixed;inset:0;z-index:10000;display:grid;place-items:center;padding:18px;background:rgba(7,6,5,.72);backdrop-filter:blur(14px);opacity:0;pointer-events:none;transition:opacity .24s}.ka-literary-library-modal.open{opacity:1;pointer-events:auto}
+.ka-literary-library-panel{width:min(1080px,calc(100vw - 28px));max-height:min(86vh,780px);overflow:auto;border:1px solid rgba(217,185,121,.22);border-radius:30px;padding:26px;background:radial-gradient(circle at 90% 0%,rgba(217,185,121,.12),transparent 30%),linear-gradient(145deg,rgba(31,28,24,.99),rgba(13,12,10,.99));box-shadow:0 35px 110px rgba(0,0,0,.52);transform:translateY(14px) scale(.975);transition:.25s}
+.ka-literary-library-modal.open .ka-literary-library-panel{transform:none}.ka-literary-library-top{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.ka-literary-library-top h2{margin:4px 0 4px;font-size:clamp(25px,3vw,38px);letter-spacing:-.025em}.ka-literary-library-top p{margin:0;opacity:.55;font-size:12px}.ka-literary-library-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.ka-library-author-card{position:relative;min-height:145px;text-align:left;color:inherit;border:1px solid rgba(217,185,121,.14);border-radius:21px;padding:19px;background:linear-gradient(135deg,rgba(255,255,255,.045),rgba(217,185,121,.025));cursor:pointer;overflow:hidden;transition:.22s}.ka-library-author-card:hover{transform:translateY(-3px);border-color:rgba(217,185,121,.38);box-shadow:0 16px 36px rgba(0,0,0,.22);background:rgba(217,185,121,.06)}.ka-library-author-card:after{content:"";position:absolute;right:-28px;bottom:-34px;width:110px;height:110px;border:1px solid rgba(217,185,121,.10);border-radius:50%;box-shadow:0 0 0 12px rgba(217,185,121,.018),0 0 0 25px rgba(217,185,121,.012)}.ka-library-mark{width:42px;height:42px;display:grid;place-items:center;border:1px solid rgba(217,185,121,.24);border-radius:13px;color:rgba(243,217,138,.9);font-size:17px;background:rgba(217,185,121,.055);margin-bottom:15px}.ka-library-author-card strong{display:block;font-size:18px;line-height:1.45}.ka-library-author-card span{display:block;margin-top:5px;font-size:11px;opacity:.46}.ka-library-author-card em{display:block;margin-top:9px;font-style:normal;font-size:11px;color:rgba(217,185,121,.8)}.ka-literary-library-note{margin-top:18px;padding:12px 14px;border:1px solid rgba(217,185,121,.10);border-radius:14px;background:rgba(217,185,121,.035);font-size:10px;opacity:.52;line-height:1.6}
+@media(max-width:700px){.ka-literary-library-modal{padding:10px}.ka-literary-library-panel{width:calc(100vw - 16px);max-height:90vh;border-radius:24px;padding:18px}.ka-literary-library-grid{grid-template-columns:1fr;gap:10px}.ka-library-author-card{min-height:125px;padding:16px}.ka-literary-library-top{margin-bottom:16px}.ka-literary-library-top p{max-width:270px;line-height:1.55}}
+@media(prefers-reduced-motion:reduce){.ka-literary-library-modal,.ka-literary-library-panel,.ka-library-author-card{transition:none}}
+</style>
+<script id="phase30-literary-library-js">
+(function(){
+  const modal=document.getElementById('kaLiteraryModal'), title=document.getElementById('kaLiteraryDialogTitle'), era=document.getElementById('kaLiteraryDialogEra'), text=document.getElementById('kaLiteraryDialogText');
+  const library=document.getElementById('kaLiteraryLibraryModal'), grid=document.getElementById('kaLiteraryLibraryGrid');
+  const authors=[...document.querySelectorAll('[data-classic-author]')].map(card=>({name:card.dataset.classicAuthor,years:card.dataset.era,note:card.dataset.note,mark:card.querySelector('.ka-literary-mark')?.textContent||card.dataset.classicAuthor?.[0]||'✦'}));
+  const close=()=>{if(!modal)return;modal.classList.remove('open');modal.setAttribute('aria-hidden','true')};
+  const open=(name,years,note)=>{if(!modal)return;title.textContent=name;era.textContent=years||'';text.textContent=`${name}-এর সাহিত্যকে কবিতার আঙিনার আলাদা সংগ্রহে সাজানোর প্রস্তুতি চলছে। ${note||''}`;modal.classList.add('open');modal.setAttribute('aria-hidden','false')};
+  const closeLibrary=()=>{if(!library)return;library.classList.remove('open');library.setAttribute('aria-hidden','true')};
+  const openAuthorProfileFromLibrary=(name)=>{window.KAProfileReturn='literaryLibrary';closeLibrary();setTimeout(()=>openProfileByName(name),20)};
+  const openLibrary=()=>{if(!library)return;grid.innerHTML=authors.map(a=>`<button type="button" class="ka-library-author-card" data-library-author="${encodeURIComponent(a.name)}"><span class="ka-library-mark">${a.mark}</span><strong>${window.escapeHTML?escapeHTML(a.name):a.name}</strong><span>${window.escapeHTML?escapeHTML(a.years):a.years}</span><em>${window.escapeHTML?escapeHTML(a.note):a.note}</em></button>`).join('');grid.querySelectorAll('[data-library-author]').forEach(btn=>btn.addEventListener('click',()=>{const a=authors.find(x=>encodeURIComponent(x.name)===btn.dataset.libraryAuthor);if(a){openAuthorProfileFromLibrary(a.name)}}));library.classList.add('open');library.setAttribute('aria-hidden','false');setTimeout(()=>grid.querySelector('.ka-library-author-card')?.focus(),40)};
+  document.querySelectorAll('[data-classic-author]').forEach(card=>card.addEventListener('click',()=>open(card.dataset.classicAuthor,card.dataset.era,card.dataset.note)));
+  document.getElementById('kaLiteraryClose')?.addEventListener('click',close);modal?.addEventListener('click',e=>{if(e.target===modal)close()});
+  document.getElementById('kaLiteraryLibraryClose')?.addEventListener('click',closeLibrary);library?.addEventListener('click',e=>{if(e.target===library)closeLibrary()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(library?.classList.contains('open'))closeLibrary();else close()}});
+  document.getElementById('literaryLibraryAll')?.addEventListener('click',openLibrary);
+  const menu=document.querySelector('.ka-menu-item[data-action="classics"]');menu?.addEventListener('click',()=>{setTimeout(openLibrary,80)});
+  window.KAClassicLibrary=Object.assign(window.KAClassicLibrary||{},{version:'30.0',discoveryRail:true,premiumHouse:true,fullLibraryModal:true,contentPolicy:'verified-public-domain-or-licensed'});window.KAClassicLibrary.open=open;window.KAClassicLibrary.openLibrary=openLibrary;
+})();
+</script>
 <section class="section" id="archive">
   <div class="section-head">
     <div><div class="eyebrow">The archive</div><h2>কবিতাগুলো</h2></div>
@@ -2113,7 +2206,7 @@ function moodMatch(p){if(activeMood==='সব')return true;const t=(p.title+' '+
 function setMood(m,el){activeMood=m;document.querySelectorAll('.mood-btn').forEach(x=>x.classList.remove('active'));el.classList.add('active');render()}
 function renderWriterChips(){const box=document.getElementById('writerChips');if(!box)return;const names=[...new Set(poems.map(x=>(x.author||'অজ্ঞাত লেখক').trim()).filter(Boolean))];box.innerHTML=names.slice(0,10).map(n=>`<button class="writer-chip" onclick="openProfileByName(decodeURIComponent('${encodeURIComponent(''+n)}'))">${escapeHTML(n)}</button>`).join('')||'<span class="muted-note">এখনো লেখক তথ্য নেই।</span>'}
 function openProfileByName(name){const works=poems.filter(p=>(p.author||'অজ্ঞাত লেখক').trim()===name);document.getElementById('profileName').textContent=name;document.getElementById('profileStats').textContent=`${works.length}টি প্রকাশিত লেখা · কবিতার আঙিনা`;document.getElementById('profileWorks').innerHTML=works.map(p=>`<article class="special-card" onclick="closeProfile();openReader('${p.id}')"><h3>${escapeHTML(p.title)}</h3><div class="special-meta">${escapeHTML(p.date||'')} · ${poemTags(p).join(' · ')}</div><div class="special-body">${escapeHTML((p.body||'').replace(/\s+/g,' ').slice(0,180))}…</div></article>`).join('');document.getElementById('profileOverlay').classList.add('show');document.body.style.overflow='hidden'}
-function closeProfile(){document.getElementById('profileOverlay').classList.remove('show');document.body.style.overflow=''}
+function closeProfile(){const overlay=document.getElementById('profileOverlay');const returnTo=window.KAProfileReturn;overlay?.classList.remove('show');document.body.style.overflow='';if(returnTo==='literaryLibrary'){window.KAProfileReturn='';setTimeout(()=>{window.KAClassicLibrary?.openLibrary?.();const lib=document.getElementById('kaLiteraryLibraryModal');if(lib){lib.classList.add('open');lib.setAttribute('aria-hidden','false')}} ,80)}}
 </script>
 
 <style id="reading-end-polish">
@@ -2305,11 +2398,117 @@ function closeProfile(){document.getElementById('profileOverlay').classList.remo
     else if(a==='unsaid'&&window.openUnsaidSpace)window.openUnsaidSpace();
     else if(a==='feeling'&&window.openFeelingSpace)window.openFeelingSpace();
     else if(a==='novel'&&window.openNovelSpace)window.openNovelSpace();
+    else if(a==='classics'){document.getElementById('literaryLibrary')?.scrollIntoView({behavior:'smooth',block:'center'});}
     else if(a==='favorites'){document.getElementById('archive')?.scrollIntoView({behavior:'smooth'});setTimeout(()=>document.querySelector('[data-filter="favorite"]')?.click(),300)}
     else if(a==='submit'&&window.openEditor)window.openEditor();
   },100)}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu.classList.contains('show'))closeMenu()});
   window.addEventListener('scroll',()=>{if(menu.classList.contains('show'))return;toggle.style.opacity=window.scrollY>80?'1':'.92'}, {passive:true});
+})();
+</script>
+<script id="phase37-movable-menu-polish-js">
+(function(){
+  'use strict';
+  const toggle=document.getElementById('kaMenuToggle');
+  if(!toggle || toggle.dataset.ka37Ready==='1') return;
+  toggle.dataset.ka37Ready='1';
+  toggle.classList.add('ka36-movable');
+  const KEY='ka-floating-menu-position-v2';
+  const clamp=(v,min,max)=>Math.max(min,Math.min(max,v));
+  const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'null');return x&&Number.isFinite(x.x)&&Number.isFinite(x.y)?x:null}catch(e){return null}};
+  const apply=(x,y,save=true)=>{
+    const maxX=Math.max(0,window.innerWidth-toggle.offsetWidth);
+    const maxY=Math.max(0,window.innerHeight-toggle.offsetHeight);
+    const pos={x:clamp(Number(x)||0,0,maxX),y:clamp(Number(y)||0,0,maxY)};
+    toggle.style.left=pos.x+'px'; toggle.style.top=pos.y+'px';
+    toggle.style.right='auto'; toggle.style.bottom='auto';
+    if(save) try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}
+    return pos;
+  };
+  const saved=read();
+  if(saved) requestAnimationFrame(()=>apply(saved.x,saved.y,false));
+
+  let drag=null, moved=false, suppressClick=false;
+  const threshold=5;
+  const begin=e=>{
+    if(e.pointerType==='mouse' && e.button!==0) return;
+    const r=toggle.getBoundingClientRect();
+    drag={id:e.pointerId,startX:e.clientX,startY:e.clientY,baseX:r.left,baseY:r.top};
+    moved=false; suppressClick=false;
+    toggle.setPointerCapture?.(e.pointerId);
+    e.preventDefault();
+  };
+  const move=e=>{
+    if(!drag || e.pointerId!==drag.id) return;
+    const dx=e.clientX-drag.startX,dy=e.clientY-drag.startY;
+    if(!moved && Math.hypot(dx,dy)<threshold) return;
+    moved=true;
+    toggle.classList.add('ka37-dragging');
+    apply(drag.baseX+dx,drag.baseY+dy,true);
+    e.preventDefault();
+  };
+  const finish=e=>{
+    if(!drag || e.pointerId!==drag.id) return;
+    if(moved) suppressClick=true;
+    toggle.classList.remove('ka37-dragging');
+    try{toggle.releasePointerCapture?.(drag.id)}catch(err){}
+    drag=null;
+  };
+  toggle.addEventListener('pointerdown',begin,{passive:false});
+  toggle.addEventListener('pointermove',move,{passive:false});
+  toggle.addEventListener('pointerup',finish,{passive:false});
+  toggle.addEventListener('pointercancel',finish,{passive:false});
+  toggle.addEventListener('lostpointercapture',()=>{if(drag){if(moved)suppressClick=true;toggle.classList.remove('ka37-dragging');drag=null}});
+  toggle.addEventListener('click',e=>{
+    if(suppressClick){suppressClick=false;e.preventDefault();e.stopImmediatePropagation();}
+  },true);
+
+  // Keyboard accessibility: Alt + arrow keys moves the floating menu in 24px steps.
+  toggle.addEventListener('keydown',e=>{
+    if(!e.altKey) return;
+    const r=toggle.getBoundingClientRect();
+    let x=r.left,y=r.top,changed=true,step=e.shiftKey?8:24;
+    if(e.key==='ArrowLeft')x-=step;
+    else if(e.key==='ArrowRight')x+=step;
+    else if(e.key==='ArrowUp')y-=step;
+    else if(e.key==='ArrowDown')y+=step;
+    else changed=false;
+    if(changed){e.preventDefault();apply(x,y,true);}
+  });
+
+  // Keep the saved position inside the viewport after rotation, resize, or split-screen changes.
+  let resizeTimer;
+  window.addEventListener('resize',()=>{
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(()=>{
+      const r=toggle.getBoundingClientRect();
+      const pos=apply(r.left,r.top,true);
+      if(window.KAMovableMenu) window.KAMovableMenu.position=pos;
+    },80);
+  },{passive:true});
+
+  window.KAMovableMenu={version:'37.1',target:'kaMenuToggle',mode:'free-2d',degrees:360,bottomNavUntouched:true,storageKey:KEY,position:saved||null,reset(){try{localStorage.removeItem(KEY)}catch(e){};toggle.style.left='';toggle.style.top='';toggle.style.right='';toggle.style.bottom='';return true}};
+})();
+</script>
+<script id="ka-final-runtime-integrity">
+(function(){
+  'use strict';
+  function audit(){
+    const ids=new Set(),duplicateIds=[];
+    document.querySelectorAll('[id]').forEach(el=>{if(ids.has(el.id))duplicateIds.push(el.id);ids.add(el.id)});
+    const checks={
+      duplicateIds:[...new Set(duplicateIds)],
+      floatingMenu:!!document.getElementById('kaMenuToggle'),
+      bottomQuickNav:!!document.getElementById('ka23QuickNav'),
+      reader:typeof window.openReader==='function',
+      search:!!document.getElementById('search'),
+      firebase:!!window.firebasePoem||!!window.firebase
+    };
+    window.KAFinalAudit={version:'1.0',checks,ok:checks.duplicateIds.length===0&&checks.floatingMenu&&checks.bottomQuickNav&&checks.reader};
+    return window.KAFinalAudit;
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(audit,350),{once:true});
+  else setTimeout(audit,350);
 })();
 </script>
 <script id="reading-experience-2-0-js">
@@ -2867,7 +3066,7 @@ function toggleReaderTools(){
   }
   function mount(){
     if(!$('archive')||$('phase16AdaptiveDiscovery'))return;
-    const sec=document.createElement('section');sec.id='phase16AdaptiveDiscovery';sec.className='phase16-adaptive';
+    const sec=document.createElement('section');sec.id='phase16AdaptiveDiscoverySection';sec.className='phase16-adaptive';
     const anchor=$('phase13Recommendation');
     sec.innerHTML='<div class="p16-shell"></div>';
     (anchor?anchor.parentNode.insertBefore(sec,anchor.nextSibling):$('archive').insertAdjacentElement('afterend',sec));
@@ -3105,7 +3304,7 @@ img{max-width:100%;height:auto}
   const $=s=>document.querySelector(s);
   const goTop=()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
   const focusSearch=()=>{const el=$('#search')||$('#searchInput'); if(el){el.focus({preventScroll:false});el.scrollIntoView({behavior:'smooth',block:'center'});}};
-  const openCollection=()=>{const candidates=['[data-action="favorites"]','#favorites','#bookmarks','#myCollection']; const el=candidates.map(x=>$(x)).find(Boolean); if(el) el.click(); else {const target=document.querySelector('#premiumFilters [data-filter="favorite"]'); const archive=document.getElementById('archive'); if(target&&archive){archive.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'start'});setTimeout(()=>target.click(),220);}}};
+  const openCollection=()=>{const candidates=['[data-action="favorites"]','#favorites','#bookmarks','#myCollection']; const el=candidates.map(x=>$(x)).find(Boolean); if(el) el.click(); else {const target=document.querySelector('#premiumFilters [data-filter="favorite"]'); const archive=document.getElementById('archive'); if(target&&archive){archive.scrollIntoView({behavior:(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'),block:'start'});setTimeout(()=>target.click(),220);}}};
   const openMenu=()=>{const b=$('#kaMenuToggle'); if(b) b.click();};
   document.querySelectorAll('[data-ka23]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.ka23;if(a==='top')goTop();if(a==='search')focusSearch();if(a==='collection')openCollection();if(a==='menu')openMenu();}));
   // Normalize common history timestamp shapes for downstream UX modules.
@@ -3235,4 +3434,5 @@ body{font-synthesis:none;-webkit-font-smoothing:antialiased;text-rendering:optim
   setTimeout(renderComfortAuthors,50);
 })();
 </script>
+
 </body></html>
