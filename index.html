@@ -589,6 +589,19 @@ body.ka-menu-lock{overflow:hidden}
 }
 @media(prefers-reduced-motion:reduce){#readerOverlay .reader .close,#readerOverlay .reader-nav .btn{transition:none!important}}
 </style>
+
+<style id="phase22-polish-css">
+/* Phase 22 — final product polish: restrained, responsive, accessible */
+:root{scroll-behavior:smooth}
+html{scroll-padding-top:88px}
+body{overflow-x:hidden}
+button,a,input,select,textarea{touch-action:manipulation}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid rgba(243,217,138,.9);outline-offset:3px}
+img{max-width:100%;height:auto}
+.ka-menu-item{min-height:44px}
+@media(max-width:700px){body{font-size:15px}.hero{padding-left:16px!important;padding-right:16px!important}.search{min-height:48px!important;font-size:16px!important}.ka-menu-item{min-height:46px}.ka-menu-panel{max-width:calc(100vw - 24px)!important}.reader,.modal,.admin-panel{max-width:calc(100vw - 20px)!important}.card,.poem-card{overflow-wrap:anywhere}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body style="">
 <div id="pageLoader" class="page-loader" role="status" aria-label="কবিতার আঙিনা লোড হচ্ছে"><div class="wow-entry"><div class="wow-symbol" aria-label="কবিতার আঙিনা লোগো"><span class="wow-logo-main">ক</span><i class="wow-logo-sub">আ</i></div><div class="wow-entry-kicker">KOBITAR ANGINA</div><h2>নীরবতারও একটি ভাষা আছে</h2><p>সেই ভাষার শব্দগুলোকে একটু ধীরে পড়ুন।</p><div class="wow-line"></div></div></div>
@@ -656,7 +669,7 @@ body.ka-menu-lock{overflow:hidden}
   <div class="tagbar" id="tagbar"><button class="tag active" onclick="setTag('সব',this)">সব</button><button class="tag" onclick="setTag('প্রেম',this)">প্রেম</button><button class="tag" onclick="setTag('বিরহ',this)">বিরহ</button><button class="tag" onclick="setTag('জীবন',this)">জীবন</button><button class="tag" onclick="setTag('নির্জনতা',this)">নির্জনতা</button></div>
   <div class="quick-hub">
     <div class="hub-panel"><h3>🎭 আজকের অনুভূতি</h3><div class="mood-row"><button class="mood-btn active" onclick="setMood('সব',this)">সব</button><button class="mood-btn" onclick="setMood('প্রেম',this)">❤️ প্রেম</button><button class="mood-btn" onclick="setMood('বিষণ্ণ',this)">🌧️ বিষণ্ণ</button><button class="mood-btn" onclick="setMood('শান্ত',this)">🌿 শান্ত</button><button class="mood-btn" onclick="setMood('রাত',this)">🌙 রাতজাগা</button></div></div>
-    <div class="hub-panel"><h3>✍️ লেখক আবিষ্কার</h3><div class="writer-row" id="writerChips"><span class="muted-note">লেখকদের সাজানো হচ্ছে…</span></div></div>
+    <div class="hub-panel ka-author-discovery"><div class="ka-author-head"><h3>✍️ লেখক আবিষ্কার</h3><span>তোমার পছন্দের কণ্ঠ খুঁজে নাও</span></div><div class="ka-author-tabs" role="tablist" aria-label="লেখক ও লেখিকা"><button type="button" class="ka-author-tab active" role="tab" aria-selected="true" data-author-tab="লেখক">লেখক</button><button type="button" class="ka-author-tab" role="tab" aria-selected="false" data-author-tab="লেখিকা">লেখিকা</button></div><div class="writer-row" id="writerChips"><span class="muted-note">লেখকদের সাজানো হচ্ছে…</span></div></div>
   </div>
 
 <div class="premium-featured" id="premiumFeatured">
@@ -3034,4 +3047,192 @@ img{max-width:100%;height:auto}
 @media(max-width:700px){body{overflow-x:hidden}.section{padding-left:16px;padding-right:16px}.archive-toolbar{gap:7px}.search{font-size:16px}.card:hover{transform:none}.ka-menu-item{min-height:46px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
+
+<script id="phase22-platform-polish">
+(()=>{
+  const safe=(fn)=>{try{fn()}catch(e){console.warn('[KA Phase22]',e)}};
+  safe(()=>{
+    document.querySelectorAll('img').forEach(img=>{
+      img.loading=img.loading||'lazy'; img.decoding=img.decoding||'async';
+      if(!img.alt) img.alt='কবিতার আঙিনা';
+      img.addEventListener('error',()=>{img.classList.add('ka-img-failed'); img.removeAttribute('src')},{once:true});
+    });
+  });
+  window.KAPlatformPolish={
+    version:'22.0',
+    audit(){
+      const checks={
+        menu:!!document.getElementById('kaMenuToggle'),
+        search:!!document.getElementById('search'),
+        reader:!!window.openReader,
+        firebase:!!window.firebase,
+        shareSection:!!document.querySelector('[id*=share]'),
+        duplicateIds:false
+      };
+      const seen=new Set(); document.querySelectorAll('[id]').forEach(el=>{if(seen.has(el.id)) checks.duplicateIds=true; seen.add(el.id)});
+      return checks;
+    }
+  };
+  window.addEventListener('load',()=>safe(()=>window.KAPlatformPolish.audit()),{once:true});
+})();
+</script>
+
+<!-- PHASE 23: ZERO-FRICTION UX -->
+<style id="phase23-zero-friction-css">
+  :root{--ka23-safe:env(safe-area-inset-bottom,0px)}
+  #ka23QuickNav{position:fixed;left:50%;bottom:calc(10px + var(--ka23-safe));transform:translateX(-50%);z-index:9990;display:none;align-items:center;justify-content:space-between;width:min(94vw,430px);padding:7px;border:1px solid rgba(255,255,255,.14);border-radius:24px;background:linear-gradient(180deg,rgba(28,27,32,.94),rgba(13,13,17,.96));backdrop-filter:blur(22px) saturate(140%);-webkit-backdrop-filter:blur(22px) saturate(140%);box-shadow:0 18px 50px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.07)}
+  #ka23QuickNav::before{content:"";position:absolute;inset:1px;border-radius:23px;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.07),transparent 38%,rgba(214,180,111,.045))}
+  #ka23QuickNav button{position:relative;z-index:1;min-width:72px;height:54px;border:0;background:transparent;color:rgba(255,255,255,.58);border-radius:18px;padding:6px 9px;font:inherit;font-size:11px;font-weight:600;letter-spacing:.1px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:transform .2s ease,color .2s ease,background .2s ease}
+  #ka23QuickNav button::first-line{font-size:17px}
+  #ka23QuickNav button:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.055);transform:translateY(-1px)}
+  #ka23QuickNav button:focus-visible{color:#f0dfbd;background:rgba(214,180,111,.11);outline:2px solid rgba(214,180,111,.45);outline-offset:-2px}
+  #ka23QuickNav button[data-ka23="menu"]{color:#ead7ad;background:linear-gradient(180deg,rgba(214,180,111,.13),rgba(214,180,111,.055));box-shadow:inset 0 1px 0 rgba(255,255,255,.05)}
+  #ka23QuickNav button[data-ka23="menu"]::after{content:"";position:absolute;bottom:4px;width:18px;height:2px;border-radius:9px;background:rgba(214,180,111,.65)}
+  #ka23HomeHint{display:none;margin:8px 0 0;padding:9px 12px;border-radius:12px;font-size:12px;opacity:.8}
+  @media(max-width:720px){#ka23QuickNav{display:flex}.ka23-desktop-only{display:none!important}}
+  @media(max-width:390px){#ka23QuickNav{width:96vw;padding:6px}#ka23QuickNav button{min-width:64px;height:52px;font-size:10px}}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}#ka23QuickNav,#ka23QuickNav button{transition:none!important}}
+</style>
+<div id="ka23QuickNav" aria-label="দ্রুত নেভিগেশন">
+  <button type="button" data-ka23="top" aria-label="হোমে যান">⌂<span>হোম</span></button>
+  <button type="button" data-ka23="search" aria-label="খুঁজুন">⌕<span>খুঁজুন</span></button>
+  <button type="button" data-ka23="collection" aria-label="আমার সংগ্রহ">♡<span>সংগ্রহ</span></button>
+  <button type="button" data-ka23="menu" aria-label="মেনু খুলুন">☰<span>মেনু</span></button>
+</div>
+<script id="phase23-zero-friction-js">
+(function(){
+  'use strict';
+  const $=s=>document.querySelector(s);
+  const goTop=()=>window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  const focusSearch=()=>{const el=$('#search')||$('#searchInput'); if(el){el.focus({preventScroll:false});el.scrollIntoView({behavior:'smooth',block:'center'});}};
+  const openCollection=()=>{const candidates=['[data-action="favorites"]','#favorites','#bookmarks','#myCollection']; const el=candidates.map(x=>$(x)).find(Boolean); if(el) el.click(); else {const target=document.querySelector('#premiumFilters [data-filter="favorite"]'); const archive=document.getElementById('archive'); if(target&&archive){archive.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'start'});setTimeout(()=>target.click(),220);}}};
+  const openMenu=()=>{const b=$('#kaMenuToggle'); if(b) b.click();};
+  document.querySelectorAll('[data-ka23]').forEach(b=>b.addEventListener('click',()=>{const a=b.dataset.ka23;if(a==='top')goTop();if(a==='search')focusSearch();if(a==='collection')openCollection();if(a==='menu')openMenu();}));
+  // Normalize common history timestamp shapes for downstream UX modules.
+  window.KAUX={version:'24.0',historyAt:x=>Number(x?.at??x?.ts??x?.time??0)||0,focusSearch,goTop};
+  // Add an unobtrusive empty-search recovery hint only when search exists.
+  const search=$('#search')||$('#searchInput');
+  if(search){
+    search.setAttribute('aria-label',search.getAttribute('aria-label')||'কবিতা, লেখক বা বিষয় খুঁজুন');
+    search.setAttribute('autocomplete','off');
+  }
+})();
+</script>
+
+
+<style id="phase25-zero-friction-polish">
+/* Phase 25 — UX audit: simplify journeys without adding new platform features */
+.ka25-rail{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 14px;padding:10px 12px;border:1px solid rgba(255,255,255,.08);border-radius:16px;background:rgba(255,255,255,.025)}
+.ka25-rail-label{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-right:2px}
+.ka25-chip{border:1px solid rgba(255,255,255,.10);background:rgba(255,255,255,.035);color:rgba(255,255,255,.70);border-radius:999px;padding:8px 12px;font:inherit;font-size:12px;cursor:pointer;transition:.2s ease}
+.ka25-chip:hover,.ka25-chip.active{color:#f0dfbd;border-color:rgba(217,185,121,.38);background:rgba(217,185,121,.09)}
+.ka25-continue{margin-left:auto;color:#ead7ad;border-color:rgba(217,185,121,.28)}
+.ka25-continue[hidden]{display:none}
+.ka25-empty{padding:18px;border:1px dashed rgba(255,255,255,.12);border-radius:16px;text-align:center;color:rgba(255,255,255,.55);font-size:13px}
+@media(max-width:620px){.ka25-rail{padding:9px}.ka25-rail-label{width:100%}.ka25-chip{padding:8px 10px}.ka25-continue{margin-left:0}}
+</style>
+<script id="phase25-ux-audit">
+(function(){
+  'use strict';
+  const $=s=>document.querySelector(s);
+  const reduced=()=>window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const go=(el)=>el&&el.scrollIntoView({behavior:reduced()?'auto':'smooth',block:'start'});
+  function ensureRail(){
+    const archive=$('#archive'); if(!archive||$('#ka25Rail'))return;
+    const toolbar=archive.querySelector('#premiumFilters')||archive.querySelector('.archive-toolbar');
+    if(!toolbar)return;
+    const rail=document.createElement('div'); rail.id='ka25Rail'; rail.className='ka25-rail'; rail.setAttribute('aria-label','দ্রুত পাঠ নেভিগেশন');
+    rail.innerHTML='<span class="ka25-rail-label">দ্রুত পাঠ</span><button type="button" class="ka25-chip active" data-ka25-filter="all">সব লেখা</button><button type="button" class="ka25-chip" data-ka25-filter="favorite">♥ প্রিয়</button><button type="button" class="ka25-chip" data-ka25-filter="recent">সাম্প্রতিক</button><button type="button" class="ka25-chip ka25-continue" data-ka25-continue hidden>যেখানে থেমেছিলে →</button>';
+    toolbar.parentNode.insertBefore(rail,toolbar);
+    rail.addEventListener('click',e=>{
+      const b=e.target.closest('[data-ka25-filter]'); if(b){
+        rail.querySelectorAll('[data-ka25-filter]').forEach(x=>x.classList.toggle('active',x===b));
+        const target=toolbar.querySelector('[data-filter="'+b.dataset.ka25Filter+'"]'); if(target)target.click();
+      }
+      if(e.target.closest('[data-ka25-continue]')){
+        const h=localStorage.getItem('ka-last-reading-v1');
+        if(h){try{const x=JSON.parse(h); if(x?.id&&typeof window.openReader==='function')window.openReader(x.id)}catch(_){} }
+      }
+    });
+    try{const h=JSON.parse(localStorage.getItem('ka-last-reading-v1')||'null'); if(h?.id&&typeof window.openReader==='function'){const c=rail.querySelector('[data-ka25-continue]'); if(c)c.hidden=false}}catch(_){}
+  }
+  function improveSearch(){
+    const input=$('#search'); if(!input)return;
+    input.setAttribute('enterkeyhint','search');
+    input.setAttribute('aria-label','কবিতা, লেখক বা বিষয় খুঁজুন');
+    const form=input.closest('form');
+    if(form&&!form.__ka25){form.__ka25=true;form.addEventListener('submit',e=>{e.preventDefault();input.blur();go($('#archive'))})}
+  }
+  function improveMenu(){
+    const menu=$('#kaLuxuryMenu'); if(!menu)return;
+    menu.querySelectorAll('.ka-menu-item').forEach((b,i)=>{b.setAttribute('role','menuitem');b.tabIndex=0;if(!b.dataset.ka25Key)b.dataset.ka25Key=String(i+1)});
+  }
+  function audit(){
+    const ids=new Set(),dupes=[];document.querySelectorAll('[id]').forEach(el=>{if(ids.has(el.id))dupes.push(el.id);ids.add(el.id)});
+    return {home:!!$('#top'),search:!!$('#search'),archive:!!$('#archive'),reader:typeof window.openReader==='function',menu:!!$('#kaLuxuryMenu'),duplicateIds:[...new Set(dupes)]};
+  }
+  function init(){ensureRail();improveSearch();improveMenu();window.KAUXAudit={version:'25.0',audit};}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+})();
+</script>
+
+
+<style id="phase26-reading-comfort-css">
+/* Phase 26 — reading comfort: typography, spacing, touch and modal breathing room */
+:root{--read-max:760px}
+body{font-synthesis:none;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.card,.story-card,.special-card,.hub-panel,.premium-featured{overflow-wrap:anywhere}
+.card h3,.story-card h3,.special-card h3{line-height:1.45}
+.excerpt,.story-excerpt,.special-body{line-height:1.95;letter-spacing:.005em}
+.poem,.story-reader-body{font-size:clamp(17px,1.45vw,20px)!important;line-height:2.12!important;letter-spacing:.012em;max-width:var(--read-max);margin-left:auto;margin-right:auto}
+.reader{width:min(820px,calc(100% - 24px));box-sizing:border-box;padding:clamp(26px,5vw,52px)!important}
+.reader h2{line-height:1.3!important;letter-spacing:-.01em}
+.reader .reader-actions,.reader-tools{gap:10px}
+.reader .btn,.reader button,.ka-author-tab,.writer-chip,.mood-btn{min-height:42px}
+.field label{line-height:1.55}
+.field input,.field textarea,.field select{line-height:1.6}
+.ka-author-head{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:12px}
+.ka-author-head h3{margin:0!important}
+.ka-author-head span{font-size:11px;color:#8f8980}
+.ka-author-tabs{display:flex;gap:5px;padding:4px;margin-bottom:14px;border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.025);border-radius:14px;width:max-content;max-width:100%}
+.ka-author-tab{border:0;background:transparent;color:#8f8980;padding:8px 16px;border-radius:10px;cursor:pointer;font:inherit;font-size:13px;transition:.2s ease}
+.ka-author-tab.active{background:linear-gradient(135deg,rgba(217,185,121,.22),rgba(217,185,121,.08));color:#f0d9a5;box-shadow:inset 0 0 0 1px rgba(217,185,121,.22)}
+.ka-author-tab:focus-visible,.writer-chip:focus-visible,.mood-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.ka-author-discovery .writer-row{min-height:42px}
+.ka-author-discovery .muted-note{line-height:1.7}
+@media(max-width:760px){
+  .section{padding-left:16px!important;padding-right:16px!important}
+  .hub-panel{padding:18px!important;border-radius:20px}
+  .ka-author-head{align-items:flex-start;flex-direction:column;gap:3px}
+  .ka-author-tabs{width:100%}
+  .ka-author-tab{flex:1}
+  .writer-row{gap:7px}
+  .writer-chip,.mood-btn{padding:9px 12px}
+  .reader{width:calc(100% - 14px);padding:24px 18px!important;border-radius:22px}
+  .reader h2{font-size:clamp(28px,8vw,36px)!important;margin-bottom:20px!important}
+  .poem,.story-reader-body{font-size:18px!important;line-height:2.05!important;padding:22px!important}
+  .reader-cover{margin-bottom:22px!important}
+}
+@media(prefers-reduced-motion:reduce){.ka-author-tab{transition:none}}
+</style>
+<script id="phase26-comfort-js">
+(function(){
+  'use strict';
+  const tabs=[...document.querySelectorAll('[data-author-tab]')];
+  let activeType='লেখক';
+  const norm=v=>String(v||'').replace(/\s+/g,'').trim()==='লেখিকা'?'লেখিকা':'লেখক';
+  function renderComfortAuthors(){
+    const box=document.getElementById('writerChips'); if(!box)return;
+    const map=new Map();
+    const source = Array.isArray(window.poems) && window.poems.length ? window.poems : (Array.isArray(poems) ? poems : []);
+    source.forEach(p=>{const name=String(p.author||'').trim();if(!name)return;const type=norm(p.authorType);if(type!==activeType)return;if(!map.has(name))map.set(name,p);});
+    const names=[...map.keys()].sort((a,b)=>a.localeCompare(b,'bn'));
+    box.innerHTML=names.slice(0,12).map(n=>`<button type="button" class="writer-chip" onclick="openProfileByName(decodeURIComponent('${encodeURIComponent(n)}'))">${window.escapeHTML?escapeHTML(n):n}</button>`).join('')||`<span class="muted-note">এখনো কোনো ${activeType} প্রকাশিত লেখা পাওয়া যায়নি।</span>`;
+  }
+  tabs.forEach(t=>t.addEventListener('click',()=>{activeType=norm(t.dataset.authorTab);tabs.forEach(x=>{const on=norm(x.dataset.authorTab)===activeType;x.classList.toggle('active',on);x.setAttribute('aria-selected',on?'true':'false')});renderComfortAuthors()}));
+  const old=window.renderWriterChips; window.renderWriterChips=function(){renderComfortAuthors()};
+  window.KAComfort={version:'26.0',authorDiscovery:'type-tabs',reading:'responsive-typography'};
+  setTimeout(renderComfortAuthors,50);
+})();
+</script>
 </body></html>
